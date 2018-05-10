@@ -1,0 +1,13 @@
+name: test_env
+channels:
+  - conda-forge
+dependencies:
+  - python=3.5
+  - dask
+  - pytest
+  - flake8
+  - numba
+  - numpy
+  - pip:
+    - coveralls
+    - pytest-cov
