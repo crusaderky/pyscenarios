@@ -26,7 +26,7 @@ def calc_v():
     """
     import os.path
     fdata = pkg_resources.resource_string(
-        'pyscenarios.resources',  DIRECTIONS + '.txt').decode('ascii')
+        'pyscenarios.resources', DIRECTIONS + '.txt').decode('ascii')
     directions = _load_directions(fdata)
     v = _calc_v_kernel(directions)
 
@@ -83,7 +83,9 @@ def _calc_v_kernel(directions):
         for t in range(s, 32):
             v[j, t] = v[j, t - s] ^ (v[j, t - s] // 2**s)
             for k in range(1, s):
-                v[j, t] ^= ((directions[j, 0] // 2**(s - 1 - k)) & 1) * v[j, t - k]
+                v[j, t] ^= (
+                    ((directions[j, 0] // 2**(s - 1 - k)) & 1) *
+                    v[j, t - k])
 
     return v
 

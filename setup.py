@@ -2,9 +2,8 @@
 import os
 import re
 import warnings
-
 from setuptools import find_packages, setup
-from setuptools.command.build_ext import build_ext
+import pyscenarios.sobol
 
 
 MAJOR = 0
@@ -40,7 +39,6 @@ LONG_DESCRIPTION = ""
 # Code to extract and write the version copied from pandas.
 # Used under the terms of pandas's license, see licenses/PANDAS_LICENSE.
 FULLVERSION = VERSION
-write_version = True
 
 if not ISRELEASED:
     import subprocess
@@ -91,31 +89,16 @@ else:
     FULLVERSION += QUALIFIER
 
 
-def write_version_py(filename=None):
-    cnt = """\
-version = '%s'
-short_version = '%s'
-"""
-    if not filename:
-        filename = os.path.join(
-            os.path.dirname(__file__), 'pyscenarios', 'version.py')
-
-    a = open(filename, 'w')
-    try:
-        a.write(cnt % (FULLVERSION, VERSION))
-    finally:
-        a.close()
+def write_version_py():
+    filename = os.path.join(
+        os.path.dirname(__file__), 'pyscenarios', 'version.py')
+    with open(filename, 'w') as fh:
+        fh.write("version = '%s'\n" % FULLVERSION)
+        fh.write("short_version = '%s'\n" % VERSION)
 
 
-class BuildExt(build_ext):
-    def run(self):
-        super().run()
-        import pyscenarios.sobol
-        pyscenarios.sobol.calc_v()
-
-
-if write_version:
-    write_version_py()
+write_version_py()
+pyscenarios.sobol.calc_v()
 
 
 setup(name=DISTNAME,
@@ -129,8 +112,5 @@ setup(name=DISTNAME,
       install_requires=INSTALL_REQUIRES,
       tests_require=TESTS_REQUIRE,
       url=URL,
-      cmdclass={'build_ext': BuildExt},
       packages=find_packages(),
-      package_data={'pyscenarios':
-                    ['tests/data/*', 'pyscenarios/resources/*']})
-
+      package_data={'pyscenarios': ['tests/data/*', 'resources/*.npy']})
