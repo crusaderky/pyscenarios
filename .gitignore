@@ -57,3 +57,6 @@ Icon*
 pyscenarios/version.py
 
 doc/_build
+
+# Precompiled SOBOL directions
+pyscenarios/resources/*.npy

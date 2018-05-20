@@ -1,3 +1,4 @@
+include pyscenarios/resources/*.txt
 include LICENSE
 recursive-include doc *
 prune doc/_build

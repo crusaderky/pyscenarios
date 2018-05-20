@@ -4,6 +4,8 @@ import re
 import warnings
 
 from setuptools import find_packages, setup
+from setuptools.command.build_ext import build_ext
+
 
 MAJOR = 0
 MINOR = 1
@@ -11,8 +13,6 @@ MICRO = 0
 ISRELEASED = False
 VERSION = '%d.%d.%d' % (MAJOR, MINOR, MICRO)
 QUALIFIER = ''
-
-
 DISTNAME = 'pyscenarios'
 LICENSE = 'LGPL'
 AUTHOR = 'Guido Imperiale'
@@ -35,9 +35,7 @@ INSTALL_REQUIRES = ['numpy >= 1.11', 'numba', 'dask']
 TESTS_REQUIRE = ['pytest >= 2.7.1']
 
 DESCRIPTION = "Python Monte Carlo Scenario Generator"
-LONG_DESCRIPTION = """
-
-"""  # noqa
+LONG_DESCRIPTION = ""
 
 # Code to extract and write the version copied from pandas.
 # Used under the terms of pandas's license, see licenses/PANDAS_LICENSE.
@@ -109,8 +107,16 @@ short_version = '%s'
         a.close()
 
 
+class BuildExt(build_ext):
+    def run(self):
+        super().run()
+        import pyscenarios.sobol
+        pyscenarios.sobol.calc_v()
+
+
 if write_version:
     write_version_py()
+
 
 setup(name=DISTNAME,
       version=FULLVERSION,
@@ -123,5 +129,8 @@ setup(name=DISTNAME,
       install_requires=INSTALL_REQUIRES,
       tests_require=TESTS_REQUIRE,
       url=URL,
+      cmdclass={'build_ext': BuildExt},
       packages=find_packages(),
-      package_data={'pyscenarios': ['tests/data/*']})
+      package_data={'pyscenarios':
+                    ['tests/data/*', 'pyscenarios/resources/*']})
+
