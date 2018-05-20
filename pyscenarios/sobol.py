@@ -159,8 +159,10 @@ def sobol(samples, dimensions, d0=0, chunks=None):
         If not set, return a numpy array.
 
         If set, return a dask array with the given chunk size.
-        Can be an int or an explicit tuple of tuples, e.g.
-        ``((16384, 16383), (50, 50, 50))`` could be used for
+        It can be anything accepted by dask (a positive integer, a
+        tuple of two ints, or a tuple of two tuples of ints) for the output
+        shape (see result below). e.g. either ``(16384, 50)`` or
+        ``((16384, 16383),  (50, 50, 50))`` could be used together with
         ``samples=32767, dimensions=150``.
 
         .. note::
