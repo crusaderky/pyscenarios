@@ -143,15 +143,14 @@ def _sobol_kernel_jit(samples, dimensions, s0, d0, V, output):
                 output[i - s0, j] = np.double(state) / np.double(2**32)
 
 
-def sobol(samples, dimensions, d0=0, chunks=None):
+def sobol(size, d0=0, chunks=None):
     """SOBOL points generator based on Gray code order
 
-    :param int samples:
-        number of samples (cannot be greater than :math:`2^{32}`). To
-        guarantee uniform distribution, this should always be
-        :math:`2^{n} - 1`.
-    :param int dimensions:
-        number of dimensions
+    :param size:
+        number of samples (cannot be greater than :math:`2^{32}`) to extract
+        from a single dimension, or tuple (samples, dimensions).
+        To guarantee uniform distribution, the number of samples should
+        always be :math:`2^{n} - 1`.
     :param int d0:
         first dimension. This can be used as a functional equivalent of a
         a random seed. dimensions + d0 can't be greater than 21201.
@@ -172,21 +171,31 @@ def sobol(samples, dimensions, d0=0, chunks=None):
            than re-chunking afterwards, particularly if (most of) the
            subsequent algorithm is embarassingly parallel.
     :returns:
-        A 2-dimensional array POINTS, where
+        If size is an int, a 1-dimensional array of samples.
+        If size is a tuple, a 2-dimensional array POINTS, where
         ``POINTS[i, j]`` is the ith sample of the jth dimension.
         Each dimension is a uniform (0, 1) distribution.
     :rtype:
         If chunks is not None, :class:`dask.array.Array`; else
         :class:`numpy.ndarray`
     """
+    if isinstance(size, int):
+        samples = size
+        dimensions = 1
+    else:
+        samples, dimensions = size
+
     if not 0 < samples < 2**32:
         raise ValueError("samples must be between 1 and 2^32")
-    if not 0 < dimensions + d0 < max_dimensions():
+    if not 0 < dimensions + d0 <= max_dimensions():
         raise ValueError("(dimensions + d0) must be between 1 and %d" %
                          max_dimensions())
 
     if chunks is None:
-        return _sobol_kernel(samples, dimensions, 0, d0)
+        res = _sobol_kernel(samples, dimensions, 0, d0)
+        if isinstance(size, int):
+            res = res[:, 0]
+        return res
 
     # dask-specific code
     chunks = normalize_chunks(chunks, shape=(samples, dimensions))
@@ -202,7 +211,10 @@ def sobol(samples, dimensions, d0=0, chunks=None):
             offset_j += size_j
         offset_i += size_i
 
-    return da.Array(dsk, name=name, dtype=float, chunks=chunks)
+    res = da.Array(dsk, name=name, dtype=float, chunks=chunks)
+    if isinstance(size, int):
+        res = res[:, 0]
+    return res
 
 
 def max_dimensions():

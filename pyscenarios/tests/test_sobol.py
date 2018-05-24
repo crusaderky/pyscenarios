@@ -1,3 +1,4 @@
+import pytest
 import numpy as np
 from numpy.testing import assert_array_equal
 from pyscenarios.sobol import sobol, max_dimensions
@@ -23,14 +24,32 @@ EXPECT = np.array(
 
 def test_max_dimensions():
     assert max_dimensions() == 21201
+    assert sobol((4, 21201)).shape == (4, 21201)
+    assert sobol((4, 201), d0=21000).shape == (4, 201)
+    with pytest.raises(ValueError):
+        sobol((4, 202), d0=21000)
+    assert sobol(4, d0=21200).shape == (4, )
+    with pytest.raises(ValueError):
+        sobol(4, d0=21201)
 
 
-def test_numpy():
-    output = sobol(15, 4, d0=123)
+def test_numpy_1d():
+    output = sobol(15, d0=123)
+    assert_array_equal(EXPECT[:, 0], output)
+
+
+def test_dask_1d():
+    output = sobol(15, d0=123, chunks=(10, 3))
+    assert output.chunks == ((10, 5), )
+    assert_array_equal(EXPECT[:, 0], output.compute())
+
+
+def test_numpy_2d():
+    output = sobol((15, 4), d0=123)
     assert_array_equal(EXPECT, output)
 
 
-def test_dask():
-    output = sobol(15, 4, d0=123, chunks=(10, 3))
+def test_dask_2d():
+    output = sobol((15, 4), d0=123, chunks=(10, 3))
     assert output.chunks == ((10, 5), (3, 1))
     assert_array_equal(EXPECT, output.compute())

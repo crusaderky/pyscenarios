@@ -81,7 +81,8 @@ def gaussian_copula(cov, scenarios, seed=0, chunks=None,
                                       chunks=chunks)
     elif rng == 'SOBOL':
         # Generate uniform (0, 1) distributions
-        samples = sobol(scenarios, cov.shape[0], d0=seed, chunks=chunks)
+        samples = sobol(size=(scenarios, cov.shape[0]),
+                        d0=seed, chunks=chunks)
         # Convert to normal (0, 1)
         y = duck.norm_ppf(samples)
     else:
@@ -170,17 +171,19 @@ def t_copula(cov, df, scenarios, seed=0, chunks=None, rng='Mersenne Twister'):
             size=(scenarios, cov.shape[0]),
             chunks=chunks)
         s = rnd_state_s.chisquare(
-            df=df, size=(scenarios, df.size),
+            size=(scenarios, df.size), df=df,
             chunks=chunks_s)
 
     elif rng == 'SOBOL':
         seed_s = seed + cov.shape[0]
 
-        y = sobol(samples=scenarios, dimensions=cov.shape[0],
-                  d0=seed, chunks=chunks)
+        y = sobol(
+            size=(scenarios, cov.shape[0]),
+            d0=seed, chunks=chunks)
         y = duck.norm_ppf(y)
-        s = sobol(samples=scenarios, dimensions=df.size,
-                  d0=seed_s, chunks=chunks_s)
+        s = sobol(
+            size=(scenarios, df.size),
+            d0=seed_s, chunks=chunks_s)
         s = duck.chi2_ppf(s, df=df)
 
     else:
