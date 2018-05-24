@@ -73,15 +73,12 @@ class RandomState:
     def __init__(self, seed=None):
         self._dask_state = da.random.RandomState(seed)
 
-
     @property
     def _numpy_state(self):
         return self._dask_state._numpy_state
 
-
     def seed(self, seed=None):
         self._dask_state.seed(seed)
-
 
     def _apply(self, func_name, *args, chunks=None, **kwargs):
         if chunks:
@@ -91,10 +88,8 @@ class RandomState:
             func = getattr(self._numpy_state, func_name)
             return func(*args, **kwargs)
 
-
     def standard_normal(self, size=None, chunks=None):
         return self._apply('standard_normal', size=size, chunks=chunks)
-
 
     def chisquare(self, df, size=None, chunks=None):
         return self._apply('chisquare', df=df, size=size, chunks=chunks)
