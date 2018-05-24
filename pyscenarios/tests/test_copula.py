@@ -63,7 +63,6 @@ def test_student_t_mersenne_np():
 def test_student_t_mersenne_da():
     actual = t_copula(cov, df=3, scenarios=4, seed=123, chunks=2,
                       rng='Mersenne Twister')
-    print(repr(actual.compute()))
     expect = [[ 1.31308802,  1.14171788,  0.78120784],  # noqa
               [ 0.00859970,  0.67931082, -0.58360671],  # noqa
               [-0.48331984, -0.58214528, -0.26145540],
@@ -84,6 +83,47 @@ def test_student_t_sobol(chunks, expect_chunks):
               [-0.90292647, -0.44513114, -1.38033019],
               [ 0.51756147,  0.24504617,  0.84650386],  # noqa
               [ 0.59093028,  1.28328308, -0.94456215]]  # noqa
+    assert_allclose(expect, actual, 1e-6, 0)
+    if chunks:
+        assert actual.chunks == expect_chunks
+    else:
+        assert isinstance(actual, np.ndarray)
+
+
+def test_it_mersenne_np():
+    actual = t_copula(cov, df=[3, 4, 5], scenarios=4, seed=123, chunks=None,
+                      rng='Mersenne Twister')
+    expect = [[-0.99107466, -0.94948121, -0.66543447],
+              [-1.49979830, -1.06165547,  0.03361024],  # noqa
+              [-1.67217808, -2.15902420, -1.71162262],
+              [-0.78466239, -1.36081790, -0.23447651]]
+    assert_allclose(expect, actual, 1e-6, 0)
+    assert isinstance(actual, np.ndarray)
+
+
+def test_it_mersenne_da():
+    actual = t_copula(cov, df=[3, 4, 5], scenarios=4, seed=123, chunks=2,
+                      rng='Mersenne Twister')
+    expect = [[ 1.31308802,  1.13554641,  0.53393366],  # noqa
+              [ 0.00947089,  1.00074604, -0.67327047],  # noqa
+              [-1.31459768, -1.25075347, -0.83020987],
+              [-2.26967543, -0.78266546, -1.25292515]]
+    assert_allclose(expect, actual, 1e-6, 0)
+    assert actual.chunks == ((2, 2), (2, 1))
+
+
+@pytest.mark.parametrize('chunks,expect_chunks', [
+    (None, None),
+    (2, ((2, 2), (2, 1))),
+    (((3, 1), (2, 1)), ((3, 1), (2, 1))),
+])
+def test_it_sobol(chunks, expect_chunks):
+    actual = t_copula(cov, df=[3, 4, 5], scenarios=4, seed=123, chunks=chunks,
+                      rng='SOBOL')
+    expect = [[ 0.         ,  0.        ,  0.        ],  # noqa
+              [-0.902926470, -0.41928686, -1.35361744],
+              [ 0.517561470,  0.25248047,  0.91032037],  # noqa
+              [ 0.590930280,  0.69601356, -0.81940488]]  # noqa
     assert_allclose(expect, actual, 1e-6, 0)
     if chunks:
         assert actual.chunks == expect_chunks
