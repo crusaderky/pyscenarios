@@ -55,7 +55,7 @@ def gaussian_copula(cov, scenarios, seed=0, chunks=None,
         Either ``Mersenne Twister`` or ``SOBOL``
 
     :returns:
-        array of shape (riskdrivers, scenarios), with all series
+        array of shape (scenarios, riskdrivers), with all series
         being normal (0, 1) distributions.
     :rtype:
         If chunks is not None, :class:`dask.array.Array`; else
@@ -69,9 +69,7 @@ def gaussian_copula(cov, scenarios, seed=0, chunks=None,
     L = numpy.linalg.cholesky(cov)
 
     if chunks:
-        chunks = normalize_chunks(chunks, shape=(cov.shape[0], scenarios))
-        # Put scenarios on the rows (see note below)
-        chunks = (chunks[1], chunks[0])
+        chunks = normalize_chunks(chunks, shape=(scenarios, cov.shape[0]))
         L = dask.array.from_array(L, chunks=(chunks[1], chunks[1]))
 
     if rng == 'Mersenne Twister':
@@ -89,7 +87,7 @@ def gaussian_copula(cov, scenarios, seed=0, chunks=None,
     else:
         raise ValueError("Unknown rng: %s" % rng)
 
-    return duck.dot(L, y.T)
+    return duck.dot(L, y.T).T
 
 
 def t_copula(cov, df, scenarios, seed=0, chunks=None, rng='Mersenne Twister'):
@@ -130,10 +128,7 @@ def t_copula(cov, df, scenarios, seed=0, chunks=None, rng='Mersenne Twister'):
 
     L = numpy.linalg.cholesky(cov)
     if chunks:
-        chunks = normalize_chunks(chunks, shape=(cov.shape[0], scenarios))
-        # Random number generators are transposed, with scenarios on the rows.
-        # See note below for why this is important.
-        chunks = chunks[1], chunks[0]
+        chunks = normalize_chunks(chunks, shape=(scenarios, cov.shape[0]))
         L = dask.array.from_array(L, chunks=(chunks[1], chunks[1]))
 
     # Pre-process df into a 1D dask array
@@ -144,13 +139,19 @@ def t_copula(cov, df, scenarios, seed=0, chunks=None, rng='Mersenne Twister'):
         # Convert to 1D
         df = df.ravel()
         if chunks:
-            df = dask.array.from_array(df.flat, chunks=(1, ))
+            df = dask.array.from_array(df, chunks=(1, ))
     elif df.shape == (cov.shape[0], ):
         if chunks:
             df = dask.array.from_array(df, chunks=(chunks[1], ))
     else:
         raise ValueError("df must be either a scalar or a 1D vector with as "
                          "many points as the width of the correlation matrix")
+
+    # Define chunks for the S chi-square matrix
+    if chunks:
+        chunks_s = (chunks[0], df.chunks[0])
+    else:
+        chunks_s = None
 
     if rng == 'Mersenne Twister':
         # Use two separate random states for the normal and the chi2
@@ -170,14 +171,10 @@ def t_copula(cov, df, scenarios, seed=0, chunks=None, rng='Mersenne Twister'):
             chunks=chunks)
         s = rnd_state_s.chisquare(
             df=df, size=(scenarios, df.size),
-            chunks=(chunks[0], df.chunks[0]))
+            chunks=chunks_s)
 
     elif rng == 'SOBOL':
         seed_s = seed + cov.shape[0]
-        if chunks:
-            chunks_s = (chunks[0], df.chunks[0])
-        else:
-            chunks_s = None
 
         y = sobol(samples=scenarios, dimensions=cov.shape[0],
                   d0=seed, chunks=chunks)
@@ -189,7 +186,7 @@ def t_copula(cov, df, scenarios, seed=0, chunks=None, rng='Mersenne Twister'):
     else:
         raise ValueError("Unknown rng: %s" % rng)
 
-    z = duck.sqrt(df / s) * duck.dot(L, y.T)
+    z = duck.sqrt(df / s) * duck.dot(L, y.T).T
     # Convert t distribution to normal (0, 1)
     u = duck.t_cdf(z, df)
     p = duck.norm_ppf(u)
