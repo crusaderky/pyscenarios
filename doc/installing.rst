@@ -9,6 +9,7 @@ Required dependencies
 - Python 3.5 or 3.6
 - `dask <http://dask.pydata.org>`__
 - `numba <http://numba.pydata.org>`__
+- `scipy <http://www.scipy.org>`__
 
 Testing
 -------

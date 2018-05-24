@@ -88,6 +88,7 @@ def test_dot(chunk):
     else:
         assert isinstance(dz, np.ndarray)
 
+
 @pytest.mark.parametrize('chunks', [None, 2, ((2, 1), (2, 1))])
 def test_randomstate_standard_normal(chunks):
     state = duck.RandomState(123)
