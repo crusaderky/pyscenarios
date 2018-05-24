@@ -30,8 +30,14 @@ CLASSIFIERS = [
     'Topic :: Scientific/Engineering',
 ]
 
-INSTALL_REQUIRES = ['numpy >= 1.11', 'numba', 'dask']
-TESTS_REQUIRE = ['pytest >= 2.7.1']
+INSTALL_REQUIRES = [
+    'dask >= 0.17.3',
+    'numba >= 0.34',
+    'numpy >= 1.13',
+    'pandas >= 0.20',
+    'scipy >= 1.0',
+]
+TESTS_REQUIRE = ['pytest >= 3.1']
 
 DESCRIPTION = "Python Monte Carlo Scenario Generator"
 LONG_DESCRIPTION = ""

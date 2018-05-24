@@ -303,6 +303,8 @@ texinfo_documents = [
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3/', None),
     'dask': ('https://dask.pydata.org/en/latest/', None),
-    'numpy': ('https://docs.scipy.org/doc/numpy/', None),
     'numba': ('https://numba.pydata.org/numba-doc/latest/', None),
+    'numpy': ('https://docs.scipy.org/doc/numpy/', None),
+    'pandas': ('https://pandas.pydata.org/pandas-docs/stable/', None),
+    'scipy': ('https://docs.scipy.org/doc/scipy/reference/', None),
 }
