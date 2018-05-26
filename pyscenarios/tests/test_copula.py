@@ -3,6 +3,7 @@ import numpy as np
 import scipy.stats
 from numpy.testing import assert_allclose
 from pyscenarios.copula import gaussian_copula, t_copula
+from pyscenarios.stats import tail_dependence
 
 
 cov = [[1.0, 0.9, 0.7],
@@ -176,3 +177,26 @@ def test_cov_roundtrip(func, kwargs):
     s = func(cov, samples=65535, **kwargs)
     cov2 = np.corrcoef(s.T)
     assert_allclose(cov, cov2, rtol=0, atol=0.05)
+
+
+@pytest.mark.parametrize('df,expect_td', [
+    (3, [.33, .33, .33]),
+    (9, [.20, .20, .20]),
+    (999, [.13, .13, .13]),
+    ([3, 3, 999, 999], [.33, .08, .13])
+])
+@pytest.mark.parametrize('rng', ['Mersenne Twister', 'SOBOL'])
+@pytest.mark.parametrize('chunks', [None, (65536, 1)])
+def test_tail_dependence(df, expect_td, rng, chunks):
+    cov2 = [[1.0, 0.5, 0.5, 0.5],
+            [0.5, 1.0, 0.5, 0.5],
+            [0.5, 0.5, 1.0, 0.5],
+            [0.5, 0.5, 0.5, 1.0]]
+    s = t_copula(cov2, df=df, samples=262143, rng=rng, chunks=chunks)
+    s = scipy.stats.norm.cdf(s)
+    actual_td = [
+        tail_dependence(s[:, 0], s[:, 1], .99),
+        tail_dependence(s[:, 1], s[:, 2], .99),
+        tail_dependence(s[:, 2], s[:, 3], .99),
+    ]
+    assert_allclose(expect_td, actual_td, atol=0.02, rtol=0)
