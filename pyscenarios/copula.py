@@ -44,7 +44,7 @@ def gaussian_copula(cov, samples, seed=0, chunks=None,
         Random seed.
 
         When invoking this function multiple times with different seeds and
-        uses ``rng='SOBOL', this is the initial dimension; one should never
+        uses ``rng='SOBOL``, this is the initial dimension; one should never
         use seeds that are less than cov.shape[0] apart from each other.
 
         The maximum seed when using sobol is::

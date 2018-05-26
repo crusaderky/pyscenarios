@@ -11,7 +11,7 @@ API Reference
 
 .. toctree::
 
-   api/montecarlo
+   api/copula
    api/sobol
 
 License
