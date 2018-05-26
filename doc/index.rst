@@ -13,6 +13,7 @@ API Reference
 
    api/montecarlo
    api/sobol
+   api/stats
 
 License
 -------
