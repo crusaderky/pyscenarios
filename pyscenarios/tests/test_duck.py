@@ -121,6 +121,22 @@ def test_where(chunk):
 
 
 @pytest.mark.parametrize('chunks', [None, 2, ((2, 1), (2, 1))])
+def test_randomstate_uniform(chunks):
+    state = duck.RandomState(123)
+    ref_np = np.random.RandomState(123)
+    ref_da = da.random.RandomState(123)
+
+    seq = state.uniform(size=(3, 3), chunks=chunks)
+    if chunks:
+        assert_array_equal(
+            seq, ref_da.uniform(size=(3, 3), chunks=chunks))
+        assert seq.chunks == ((2, 1), (2, 1))
+    else:
+        assert_array_equal(seq, ref_np.uniform(size=(3, 3)))
+        assert isinstance(seq, np.ndarray)
+
+
+@pytest.mark.parametrize('chunks', [None, 2, ((2, 1), (2, 1))])
 def test_randomstate_standard_normal(chunks):
     state = duck.RandomState(123)
     ref_np = np.random.RandomState(123)
@@ -133,25 +149,4 @@ def test_randomstate_standard_normal(chunks):
         assert seq.chunks == ((2, 1), (2, 1))
     else:
         assert_array_equal(seq, ref_np.standard_normal(size=(3, 3)))
-        assert isinstance(seq, np.ndarray)
-
-
-@pytest.mark.parametrize('df', [3, [1, 2, 3]])
-@pytest.mark.parametrize('chunks', [None, 2, ((2, 1), (2, 1))])
-def test_randomstate_chisquare(chunks, df):
-    state = duck.RandomState(123)
-    ref_np = np.random.RandomState(123)
-    ref_da = da.random.RandomState(123)
-
-    if chunks:
-        df = da.from_array(np.array(df), chunks=2)
-
-    seq = state.chisquare(size=(3, 3), df=df, chunks=chunks)
-    if chunks:
-        expect = ref_da.chisquare(size=(3, 3), df=df, chunks=chunks)
-        assert_array_equal(seq, expect)
-        assert seq.chunks == ((2, 1), (2, 1))
-    else:
-        expect = ref_np.chisquare(size=(3, 3), df=df)
-        assert_array_equal(seq, expect)
         assert isinstance(seq, np.ndarray)

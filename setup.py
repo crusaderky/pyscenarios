@@ -116,7 +116,7 @@ short_version = '%s'
 if write_version:
     write_version_py()
 
-import pyscenarios.sobol
+import pyscenarios.sobol  # noqa: E402
 pyscenarios.sobol.calc_v()
 
 
