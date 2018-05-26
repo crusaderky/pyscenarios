@@ -5,7 +5,7 @@ from . import duck
 
 
 def tail_dependence(x, y, q):
-    """Caulculate `tail dependence
+    """Calculate `tail dependence
     <https://en.wikipedia.org/wiki/Tail_dependence>`_
     between vectors x and y.
 
@@ -23,8 +23,8 @@ def tail_dependence(x, y, q):
         .. math::
 
             \cases{
-                P(y < q | x < q) \text{ if } q < 0.5 \cr
-                P(y \geq q | x \geq q) \text { if } q \geq 0.5
+                P(y < q | x < q) | q < 0.5 \cr
+                P(y \geq q | x \geq q) | q \geq 0.5
             }
     """
     x = duck.array(x)

@@ -1,5 +1,5 @@
-montecarlo
-==========
+sobol
+=====
 
 .. automodule:: pyscenarios.sobol
     :members:

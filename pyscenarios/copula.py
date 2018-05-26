@@ -12,12 +12,18 @@ from . import duck
 
 def gaussian_copula(cov, samples, seed=0, chunks=None,
                     rng='Mersenne Twister'):
-    """Gaussian Copula scenario generator
+    """Gaussian Copula scenario generator.
+
+    Simplified algorithm::
+
+        >>> l = numpy.linalg.cholesky(cov)
+        >>> y = numpy.random.standard_normal(size=(samples, cov.shape[0]))
+        >>> p = numpy.dot(l, y.T).T
 
     :param numpy.ndarray cov:
         covariance matrix, a.k.a. correlation matrix. It must be a
-        Hermitian, positive-definite matrix formatted as a
-        numpy array with shape (dimensions, dimensions)
+        Hermitian, positive-definite matrix in any square array-like format.
+        The width of cov determines the number of dimensions of the output.
 
     :param int samples:
         Number of random samples to generate
@@ -27,12 +33,11 @@ def gaussian_copula(cov, samples, seed=0, chunks=None,
            :math:`2^{n} - 1` samples (for any n > 0).
 
     :param chunks:
-        Chunk size. It can be anything accepted by dask (a positive integer, a
-        tuple of two ints, or a tuple of two tuples of ints) for the output
-        shape (see result below). It is used to chunk the return array of
-        (samples, dimensions).
+        Chunk size for the return array, which has shape (samples, dimensions).
+        It can be anything accepted by dask (a positive integer, a tuple of two
+        ints, or a tuple of two tuples of ints) for the output shape.
 
-        If None, use pure numpy.
+        Set to None to return a numpy array.
 
         .. warning::
            When using the Mersenne Twister random generator, the chunk size
@@ -92,11 +97,12 @@ def gaussian_copula(cov, samples, seed=0, chunks=None,
 
 
 def t_copula(cov, df, samples, seed=0, chunks=None, rng='Mersenne Twister'):
-    """Student T Copula / IT Copula scenario generator
+    """Student T Copula / IT Copula scenario generator.
 
     Simplified algorithm::
 
         >>> l = numpy.linalg.cholesky(cov)
+        >>> y = numpy.random.standard_normal(size=(samples, cov.shape[0]))
         >>> r = numpy.random.uniform(size=(samples, 1))
         >>> s = scipy.stats.chi2.ppf(r, df=df)
         >>> z = numpy.sqrt(df / s) * numpy.dot(l, y.T).T

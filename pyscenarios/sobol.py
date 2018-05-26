@@ -3,9 +3,7 @@
 
 This is a reimplementation of a C++ algorithm by
 `Stephen Joe and Frances Y. Kuo <http://web.maths.unsw.edu.au/~fkuo/sobol/>`_.
-
-It uses one of the sets of directions downloaded from the link above;
-the file is stored in the same directory as this script.
+Directions are based on :file:`new-joe-kuo-6.21201` from the URL above.
 """
 from functools import lru_cache
 import pkg_resources
@@ -153,22 +151,22 @@ def sobol(size, d0=0, chunks=None):
         always be :math:`2^{n} - 1`.
     :param int d0:
         first dimension. This can be used as a functional equivalent of a
-        a random seed. dimensions + d0 can't be greater than 21201.
+        a random seed. dimensions + d0 can't be greater than
+        :func:`max_dimensions()` - 1.
     :param chunks:
-        If not set, return a numpy array.
+        If None, return a numpy array.
 
         If set, return a dask array with the given chunk size.
         It can be anything accepted by dask (a positive integer, a
         tuple of two ints, or a tuple of two tuples of ints) for the output
         shape (see result below). e.g. either ``(16384, 50)`` or
         ``((16384, 16383),  (50, 50, 50))`` could be used together with
-        ``samples=32767, dimensions=150``.
+        ``size=(32767, 150)``.
 
         .. note::
-           The algorithm is not efficient if there are multiple chunks on the
-           sample axis (axis 0). However, if you do need multiple chunks on
-           the sample axis, it is typically better to require it here
-           than re-chunking afterwards, particularly if (most of) the
+           The algorithm is not efficient if there are multiple chunks on axis
+           0. However, if you do need them, it is typically better to require
+           them here than re-chunking afterwards, particularly if (most of) the
            subsequent algorithm is embarassingly parallel.
     :returns:
         If size is an int, a 1-dimensional array of samples.
@@ -218,6 +216,7 @@ def sobol(size, d0=0, chunks=None):
 
 
 def max_dimensions():
-    """Return maximum (dimensions + d0) when invoking :func:`sobol`
+    """Return number of dimensions available. When invoking :func:`sobol`,
+    ``size[1] + d0`` must be smaller than this.
     """
     return load_v().shape[0]
