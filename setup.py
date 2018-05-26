@@ -40,11 +40,14 @@ INSTALL_REQUIRES = [
 TESTS_REQUIRE = ['pytest >= 3.1']
 
 DESCRIPTION = "Python Monte Carlo Scenario Generator"
-LONG_DESCRIPTION = ""
+LONG_DESCRIPTION = """
+
+"""  # noqa
 
 # Code to extract and write the version copied from pandas.
 # Used under the terms of pandas's license, see licenses/PANDAS_LICENSE.
 FULLVERSION = VERSION
+write_version = True
 
 if not ISRELEASED:
     import subprocess
@@ -95,15 +98,24 @@ else:
     FULLVERSION += QUALIFIER
 
 
-def write_version_py():
-    filename = os.path.join(
-        os.path.dirname(__file__), 'pyscenarios', 'version.py')
-    with open(filename, 'w') as fh:
-        fh.write("version = '%s'\n" % FULLVERSION)
-        fh.write("short_version = '%s'\n" % VERSION)
+def write_version_py(filename=None):
+    cnt = """\
+version = '%s'
+short_version = '%s'
+"""
+    if not filename:
+        filename = os.path.join(
+            os.path.dirname(__file__), 'pyscenarios', 'version.py')
+
+    a = open(filename, 'w')
+    try:
+        a.write(cnt % (FULLVERSION, VERSION))
+    finally:
+        a.close()
 
 
-write_version_py()
+if write_version:
+    write_version_py()
 pyscenarios.sobol.calc_v()
 
 

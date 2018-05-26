@@ -22,7 +22,7 @@ allowed_failures = set()
 
 print("python exec:", sys.executable)
 print("sys.path:", sys.path)
-for name in ('numpy numba dask').split():
+for name in ('numpy', 'numba', 'dask'):
     try:
         module = importlib.import_module(name)
         fname = module.__file__.rstrip('__init__.py')
