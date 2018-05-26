@@ -3,13 +3,14 @@ import numpy as np
 from numpy.testing import assert_allclose
 from pyscenarios.copula import gaussian_copula, t_copula
 
+
 cov = [[1.0, 0.9, 0.7],
        [0.9, 1.0, 0.4],
        [0.7, 0.4, 1.0]]
 
 
 def test_gaussian_mersenne_np():
-    actual = gaussian_copula(cov, scenarios=4, seed=123, chunks=None,
+    actual = gaussian_copula(cov, samples=4, seed=123, chunks=None,
                              rng='Mersenne Twister')
     expect = [[-1.08563060, -0.54233474, -1.15002017],
               [-1.50629471, -1.60787125,  0.04561073],  # noqa
@@ -20,7 +21,7 @@ def test_gaussian_mersenne_np():
 
 
 def test_gaussian_mersenne_da():
-    actual = gaussian_copula(cov, scenarios=4, seed=123, chunks=2,
+    actual = gaussian_copula(cov, samples=4, seed=123, chunks=2,
                              rng='Mersenne Twister')
     expect = [[ 1.61739599,  1.34668479,  0.85965138],  # noqa
               [ 0.00936110,  0.77307164, -0.65639660],  # noqa
@@ -36,7 +37,7 @@ def test_gaussian_mersenne_da():
     (((3, 1), (2, 1)), ((3, 1), (2, 1))),
 ])
 def test_gaussian_sobol(chunks, expect_chunks):
-    actual = gaussian_copula(cov, scenarios=4, seed=123, chunks=chunks,
+    actual = gaussian_copula(cov, samples=4, seed=123, chunks=chunks,
                              rng='SOBOL')
     expect = [[ 0.        ,  0.        ,  0.        ],  # noqa
               [-0.67448975, -0.31303751, -1.15262386],
@@ -50,7 +51,7 @@ def test_gaussian_sobol(chunks, expect_chunks):
 
 
 def test_student_t_mersenne_np():
-    actual = t_copula(cov, df=3, scenarios=4, seed=123, chunks=None,
+    actual = t_copula(cov, df=3, samples=4, seed=123, chunks=None,
                       rng='Mersenne Twister')
     expect = [[-0.99107466, -0.53046951, -1.03952341],
               [-2.08652315, -2.15403950,  0.10015459],  # noqa
@@ -61,7 +62,7 @@ def test_student_t_mersenne_np():
 
 
 def test_student_t_mersenne_da():
-    actual = t_copula(cov, df=3, scenarios=4, seed=123, chunks=2,
+    actual = t_copula(cov, df=3, samples=4, seed=123, chunks=2,
                       rng='Mersenne Twister')
     expect = [[ 1.31308802,  1.14171788,  0.78120784],  # noqa
               [ 0.00859970,  0.67931082, -0.58360671],  # noqa
@@ -77,7 +78,7 @@ def test_student_t_mersenne_da():
     (((3, 1), (2, 1)), ((3, 1), (2, 1))),
 ])
 def test_student_t_sobol(chunks, expect_chunks):
-    actual = t_copula(cov, df=3, scenarios=4, seed=123, chunks=chunks,
+    actual = t_copula(cov, df=3, samples=4, seed=123, chunks=chunks,
                       rng='SOBOL')
     expect = [[ 0.        ,  0.        ,  0.        ],  # noqa
               [-0.90292647, -0.44513114, -1.38033019],
@@ -91,7 +92,7 @@ def test_student_t_sobol(chunks, expect_chunks):
 
 
 def test_it_mersenne_np():
-    actual = t_copula(cov, df=[3, 4, 5], scenarios=4, seed=123, chunks=None,
+    actual = t_copula(cov, df=[3, 4, 5], samples=4, seed=123, chunks=None,
                       rng='Mersenne Twister')
     expect = [[-0.99107466, -0.94948121, -0.66543447],
               [-1.49979830, -1.06165547,  0.03361024],  # noqa
@@ -102,8 +103,8 @@ def test_it_mersenne_np():
 
 
 def test_it_mersenne_da():
-    actual = t_copula(cov, df=[3, 4, 5], scenarios=4, seed=123, chunks=2,
-                      rng='Mersenne Twister')
+    actual = t_copula(cov, df=[3, 4, 5], samples=4, seed=123,
+                      chunks=2, rng='Mersenne Twister')
     expect = [[ 1.31308802,  1.13554641,  0.53393366],  # noqa
               [ 0.00947089,  1.00074604, -0.67327047],  # noqa
               [-1.31459768, -1.25075347, -0.83020987],
@@ -118,8 +119,8 @@ def test_it_mersenne_da():
     (((3, 1), (2, 1)), ((3, 1), (2, 1))),
 ])
 def test_it_sobol(chunks, expect_chunks):
-    actual = t_copula(cov, df=[3, 4, 5], scenarios=4, seed=123, chunks=chunks,
-                      rng='SOBOL')
+    actual = t_copula(cov, df=[3, 4, 5], samples=4, seed=123,
+                      chunks=chunks, rng='SOBOL')
     expect = [[ 0.         ,  0.        ,  0.        ],  # noqa
               [-0.902926470, -0.41928686, -1.35361744],
               [ 0.517561470,  0.25248047,  0.91032037],  # noqa
