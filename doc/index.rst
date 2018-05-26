@@ -13,6 +13,7 @@ API Reference
 
    api/copula
    api/sobol
+   api/stats
 
 License
 -------
