@@ -53,3 +53,14 @@ def test_dask_2d():
     output = sobol((15, 4), d0=123, chunks=(10, 3))
     assert output.chunks == ((10, 5), (3, 1))
     assert_array_equal(EXPECT, output.compute())
+
+
+@pytest.mark.parametrize('n', list(range(8, 13)))
+def test_samepoints(n):
+    """Given exactly 2^n-1 samples, all series produce exactly the same
+    points in different order
+    """
+    s = sobol((2**n - 1, max_dimensions()), chunks=(2**n - 1, 2000))
+    s = s.map_blocks(np.sort, axis=0)
+    s = (s.T - s[:, 0])
+    assert not s.any()

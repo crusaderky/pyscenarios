@@ -130,3 +130,35 @@ def test_it_sobol(chunks, expect_chunks):
         assert actual.chunks == expect_chunks
     else:
         assert isinstance(actual, np.ndarray)
+
+
+all_copulas = pytest.mark.parametrize(
+    'func,kwargs', [
+        (gaussian_copula, {'rng': 'Mersenne Twister'}),
+        (gaussian_copula, {'rng': 'Mersenne Twister', 'chunks': (4096, 2)}),
+        (gaussian_copula, {'rng': 'SOBOL'}),
+        (t_copula, {'df': 8, 'rng': 'Mersenne Twister'}),
+        (t_copula, {'df': 8, 'rng': 'Mersenne Twister', 'chunks': (4096, 2)}),
+        (t_copula, {'df': 8, 'rng': 'SOBOL'}),
+        (t_copula, {'df': [8, 9, 10], 'rng': 'Mersenne Twister'}),
+        (t_copula, {'df': [8, 9, 10], 'rng': 'Mersenne Twister',
+                    'chunks': (4096, 2)}),
+        (t_copula, {'df': [8, 9, 10], 'rng': 'SOBOL'}),
+    ])
+
+
+@all_copulas
+def test_extra_samples(func, kwargs):
+    """Drawing additional samples from a copula does not change the
+    realised sequence of the previous samples
+    """
+    s1 = func(cov, samples=5000, **kwargs)
+    s2 = func(cov, samples=9000, **kwargs)
+    assert_allclose(s1, s2[:5000], atol=0, rtol=1e-12)
+
+
+@all_copulas
+def test_cov_roundtrip(func, kwargs):
+    s = func(cov, samples=65535, **kwargs)
+    cov2 = np.corrcoef(s.T)
+    assert_allclose(cov, cov2, rtol=0, atol=0.05)
