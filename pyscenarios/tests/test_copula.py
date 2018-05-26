@@ -1,5 +1,6 @@
 import pytest
 import numpy as np
+import scipy.stats
 from numpy.testing import assert_allclose
 from pyscenarios.copula import gaussian_copula, t_copula
 
@@ -145,6 +146,19 @@ all_copulas = pytest.mark.parametrize(
                     'chunks': (4096, 2)}),
         (t_copula, {'df': [8, 9, 10], 'rng': 'SOBOL'}),
     ])
+
+
+@all_copulas
+def test_normal_01(func, kwargs):
+    """All copulas produce normal (0, 1) distributions for all series
+    """
+    s = func(cov, samples=65535, **kwargs)
+    s = scipy.stats.norm.cdf(s)
+    hist, bin_edges = np.histogram(s)
+
+    assert_allclose(hist / 65535, [.3] * 10, rtol=0, atol=1e-2)
+    assert_allclose(bin_edges, [0, .1, .2, .3, .4, .5, .6, .7, .8, .9, 1],
+                    rtol=0, atol=1e-2)
 
 
 @all_copulas
