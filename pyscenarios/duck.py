@@ -6,6 +6,14 @@ import scipy.stats
 from functools import wraps
 
 
+def array(x):
+    """Convert x to numpy array, unless it's a da.array
+    """
+    if isinstance(x, (np.ndarray, da.Array)):
+        return x
+    return np.array(x)
+
+
 def _map_blocks(func):
     """Wrap an arbitrary function that takes one or more arrays in input.
     If any is a Dask Array, invoke :func:`dask.array.map_blocks`, otherwise
@@ -61,6 +69,7 @@ t_cdf = _map_blocks_df(scipy.stats.t.cdf)
 t_ppf = _map_blocks_df(scipy.stats.t.ppf)
 dot = _toplevel('dot')
 sqrt = _toplevel('sqrt')
+where = _toplevel('where')
 
 
 class RandomState:

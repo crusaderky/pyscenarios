@@ -2,8 +2,19 @@ import pytest
 import dask.array as da
 import numpy as np
 import scipy.stats
-from numpy.testing import assert_array_equal, assert_allclose
+from numpy.testing import assert_array_equal, assert_allclose, assert_equal
 from pyscenarios import duck
+
+
+def test_array():
+    for x in (1, [1, 2], np.array(1), np.array([1, 2])):
+        y = duck.array(x)
+        assert isinstance(y, np.ndarray)
+        assert_equal(x, y)
+
+    x = da.arange(3, chunks=2)
+    y = duck.array(x)
+    assert x is y
 
 
 @pytest.mark.parametrize('chunk', [False, True])
@@ -85,6 +96,26 @@ def test_dot(chunk):
     assert_allclose(z, dz, 1e-12, 0)
     if chunk:
         assert dz.chunks == ((2, 2), (2, 2, 2))
+    else:
+        assert isinstance(dz, np.ndarray)
+
+
+@pytest.mark.parametrize('chunk', [False, True])
+def test_where(chunk):
+    x = np.array([1, 2, 3])
+    y = np.array([0, 5, 2])
+    z = duck.where(x > y, x, y)
+
+    if chunk:
+        dx = da.from_array(x, chunks=2)
+        dy = da.from_array(y, chunks=2)
+    else:
+        dx = x
+        dy = y
+    dz = duck.where(dx > dy, dx, dy)
+    assert_array_equal(z, dz)
+    if chunk:
+        assert dz.chunks == ((2, 1),)
     else:
         assert isinstance(dz, np.ndarray)
 
