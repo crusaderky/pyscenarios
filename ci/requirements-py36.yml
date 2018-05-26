@@ -4,10 +4,12 @@ channels:
 dependencies:
   - python=3.6
   - dask
-  - pytest
   - flake8
   - numba
   - numpy
+  - pandas
+  - pytest
+  - scipy
   - pip:
     - coveralls
     - pytest-cov
