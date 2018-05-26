@@ -43,9 +43,9 @@ def gaussian_copula(cov, samples, seed=0, chunks=None,
     :param int seed:
         Random seed.
 
-        When invoking this function multiple times with different seeds and
-        uses ``rng='SOBOL``, this is the initial dimension; one should never
-        use seeds that are less than cov.shape[0] apart from each other.
+        With ``rng='SOBOL'``, this is the initial dimension; when generating
+        multiple copulas with different seeds, one should never use seeds that
+        are less than ``cov.shape[0]`` apart from each other.
 
         The maximum seed when using sobol is::
 
@@ -95,64 +95,59 @@ def t_copula(cov, df, samples, seed=0, chunks=None, rng='Mersenne Twister'):
     """Student T Copula / IT Copula scenario generator
 
     Simplified algorithm::
-        l = numpy.linalg.cholesky(cov)
-        y = numpy.random.normal(size=(samples, dimensions))
-        s = numpy.random.chisquare(df=df, size=samples)
-        z = numpy.sqrt(df / s) * numpy.tensordot(l, y, ((1, ), (1, )))
-        u = scipy.stats.t.cdf(z, df=df)
-        p = scipy.stats.norm.ppf(u)
+
+        >>> l = numpy.linalg.cholesky(cov)
+        >>> r = numpy.random.uniform(size=(samples, 1))
+        >>> s = scipy.stats.chi2.ppf(r, df=df)
+        >>> z = numpy.sqrt(df / s) * numpy.dot(l, y.T).T
+        >>> u = scipy.stats.t.cdf(z, df=df)
+        >>> p = scipy.stats.norm.ppf(u)
 
     :param df:
-        Number of degrees of freedom. Can be either a scalar int for a
+        Number of degrees of freedom. Can be either a scalar int for
         Student T Copula, or a one-dimensional array-like with one point per
-        riskdriver for a IT Copula.
+        dimension for IT Copula.
 
     :param int seed:
         Random seed.
 
-        When invoking this function multiple times with different seeds and
-        uses ``rng='SOBOL', this is the initial dimension; one should never
-        use seeds that are less than ``cov.shape[0] + df.size`` apart from each
-        other, or ``cov.shape[0] + 1`` if df is a scalar.
+        With ``rng='SOBOL'``, this is the initial dimension; when generating
+        multiple copulas with different seeds, one should never use seeds that
+        are less than ``cov.shape[0] + 1`` apart from each other.
 
         The maximum seed when using sobol is::
 
-            pysamples.sobol.max_dimensions() - cov.shape[0] - df.size - 1
+            pysamples.sobol.max_dimensions() - cov.shape[0] - 2
 
-    All other parameters and the return type are the same as in
+    All other parameters and the return value are the same as in
     :func:`gaussian_copula`.
     """
     assert samples > 0
     cov = numpy.array(cov)
     assert cov.ndim == 2
     assert cov.shape[0] == cov.shape[1]
+    dimensions = cov.shape[0]
 
     L = numpy.linalg.cholesky(cov)
     if chunks:
-        chunks = normalize_chunks(chunks, shape=(samples, cov.shape[0]))
+        chunks = normalize_chunks(chunks, shape=(samples, dimensions))
         L = dask.array.from_array(L, chunks=(chunks[1], chunks[1]))
 
     # Pre-process df into a 1D dask array
     df = numpy.array(df)
     if (df <= 0).any():
         raise ValueError("df must always be greater than zero")
-    if df.shape == ():
-        # Convert to 1D
-        df = df.ravel()
-        if chunks:
-            df = dask.array.from_array(df, chunks=(1, ))
-    elif df.shape == (cov.shape[0], ):
-        if chunks:
-            df = dask.array.from_array(df, chunks=(chunks[1], ))
-    else:
+    if df.shape not in ((), (dimensions, )):
         raise ValueError("df must be either a scalar or a 1D vector with as "
                          "many points as the width of the correlation matrix")
+    if df.ndim == 1 and chunks:
+        df = dask.array.from_array(df, chunks=(chunks[1], ))
 
     # Define chunks for the S chi-square matrix
     if chunks:
-        chunks_s = (chunks[0], df.chunks[0])
+        chunks_r = (chunks[0], (1, ))
     else:
-        chunks_s = None
+        chunks_r = None
 
     if rng == 'Mersenne Twister':
         # Use two separate random states for the normal and the chi2
@@ -164,31 +159,24 @@ def t_copula(cov, df, samples, seed=0, chunks=None, rng='Mersenne Twister'):
         rnd_state_y = duck.RandomState(seed)
         # Don't just do seed + 1 as that would have unwanted repercussions
         # when one tries to extract different series from different seeds.
-        seed_s = (seed + 190823761298456) % 2**32
-        rnd_state_s = duck.RandomState(seed_s)
+        seed_r = (seed + 190823761298456) % 2**32
+        rnd_state_r = duck.RandomState(seed_r)
 
-        y = rnd_state_y.standard_normal(
-            size=(samples, cov.shape[0]),
-            chunks=chunks)
-        s = rnd_state_s.chisquare(
-            size=(samples, df.size), df=df,
-            chunks=chunks_s)
+        y = rnd_state_y.standard_normal(size=(samples, dimensions),
+                                        chunks=chunks)
+        r = rnd_state_r.uniform(size=(samples, 1), chunks=chunks_r)
 
     elif rng == 'SOBOL':
-        seed_s = seed + cov.shape[0]
+        seed_r = seed + dimensions
 
-        y = sobol(
-            size=(samples, cov.shape[0]),
-            d0=seed, chunks=chunks)
+        y = sobol(size=(samples, dimensions), d0=seed, chunks=chunks)
         y = duck.norm_ppf(y)
-        s = sobol(
-            size=(samples, df.size),
-            d0=seed_s, chunks=chunks_s)
-        s = duck.chi2_ppf(s, df=df)
+        r = sobol(size=(samples, 1), d0=seed_r, chunks=chunks_r)
 
     else:
         raise ValueError("Unknown rng: %s" % rng)
 
+    s = duck.chi2_ppf(r, df=df)
     z = duck.sqrt(df / s) * duck.dot(L, y.T).T
     # Convert t distribution to normal (0, 1)
     u = duck.t_cdf(z, df)

@@ -97,8 +97,8 @@ class RandomState:
             func = getattr(self._numpy_state, func_name)
             return func(*args, **kwargs)
 
+    def uniform(self, size=None, chunks=None):
+        return self._apply('uniform', size=size, chunks=chunks)
+
     def standard_normal(self, size=None, chunks=None):
         return self._apply('standard_normal', size=size, chunks=chunks)
-
-    def chisquare(self, df, size=None, chunks=None):
-        return self._apply('chisquare', df=df, size=size, chunks=chunks)

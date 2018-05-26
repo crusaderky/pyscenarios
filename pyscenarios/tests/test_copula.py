@@ -1,5 +1,6 @@
 import pytest
 import numpy as np
+import scipy.stats
 from numpy.testing import assert_allclose
 from pyscenarios.copula import gaussian_copula, t_copula
 
@@ -53,10 +54,10 @@ def test_gaussian_sobol(chunks, expect_chunks):
 def test_student_t_mersenne_np():
     actual = t_copula(cov, df=3, samples=4, seed=123, chunks=None,
                       rng='Mersenne Twister')
-    expect = [[-0.99107466, -0.53046951, -1.03952341],
-              [-2.08652315, -2.15403950,  0.10015459],  # noqa
-              [-1.11240463, -1.09187061, -0.43874990],
-              [-0.98508856, -1.17355012, -0.36287494]]
+    expect = [[-1.48810072, -0.86441534, -1.54668921],
+              [-1.29120595, -1.35445918,  0.04614266],  # noqa
+              [-1.69841381, -1.67427423, -0.76713426],
+              [-0.52427748, -0.64222262, -0.18205599]]
     assert_allclose(expect, actual, 1e-6, 0)
     assert isinstance(actual, np.ndarray)
 
@@ -64,10 +65,10 @@ def test_student_t_mersenne_np():
 def test_student_t_mersenne_da():
     actual = t_copula(cov, df=3, samples=4, seed=123, chunks=2,
                       rng='Mersenne Twister')
-    expect = [[ 1.31308802,  1.14171788,  0.78120784],  # noqa
-              [ 0.00859970,  0.67931082, -0.58360671],  # noqa
-              [-0.48331984, -0.58214528, -0.26145540],
-              [-1.44327714, -1.15851122, -1.33815158]]
+    expect = [[ 0.9251499 ,  0.78838765,  0.52075254],  # noqa
+              [ 0.00733126,  0.58581369, -0.50181461],  # noqa
+              [-0.46342698, -0.55862319, -0.25037537],
+              [-0.92150594, -0.70869994, -0.84036731]]
     assert_allclose(expect, actual, 1e-6, 0)
     assert actual.chunks == ((2, 2), (2, 1))
 
@@ -94,10 +95,10 @@ def test_student_t_sobol(chunks, expect_chunks):
 def test_it_mersenne_np():
     actual = t_copula(cov, df=[3, 4, 5], samples=4, seed=123, chunks=None,
                       rng='Mersenne Twister')
-    expect = [[-0.99107466, -0.94948121, -0.66543447],
-              [-1.49979830, -1.06165547,  0.03361024],  # noqa
-              [-1.67217808, -2.15902420, -1.71162262],
-              [-0.78466239, -1.36081790, -0.23447651]]
+    expect = [[-1.48810072, -0.80579141, -1.48680149],
+              [-1.29120595, -1.40226642,  0.04565698],  # noqa
+              [-1.69841381, -1.77537961, -0.79048734],
+              [-0.52427748, -0.68508399, -0.20095568]]
     assert_allclose(expect, actual, 1e-6, 0)
     assert isinstance(actual, np.ndarray)
 
@@ -105,10 +106,10 @@ def test_it_mersenne_np():
 def test_it_mersenne_da():
     actual = t_copula(cov, df=[3, 4, 5], samples=4, seed=123,
                       chunks=2, rng='Mersenne Twister')
-    expect = [[ 1.31308802,  1.13554641,  0.53393366],  # noqa
-              [ 0.00947089,  1.00074604, -0.67327047],  # noqa
-              [-1.31459768, -1.25075347, -0.83020987],
-              [-2.26967543, -0.78266546, -1.25292515]]
+    expect = [[ 0.92514990,  0.84367196,  0.57859631],  # noqa
+              [ 0.00733126,  0.60760124, -0.53208793],  # noqa
+              [-0.46342698, -0.60402557, -0.28417274],
+              [-0.92150594, -0.75838980, -0.94757843]]
     assert_allclose(expect, actual, 1e-6, 0)
     assert actual.chunks == ((2, 2), (2, 1))
 
@@ -121,10 +122,10 @@ def test_it_mersenne_da():
 def test_it_sobol(chunks, expect_chunks):
     actual = t_copula(cov, df=[3, 4, 5], samples=4, seed=123,
                       chunks=chunks, rng='SOBOL')
-    expect = [[ 0.         ,  0.        ,  0.        ],  # noqa
-              [-0.902926470, -0.41928686, -1.35361744],
-              [ 0.517561470,  0.25248047,  0.91032037],  # noqa
-              [ 0.590930280,  0.69601356, -0.81940488]]  # noqa
+    expect = [[ 0.        ,  0.        ,  0.        ],  # noqa
+              [-0.90292647, -0.41928686, -1.35361744],
+              [ 0.51756147,  0.25248047,  0.91032037],  # noqa
+              [ 0.59093028,  1.20943444, -0.81940488]]  # noqa
     assert_allclose(expect, actual, 1e-6, 0)
     if chunks:
         assert actual.chunks == expect_chunks
@@ -145,6 +146,19 @@ all_copulas = pytest.mark.parametrize(
                     'chunks': (4096, 2)}),
         (t_copula, {'df': [8, 9, 10], 'rng': 'SOBOL'}),
     ])
+
+
+@all_copulas
+def test_normal_01(func, kwargs):
+    """All copulas produce normal (0, 1) distributions for all series
+    """
+    s = func(cov, samples=65535, **kwargs)
+    s = scipy.stats.norm.cdf(s)
+    hist, bin_edges = np.histogram(s)
+
+    assert_allclose(hist / 65535, [.3] * 10, rtol=0, atol=1e-2)
+    assert_allclose(bin_edges, [0, .1, .2, .3, .4, .5, .6, .7, .8, .9, 1],
+                    rtol=0, atol=1e-2)
 
 
 @all_copulas
