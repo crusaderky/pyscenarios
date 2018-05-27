@@ -8,7 +8,7 @@ from setuptools import find_packages, setup
 MAJOR = 0
 MINOR = 1
 MICRO = 0
-ISRELEASED = False
+ISRELEASED = True
 VERSION = '%d.%d.%d' % (MAJOR, MINOR, MICRO)
 QUALIFIER = ''
 DISTNAME = 'pyscenarios'
@@ -39,9 +39,7 @@ INSTALL_REQUIRES = [
 TESTS_REQUIRE = ['pytest >= 3.1']
 
 DESCRIPTION = "Python Monte Carlo Scenario Generator"
-LONG_DESCRIPTION = """
-
-"""  # noqa
+LONG_DESCRIPTION = DESCRIPTION
 
 # Code to extract and write the version copied from pandas.
 # Used under the terms of pandas's license, see licenses/PANDAS_LICENSE.
