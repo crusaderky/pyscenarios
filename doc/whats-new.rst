@@ -15,6 +15,9 @@ What's New
 v0.2.0 (unreleased)
 -------------------
 
+- Explicit CI tests for Windows and Python 3.7
+
+
 v0.1.0 (2018-05-27)
 -------------------
 

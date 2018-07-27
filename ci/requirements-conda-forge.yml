@@ -1,6 +1,6 @@
 name: test_env
 channels:
-  - anaconda
+  - conda-forge
 dependencies:
   - python=3.6
   - dask
