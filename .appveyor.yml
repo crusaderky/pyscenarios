@@ -21,10 +21,11 @@ install:
   # the parent CMD process).
   - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
 
-  # install dependencies
+  # install pyscenarios and dependencies
   - "conda env create --file ./ci/requirements-%CONDA_ENV%.yml"
   - "activate test_env"
   - "conda list"
+  - "python setup.py build_ext --inplace"
   - "python setup.py install"
 
 build: false
