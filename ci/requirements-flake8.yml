@@ -3,11 +3,10 @@ channels:
   - anaconda
 dependencies:
   - python=3.7
-  - coveralls
+  - flake8
+  # setup.py needs to import the whole module in order to calculate the V matrix
   - dask
   - numba
   - numpy
   - pandas
-  - pytest
-  - pytest-cov
   - scipy

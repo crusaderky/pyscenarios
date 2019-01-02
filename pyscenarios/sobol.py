@@ -82,8 +82,8 @@ def _calc_v_kernel(directions):
             v[j, t] = v[j, t - s] ^ (v[j, t - s] // 2**s)
             for k in range(1, s):
                 v[j, t] ^= (
-                    ((directions[j, 0] // 2**(s - 1 - k)) & 1) *
-                    v[j, t - k])
+                    ((directions[j, 0] // 2**(s - 1 - k)) & 1)
+                    * v[j, t - k])
 
     return v
 

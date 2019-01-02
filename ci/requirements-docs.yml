@@ -1,15 +1,14 @@
 name: pyscenarios-docs
 channels:
-  - conda-forge
-  - defaults
+  - anaconda
 dependencies:
   - python=3.6
-  - ipython=6.2.1
+  - ipython
   - dask
-  - flake8
   - matplotlib
   - numba
-  - numpy=1.13
-  - numpydoc=0.7.0
-  - sphinx=1.5
+  - numpy
+  - numpydoc
+  - scipy
+  - sphinx
   - sphinx_rtd_theme

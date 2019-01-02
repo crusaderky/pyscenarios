@@ -5,7 +5,7 @@ from . import duck
 
 
 def tail_dependence(x, y, q):
-    """Calculate `tail dependence
+    r"""Calculate `tail dependence
     <https://en.wikipedia.org/wiki/Tail_dependence>`_
     between vectors x and y.
 
