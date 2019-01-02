@@ -10,7 +10,7 @@ Required dependencies
 - `dask <https://dask.org>`__
 - `numba <http://numba.pydata.org>`__
 - `numpy <http://www.numpy.org>`__
-- `scipy <http://www.scipy.org>`__
+- `scipy <https://www.scipy.org>`__
 
 Testing
 -------
