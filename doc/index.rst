@@ -18,6 +18,6 @@ API Reference
 License
 -------
 
-pyscenarios is available under the open source `LGPL License`__.
+pyscenarios is available under the open source `Apache License`__.
 
-__ https://www.gnu.org/licenses/lgpl-3.0.en.html
+__ http://www.apache.org/licenses/LICENSE-2.0.html

@@ -3,13 +3,11 @@ channels:
   - anaconda
 dependencies:
   - python=3.5
+  - coveralls
   - dask
-  - flake8
   - numba
   - numpy
   - pandas
   - pytest
+  - pytest-cov
   - scipy
-  - pip:
-    - coveralls
-    - pytest-cov

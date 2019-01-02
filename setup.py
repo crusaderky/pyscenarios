@@ -12,14 +12,13 @@ ISRELEASED = False
 VERSION = '%d.%d.%d' % (MAJOR, MINOR, MICRO)
 QUALIFIER = ''
 DISTNAME = 'pyscenarios'
-LICENSE = 'LGPL'
+LICENSE = 'Apache'
 AUTHOR = 'Guido Imperiale'
 AUTHOR_EMAIL = 'guido.imperiale@gmail.com'
 URL = 'https://github.com/crusaderky/pyscenarios'
 CLASSIFIERS = [
     'Development Status :: 3 - Alpha',
-    'License :: OSI Approved :: GNU Lesser General Public License v3 or later '
-    '(LGPLv3+)',
+    'License :: OSI Approved :: Apache Software License',
     'Operating System :: OS Independent',
     'Intended Audience :: Science/Research',
     'Programming Language :: Python',
@@ -37,7 +36,7 @@ INSTALL_REQUIRES = [
     'pandas >= 0.20',
     'scipy >= 1.0',
 ]
-TESTS_REQUIRE = ['pytest >= 3.1']
+TESTS_REQUIRE = ['pytest >= 3.6']
 
 DESCRIPTION = "Python Monte Carlo Scenario Generator"
 LONG_DESCRIPTION = DESCRIPTION
