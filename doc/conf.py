@@ -46,9 +46,6 @@ extensions = [
     'sphinx.ext.intersphinx',
     'sphinx.ext.extlinks',
     'sphinx.ext.mathjax',
-    'numpydoc',
-    'IPython.sphinxext.ipython_directive',
-    'IPython.sphinxext.ipython_console_highlighting',
 ]
 
 extlinks = {'issue': ('https://github.com/crusaderky/pyscenarios/issues/%s', 'GH'),
@@ -56,9 +53,6 @@ extlinks = {'issue': ('https://github.com/crusaderky/pyscenarios/issues/%s', 'GH
            }
 
 autosummary_generate = True
-
-numpydoc_class_members_toctree = True
-numpydoc_show_class_members = False
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
