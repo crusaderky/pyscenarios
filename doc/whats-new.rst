@@ -17,6 +17,8 @@ v0.2.0 (unreleased)
 -------------------
 
 - Explicit CI tests for Windows and Python 3.7
+- Mandatory flake8 in CI
+- Changed license to Apache 2.0
 
 
 .. _whats-new.0.1.0:
