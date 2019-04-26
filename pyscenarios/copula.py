@@ -1,17 +1,23 @@
 """High performance copula generators
 """
-import numpy
+from typing import List, Optional, Union, cast
+
+import numpy as np
 import numpy.random
 import numpy.linalg
-import dask.array
-import dask.base
+import dask.array as da
 from dask.array.core import normalize_chunks
-from .sobol import sobol
+
 from . import duck
+from .sobol import sobol
+from .typing import Chunks2D, NormalizedChunks2D
 
 
-def gaussian_copula(cov, samples, seed=0, chunks=None,
-                    rng='Mersenne Twister'):
+def gaussian_copula(cov: Union[List[List[float]], np.ndarray],
+                    samples: int, seed: int = 0,
+                    chunks: Chunks2D = None,
+                    rng: str = 'Mersenne Twister'
+                    ) -> Union[np.ndarray, da.Array]:
     """Gaussian Copula scenario generator.
 
     Simplified algorithm::
@@ -29,7 +35,7 @@ def gaussian_copula(cov, samples, seed=0, chunks=None,
         Number of random samples to generate
 
         .. note::
-           When using SOBOL, to obtain a uniform distribution one must use
+           When using Sobol, to obtain a uniform distribution one must use
            :math:`2^{n} - 1` samples (for any n > 0).
 
     :param chunks:
@@ -48,7 +54,7 @@ def gaussian_copula(cov, samples, seed=0, chunks=None,
     :param int seed:
         Random seed.
 
-        With ``rng='SOBOL'``, this is the initial dimension; when generating
+        With ``rng='Sobol'``, this is the initial dimension; when generating
         multiple copulas with different seeds, one should never use seeds that
         are less than ``cov.shape[0]`` apart from each other.
 
@@ -57,7 +63,7 @@ def gaussian_copula(cov, samples, seed=0, chunks=None,
             pysamples.sobol.max_dimensions() - cov.shape[0] - 1
 
     :param str rng:
-        Either ``Mersenne Twister`` or ``SOBOL``
+        Either ``Mersenne Twister`` or ``Sobol``
 
     :returns:
         array of shape (samples, dimensions), with all series
@@ -67,24 +73,25 @@ def gaussian_copula(cov, samples, seed=0, chunks=None,
         :class:`numpy.ndarray`
     """
     assert samples > 0
-    cov = numpy.array(cov)
+    cov = np.asarray(cov)
     assert cov.ndim == 2
     assert cov.shape[0] == cov.shape[1]
 
-    L = numpy.linalg.cholesky(cov)
-
+    L = numpy.linalg.cholesky(cov)  # type: Union[np.ndarray, da.Array]
     if chunks:
-        chunks = normalize_chunks(chunks, shape=(samples, cov.shape[0]))
-        L = dask.array.from_array(L, chunks=(chunks[1], chunks[1]))
+        chunks = cast(NormalizedChunks2D,
+                      normalize_chunks(chunks, shape=(samples, cov.shape[0])))
+        L = da.from_array(L, chunks=(chunks[1], chunks[1]))
 
-    if rng == 'Mersenne Twister':
+    rng = rng.lower()
+    if rng == 'mersenne twister':
         rnd_state = duck.RandomState(seed)
         # When pulling samples from the Mersenne Twister generator, we have
         # the samples on the rows. This guarantees that if we draw more
         # samples, the original samples won't change.
         y = rnd_state.standard_normal(size=(samples, cov.shape[0]),
                                       chunks=chunks)
-    elif rng == 'SOBOL':
+    elif rng == 'sobol':
         # Generate uniform (0, 1) distributions
         samples = sobol(size=(samples, cov.shape[0]),
                         d0=seed, chunks=chunks)
@@ -96,7 +103,12 @@ def gaussian_copula(cov, samples, seed=0, chunks=None,
     return duck.dot(L, y.T).T
 
 
-def t_copula(cov, df, samples, seed=0, chunks=None, rng='Mersenne Twister'):
+def t_copula(cov: Union[List[List[float]], np.ndarray],
+             df: Union[int, List[int], np.ndarray],
+             samples: int, seed: int = 0,
+             chunks: Chunks2D = None,
+             rng: str = 'Mersenne Twister'
+             ) -> Union[np.ndarray, da.Array]:
     """Student T Copula / IT Copula scenario generator.
 
     Simplified algorithm::
@@ -117,7 +129,7 @@ def t_copula(cov, df, samples, seed=0, chunks=None, rng='Mersenne Twister'):
     :param int seed:
         Random seed.
 
-        With ``rng='SOBOL'``, this is the initial dimension; when generating
+        With ``rng='Sobol'``, this is the initial dimension; when generating
         multiple copulas with different seeds, one should never use seeds that
         are less than ``cov.shape[0] + 1`` apart from each other.
 
@@ -129,33 +141,34 @@ def t_copula(cov, df, samples, seed=0, chunks=None, rng='Mersenne Twister'):
     :func:`gaussian_copula`.
     """
     assert samples > 0
-    cov = numpy.array(cov)
+    cov = np.asarray(cov)
     assert cov.ndim == 2
     assert cov.shape[0] == cov.shape[1]
     dimensions = cov.shape[0]
 
     L = numpy.linalg.cholesky(cov)
-    if chunks:
-        chunks = normalize_chunks(chunks, shape=(samples, dimensions))
-        L = dask.array.from_array(L, chunks=(chunks[1], chunks[1]))
+    if chunks is not None:
+        chunks = cast(NormalizedChunks2D,
+                      normalize_chunks(chunks, shape=(samples, dimensions)))
+        L = da.from_array(L, chunks=(chunks[1], chunks[1]))
 
     # Pre-process df into a 1D dask array
-    df = numpy.array(df)
+    df = np.asarray(df)
     if (df <= 0).any():
         raise ValueError("df must always be greater than zero")
     if df.shape not in ((), (dimensions, )):
         raise ValueError("df must be either a scalar or a 1D vector with as "
                          "many points as the width of the correlation matrix")
-    if df.ndim == 1 and chunks:
-        df = dask.array.from_array(df, chunks=(chunks[1], ))
+    if df.ndim == 1 and chunks is not None:
+        df = da.from_array(df, chunks=(chunks[1], ))
 
     # Define chunks for the S chi-square matrix
-    if chunks:
+    chunks_r = None  # type: Optional[NormalizedChunks2D]
+    if chunks is not None:
         chunks_r = (chunks[0], (1, ))
-    else:
-        chunks_r = None
 
-    if rng == 'Mersenne Twister':
+    rng = rng.lower()
+    if rng == 'mersenne twister':
         # Use two separate random states for the normal and the chi2
         # distributions. This is NOT the same as just extracting two series
         # from the same RandomState, as we must guarantee that, if you extract
@@ -172,7 +185,7 @@ def t_copula(cov, df, samples, seed=0, chunks=None, rng='Mersenne Twister'):
                                         chunks=chunks)
         r = rnd_state_r.uniform(size=(samples, 1), chunks=chunks_r)
 
-    elif rng == 'SOBOL':
+    elif rng == 'sobol':
         seed_r = seed + dimensions
 
         y = sobol(size=(samples, dimensions), d0=seed, chunks=chunks)

@@ -8,6 +8,8 @@ What's New
 v0.2.0 (unreleased)
 -------------------
 
+- Type annotations
+- 'rng' parameter in copula functions is now case insensitive
 - Explicit CI tests for Windows and Python 3.7
 - Mandatory flake8 in CI
 - Changed license to Apache 2.0

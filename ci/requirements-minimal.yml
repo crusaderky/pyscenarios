@@ -2,7 +2,7 @@ name: test_env
 channels:
   - anaconda
 dependencies:
-  - python=3.5
+  - python=3.5.0
   - coveralls
   - dask=0.17.3
   - numba=0.34

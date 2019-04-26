@@ -5,7 +5,7 @@ channels:
   # random timeouts
   - conda-forge
 dependencies:
-  - python=3.6
+  - python=3.7
   - dask
   - numba
   - numpy
