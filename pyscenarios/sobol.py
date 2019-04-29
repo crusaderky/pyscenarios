@@ -4,9 +4,10 @@ This is a reimplementation of a C++ algorithm by
 `Stephen Joe and Frances Y. Kuo <http://web.maths.unsw.edu.au/~fkuo/sobol/>`_.
 Directions are based on :file:`new-joe-kuo-6.21201` from the URL above.
 """
+import lzma
 import pkg_resources
 from functools import lru_cache
-from typing import Tuple, Union, cast
+from typing import Iterator, Tuple, Union, cast
 
 import numpy as np
 import dask.array as da
@@ -17,7 +18,7 @@ from .typing import Chunks2D, NormalizedChunks2D
 
 __all__ = ('sobol', 'max_dimensions')
 
-DIRECTIONS = 'new-joe-kuo-6.21201.txt'
+DIRECTIONS = 'new-joe-kuo-6.21201.txt.xz'
 
 
 @lru_cache(None)
@@ -29,13 +30,14 @@ def load_v() -> np.ndarray:
     When using dask distributed, V is loaded locally on the workers instead of
     being transferred over the network.
     """
-    fdata = pkg_resources.resource_string(
-        'pyscenarios.resources', DIRECTIONS).decode('ascii')
-    directions = _load_directions(fdata)
+    with pkg_resources.resource_stream(
+            'pyscenarios.resources', DIRECTIONS) as fh:
+        with lzma.open(fh, 'rt') as zfh:
+            directions = _load_directions(zfh)
     return _calc_v_kernel(directions)
 
 
-def _load_directions(fdata: str) -> np.ndarray:
+def _load_directions(fh: Iterator[str]) -> np.ndarray:
     """Load input file containing direction numbers.
     The file must one of those available on the website of the
     original author, or formatted like one.
@@ -46,15 +48,15 @@ def _load_directions(fdata: str) -> np.ndarray:
         Column 0 contains the a values, while columns 1+ contain the m values.
         The m values are padded on the right with zeros.
     """
-    rows = [row.split() for row in fdata.splitlines()]
+    rows = [row.split() for row in fh]
 
     # Add padding at end of rows
     # Drop first 2 columns
     # Replace header with element for d=1
-    rowlen = max(len(row) for row in rows) - 2
+    rowlen = len(rows[-1])
     for row in rows:
-        row[:] = row[2:] + ['0'] * (rowlen - len(row) + 2)
-    rows[0] = ['0'] + ['1'] * (rowlen - 1)
+        row[:] = row[2:] + ['0'] * (rowlen - len(row))
+    rows[0] = ['0'] + ['1'] * (rowlen - 3)
     return np.array(rows, dtype='uint32')
 
 
