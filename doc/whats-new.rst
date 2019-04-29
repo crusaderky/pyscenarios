@@ -3,10 +3,13 @@
 What's New
 ==========
 
-.. _whats-new.0.3.0:
+.. _whats-new.0.2.1:
 
-v0.3.0 (Unreleased)
+v0.2.1 (Unreleased)
 -------------------
+
+- Make package discoverable by mypy
+- Work around readthedocs build failure
 
 
 .. _whats-new.0.2.0:
