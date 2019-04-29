@@ -1,12 +1,15 @@
 """Duck-typed functions that call numpy or dask depending on the inputs
 """
+from functools import wraps
+from typing import Any, Callable, Optional, Tuple, Union
+
 import dask.array as da
 import numpy as np
 import scipy.stats
-from functools import wraps
+from .typing import Chunks2D
 
 
-def array(x):
+def array(x: Any) -> Union[np.ndarray, da.Array]:
     """Convert x to numpy array, unless it's a da.array
     """
     if isinstance(x, (np.ndarray, da.Array)):
@@ -14,7 +17,8 @@ def array(x):
     return np.array(x)
 
 
-def _map_blocks(func):
+def _map_blocks(func: Callable[..., np.ndarray]
+                ) -> Callable[..., Union[np.ndarray, da.Array]]:
     """Wrap an arbitrary function that takes one or more arrays in input.
     If any is a Dask Array, invoke :func:`dask.array.map_blocks`, otherwise
     apply the function directly.
@@ -27,7 +31,8 @@ def _map_blocks(func):
     return wrapper
 
 
-def _map_blocks_df(func):
+def _map_blocks_df(func: Callable[[Any, Any], np.ndarray]
+                   ) -> Callable[[Any, Any], Union[np.ndarray, da.Array]]:
     """Specialized variant for functions with degrees of freedom - adds
     auto-chunking in case of mismatched arguments
     """
@@ -44,7 +49,7 @@ def _map_blocks_df(func):
     return wrapper
 
 
-def _toplevel(func_name):
+def _toplevel(func_name: str) -> Callable[..., Union[np.ndarray, da.Array]]:
     """If any of the args is a Dask Array, invoke da.func_name; else invoke
     np.func_name
     """
@@ -75,26 +80,29 @@ class RandomState:
     For each method, if chunks=None invoke the numpy version, otherwise invoke
     the dask version.
     """
-    def __init__(self, seed=None):
+    def __init__(self, seed: Optional[int] = None):
         self._dask_state = da.random.RandomState(seed)
 
     @property
-    def _numpy_state(self):
+    def _numpy_state(self) -> np.random.RandomState:
         return self._dask_state._numpy_state
 
-    def seed(self, seed=None):
+    def seed(self, seed: Optional[int] = None) -> None:
         self._dask_state.seed(seed)
 
-    def _apply(self, func_name, *args, chunks=None, **kwargs):
-        if chunks:
+    def _apply(self, func_name: str, size: Optional[Tuple[int, int]] = None,
+               chunks: Chunks2D = None):
+        if chunks is not None:
             func = getattr(self._dask_state, func_name)
-            return func(*args, **kwargs, chunks=chunks)
+            return func(size=size, chunks=chunks)
         else:
             func = getattr(self._numpy_state, func_name)
-            return func(*args, **kwargs)
+            return func(size=size)
 
-    def uniform(self, size=None, chunks=None):
+    def uniform(self, size: Optional[Tuple[int, int]] = None,
+                chunks: Chunks2D = None):
         return self._apply('uniform', size=size, chunks=chunks)
 
-    def standard_normal(self, size=None, chunks=None):
+    def standard_normal(self, size: Optional[Tuple[int, int]] = None,
+                        chunks: Chunks2D = None):
         return self._apply('standard_normal', size=size, chunks=chunks)

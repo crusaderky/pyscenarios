@@ -128,6 +128,7 @@ setup(name=DISTNAME,
       long_description=LONG_DESCRIPTION,
       install_requires=INSTALL_REQUIRES,
       tests_require=TESTS_REQUIRE,
+      python_requires='>=3.5.0',
       url=URL,
       packages=find_packages(),
       package_data={'pyscenarios': ['tests/data/*', 'resources/*.npy']})
