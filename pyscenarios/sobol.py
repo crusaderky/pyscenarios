@@ -4,9 +4,9 @@ This is a reimplementation of a C++ algorithm by
 `Stephen Joe and Frances Y. Kuo <http://web.maths.unsw.edu.au/~fkuo/sobol/>`_.
 Directions are based on :file:`new-joe-kuo-6.21201` from the URL above.
 """
+import lzma
 import pkg_resources
-from functools import lru_cache
-from typing import Tuple, Union, cast
+from typing import Iterator, Tuple, Union, cast
 
 import numpy as np
 import dask.array as da
@@ -17,28 +17,30 @@ from .typing import Chunks2D, NormalizedChunks2D
 
 __all__ = ('sobol', 'max_dimensions')
 
-DIRECTIONS = 'new-joe-kuo-6.21201'
+DIRECTIONS = 'new-joe-kuo-6.21201.txt.xz'
 
 
-def calc_v() -> None:
-    """Precalculate V array from the original author's file and then store the
-    result to disk, in the same directory of this script. This function is
-    invoked by ``setup.py build_ext``.
+v_cache = None
+
+
+def load_v() -> np.ndarray:
+    """Load V from the original author's file. This function is executed
+    automatically the first time you call the :func:`sobol` function.
+    When using a dask backend, the V array is only loaded when
+    actually needed by the kernel; this results in smaller pickle files.
+    When using dask distributed, V is loaded locally on the workers instead of
+    being transferred over the network.
     """
-    import os.path
-    fdata = pkg_resources.resource_string(
-        'pyscenarios.resources', DIRECTIONS + '.txt').decode('ascii')
-    directions = _load_directions(fdata)
-    v = _calc_v_kernel(directions)
-
-    # This is dirty, but this function is exclusively invoked by setup.py
-    output_fname = os.path.join(
-        os.path.dirname(__file__), 'resources', DIRECTIONS + '.npy')
-    np.save(output_fname, v)
-    print("Generated Sobol V matrix: %s" % output_fname)
+    global v_cache
+    if v_cache is None:
+        with pkg_resources.resource_stream('pyscenarios', DIRECTIONS) as fh:
+            with lzma.open(fh, 'rt') as zfh:
+                directions = _load_directions(zfh)
+        v_cache = _calc_v_kernel(directions)
+    return v_cache
 
 
-def _load_directions(fdata: str) -> np.ndarray:
+def _load_directions(fh: Iterator[str]) -> np.ndarray:
     """Load input file containing direction numbers.
     The file must one of those available on the website of the
     original author, or formatted like one.
@@ -49,15 +51,15 @@ def _load_directions(fdata: str) -> np.ndarray:
         Column 0 contains the a values, while columns 1+ contain the m values.
         The m values are padded on the right with zeros.
     """
-    rows = [row.split() for row in fdata.splitlines()]
+    rows = [row.split() for row in fh]
 
     # Add padding at end of rows
     # Drop first 2 columns
     # Replace header with element for d=1
-    rowlen = max(len(row) for row in rows) - 2
+    rowlen = len(rows[-1])
     for row in rows:
-        row[:] = row[2:] + ['0'] * (rowlen - len(row) + 2)
-    rows[0] = ['0'] + ['1'] * (rowlen - 1)
+        row[:] = row[2:] + ['0'] * (rowlen - len(row))
+    rows[0] = ['0'] + ['1'] * (rowlen - 3)
     return np.array(rows, dtype='uint32')
 
 
@@ -89,20 +91,6 @@ def _calc_v_kernel(directions: np.ndarray) -> np.ndarray:
                     * v[j, t - k])
 
     return v
-
-
-@lru_cache(None)
-def load_v() -> np.ndarray:
-    """Load V from the on-disk cache. This function is executed
-    automatically the first time you call the :func:`sobol` function.
-    When using a dask backend, the V array is only loaded when
-    actually needed by the kernel; this results in smaller pickle files.
-    When using dask distributed, V is loaded locally on the workers instead of
-    being transferred over the network.
-    """
-    buf = pkg_resources.resource_stream(
-        'pyscenarios.resources', DIRECTIONS + '.npy')
-    return np.load(buf)
 
 
 def _sobol_kernel(samples: int, dimensions: int, s0: int, d0: int

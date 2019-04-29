@@ -114,9 +114,6 @@ short_version = '%s'
 if write_version:
     write_version_py()
 
-import pyscenarios.sobol  # noqa: E402
-pyscenarios.sobol.calc_v()
-
 
 setup(name=DISTNAME,
       version=FULLVERSION,
@@ -130,5 +127,5 @@ setup(name=DISTNAME,
       tests_require=TESTS_REQUIRE,
       python_requires='>=3.5.0',
       url=URL,
-      packages=find_packages(),
-      package_data={'pyscenarios': ['tests/data/*', 'resources/*.npy']})
+      package_data={'pyscenarios': ['*.txt.xz']},
+      packages=find_packages())

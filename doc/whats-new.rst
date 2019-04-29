@@ -12,6 +12,7 @@ v0.2.0 (unreleased)
 - 'rng' parameter in copula functions is now case insensitive
 - Work around regression in IT copula with dask >= 1.1
   (`<https://github.com/dask/dask/issues/4739> dask#4739>`)
+- Smaller binary package; simplified setup
 - Explicit CI tests for Windows, Python 3.5.0, and Python 3.7
 - Mandatory flake8 and mypy in CI
 - Changed license to Apache 2.0
