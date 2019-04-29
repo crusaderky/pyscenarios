@@ -49,7 +49,7 @@ def _map_blocks_df(func: Callable[[Any, Any], np.ndarray]
     return wrapper
 
 
-def _toplevel(func_name: str) -> Callable:
+def _toplevel(func_name: str) -> Callable[..., Union[np.ndarray, da.Array]]:
     """If any of the args is a Dask Array, invoke da.func_name; else invoke
     np.func_name
     """
