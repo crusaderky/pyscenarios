@@ -35,10 +35,10 @@ install:
 
 script:
   - python -c "import pyscenarios"
-  - if [[ "$CONVA_ENV" == "py37"]]; then
+  - if [[ "$CONVA_ENV" == "py37" ]]; then
       flake8;
     fi
-  - if [[ "$CONVA_ENV" == "py37"]]; then
+  - if [[ "$CONVA_ENV" == "py37" ]]; then
       mypy .;
     fi
   - if [[ "$CONDA_ENV" == "docs" ]]; then
