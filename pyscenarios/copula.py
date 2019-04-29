@@ -60,7 +60,7 @@ def gaussian_copula(cov: Union[List[List[float]], np.ndarray],
 
         The maximum seed when using sobol is::
 
-            pysamples.sobol.max_dimensions() - cov.shape[0] - 1
+            pyscenarios.sobol.max_dimensions() - cov.shape[0] - 1
 
     :param str rng:
         Either ``Mersenne Twister`` or ``Sobol``
@@ -135,7 +135,7 @@ def t_copula(cov: Union[List[List[float]], np.ndarray],
 
         The maximum seed when using sobol is::
 
-            pysamples.sobol.max_dimensions() - cov.shape[0] - 2
+            pyscenarios.sobol.max_dimensions() - cov.shape[0] - 2
 
     All other parameters and the return value are the same as in
     :func:`gaussian_copula`.
