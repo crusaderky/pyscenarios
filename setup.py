@@ -128,4 +128,5 @@ setup(name=DISTNAME,
       python_requires='>=3.5.0',
       url=URL,
       package_data={'pyscenarios': ['py.typed', '*.txt.xz']},
-      packages=find_packages())
+      packages=find_packages(),
+      zip_safe=False)  # Required by mypy
