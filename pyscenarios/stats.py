@@ -1,10 +1,12 @@
 """Statistical functions
 """
+from typing import Any, Union
+import dask.array as da
 import numpy as np
 from . import duck
 
 
-def tail_dependence(x, y, q):
+def tail_dependence(x: Any, y: Any, q: Any) -> Union[np.ndarray, da.Array]:
     r"""Calculate `tail dependence
     <https://en.wikipedia.org/wiki/Tail_dependence>`_
     between vectors x and y.

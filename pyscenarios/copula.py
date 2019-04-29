@@ -195,7 +195,7 @@ def t_copula(cov: Union[List[List[float]], np.ndarray],
     else:
         raise ValueError("Unknown rng: %s" % rng)
 
-    s = duck.chi2_ppf(r, df=df)
+    s = duck.chi2_ppf(r, df)
     z = duck.sqrt(df / s) * duck.dot(L, y.T).T
     # Convert t distribution to normal (0, 1)
     u = duck.t_cdf(z, df)

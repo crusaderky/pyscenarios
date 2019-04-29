@@ -17,7 +17,8 @@ def array(x: Any) -> Union[np.ndarray, da.Array]:
     return np.array(x)
 
 
-def _map_blocks(func: Callable) -> Callable:
+def _map_blocks(func: Callable[..., np.ndarray]
+                ) -> Callable[..., Union[np.ndarray, da.Array]]:
     """Wrap an arbitrary function that takes one or more arrays in input.
     If any is a Dask Array, invoke :func:`dask.array.map_blocks`, otherwise
     apply the function directly.
@@ -30,7 +31,8 @@ def _map_blocks(func: Callable) -> Callable:
     return wrapper
 
 
-def _map_blocks_df(func: Callable) -> Callable:
+def _map_blocks_df(func: Callable[[Any, Any], np.ndarray]
+                   ) -> Callable[[Any, Any], Union[np.ndarray, da.Array]]:
     """Specialized variant for functions with degrees of freedom - adds
     auto-chunking in case of mismatched arguments
     """
