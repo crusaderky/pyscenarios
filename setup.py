@@ -127,6 +127,5 @@ setup(name=DISTNAME,
       tests_require=TESTS_REQUIRE,
       python_requires='>=3.5.0',
       url=URL,
-      package_data={'pyscenarios': ['tests/data/*', 'resources/*.txt.xz']},
+      package_data={'pyscenarios': ['*.txt.xz']},
       packages=find_packages())
-

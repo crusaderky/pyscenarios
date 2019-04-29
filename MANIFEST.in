@@ -1,4 +1,4 @@
-include pyscenarios/resources/*.txt.xz
+include pyscenarios/*.txt.xz
 include LICENSE
 recursive-include doc *
 prune doc/_build

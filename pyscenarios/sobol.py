@@ -6,7 +6,6 @@ Directions are based on :file:`new-joe-kuo-6.21201` from the URL above.
 """
 import lzma
 import pkg_resources
-from functools import lru_cache
 from typing import Iterator, Tuple, Union, cast
 
 import numpy as np
@@ -21,7 +20,9 @@ __all__ = ('sobol', 'max_dimensions')
 DIRECTIONS = 'new-joe-kuo-6.21201.txt.xz'
 
 
-@lru_cache(None)
+v_cache = None
+
+
 def load_v() -> np.ndarray:
     """Load V from the original author's file. This function is executed
     automatically the first time you call the :func:`sobol` function.
@@ -30,11 +31,13 @@ def load_v() -> np.ndarray:
     When using dask distributed, V is loaded locally on the workers instead of
     being transferred over the network.
     """
-    with pkg_resources.resource_stream(
-            'pyscenarios.resources', DIRECTIONS) as fh:
-        with lzma.open(fh, 'rt') as zfh:
-            directions = _load_directions(zfh)
-    return _calc_v_kernel(directions)
+    global v_cache
+    if v_cache is None:
+        with pkg_resources.resource_stream('pyscenarios', DIRECTIONS) as fh:
+            with lzma.open(fh, 'rt') as zfh:
+                directions = _load_directions(zfh)
+        v_cache = _calc_v_kernel(directions)
+    return v_cache
 
 
 def _load_directions(fh: Iterator[str]) -> np.ndarray:
