@@ -35,8 +35,11 @@ install:
 
 script:
   - python -c "import pyscenarios"
-  - if [[ "$CONDA_ENV" == "py37" ]]; then
-      flake8 && mypy .;
+  - if [[ "$CONVA_ENV" == "py37"]]; then
+      flake8;
+    fi
+  - if [[ "$CONVA_ENV" == "py37"]]; then
+      mypy .;
     fi
   - if [[ "$CONDA_ENV" == "docs" ]]; then
       sphinx-build -n -j auto -b html -d _build/doctrees doc _build/html;
