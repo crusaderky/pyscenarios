@@ -33,16 +33,12 @@ def _map_blocks_df(func):
     """
     @wraps(func)
     def wrapper(x, df):
-        if not isinstance(x, da.Array):
-            x = np.array(x)
-        if not isinstance(df, da.Array):
-            df = np.array(df)
-        if isinstance(x, da.Array) and isinstance(df, np.ndarray):
-            df = da.from_array(df, chunks=(x.chunks[-1], ))
-        if isinstance(x, np.ndarray) and isinstance(df, da.Array):
-            xchunks = tuple((s, ) for s in x.shape[:-1]) + df.chunks
-            x = da.from_array(x, chunks=xchunks)
+        x = array(x)
+        df = array(df)
         if isinstance(x, da.Array) or isinstance(df, da.Array):
+            # map_blocks auto-broadcasting broken since dask 1.1
+            # https://github.com/dask/dask/issues/4739
+            x, df = da.broadcast_arrays(x, df)
             return da.map_blocks(func, x, df, dtype=float)
         return func(x, df)
     return wrapper
