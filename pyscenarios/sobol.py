@@ -17,25 +17,22 @@ from .typing import Chunks2D, NormalizedChunks2D
 
 __all__ = ('sobol', 'max_dimensions')
 
-DIRECTIONS = 'new-joe-kuo-6.21201'
+DIRECTIONS = 'new-joe-kuo-6.21201.txt'
 
 
-def calc_v() -> None:
-    """Precalculate V array from the original author's file and then store the
-    result to disk, in the same directory of this script. This function is
-    invoked by ``setup.py build_ext``.
+@lru_cache(None)
+def load_v() -> np.ndarray:
+    """Load V from the original author's file. This function is executed
+    automatically the first time you call the :func:`sobol` function.
+    When using a dask backend, the V array is only loaded when
+    actually needed by the kernel; this results in smaller pickle files.
+    When using dask distributed, V is loaded locally on the workers instead of
+    being transferred over the network.
     """
-    import os.path
     fdata = pkg_resources.resource_string(
-        'pyscenarios.resources', DIRECTIONS + '.txt').decode('ascii')
+        'pyscenarios.resources', DIRECTIONS).decode('ascii')
     directions = _load_directions(fdata)
-    v = _calc_v_kernel(directions)
-
-    # This is dirty, but this function is exclusively invoked by setup.py
-    output_fname = os.path.join(
-        os.path.dirname(__file__), 'resources', DIRECTIONS + '.npy')
-    np.save(output_fname, v)
-    print("Generated Sobol V matrix: %s" % output_fname)
+    return _calc_v_kernel(directions)
 
 
 def _load_directions(fdata: str) -> np.ndarray:
@@ -89,20 +86,6 @@ def _calc_v_kernel(directions: np.ndarray) -> np.ndarray:
                     * v[j, t - k])
 
     return v
-
-
-@lru_cache(None)
-def load_v() -> np.ndarray:
-    """Load V from the on-disk cache. This function is executed
-    automatically the first time you call the :func:`sobol` function.
-    When using a dask backend, the V array is only loaded when
-    actually needed by the kernel; this results in smaller pickle files.
-    When using dask distributed, V is loaded locally on the workers instead of
-    being transferred over the network.
-    """
-    buf = pkg_resources.resource_stream(
-        'pyscenarios.resources', DIRECTIONS + '.npy')
-    return np.load(buf)
 
 
 def _sobol_kernel(samples: int, dimensions: int, s0: int, d0: int

@@ -1,5 +1,4 @@
 include pyscenarios/resources/*.txt
-exclude pyscenarios/resources/*.npy
 include LICENSE
 recursive-include doc *
 prune doc/_build
