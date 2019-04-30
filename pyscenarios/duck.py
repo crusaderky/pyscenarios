@@ -70,14 +70,10 @@ def _toplevel(func_name: str) -> Callable[..., Union[np.ndarray, da.Array]]:
     return wrapper
 
 
-norm_cdf = _apply_unary(scipy.stats.norm.cdf)
 norm_ppf = _apply_unary(scipy.stats.norm.ppf)
-chi2_cdf = _apply_binary(scipy.stats.chi2.cdf)
 chi2_ppf = _apply_binary(scipy.stats.chi2.ppf)
 t_cdf = _apply_binary(scipy.stats.t.cdf)
-t_ppf = _apply_binary(scipy.stats.t.ppf)
-dot = _toplevel('dot')
-sqrt = _toplevel('sqrt')
+sqrt = np.sqrt  # NEP-18 gufunc
 where = _toplevel('where')
 
 

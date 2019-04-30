@@ -2,7 +2,7 @@ import pytest
 import dask.array as da
 import numpy as np
 import scipy.stats
-from numpy.testing import assert_array_equal, assert_allclose, assert_equal
+from numpy.testing import assert_array_equal, assert_equal
 from pyscenarios import duck
 
 
@@ -19,7 +19,6 @@ def test_array():
 
 @pytest.mark.parametrize('chunk', [False, True])
 @pytest.mark.parametrize('func,wrapped', [
-    (duck.norm_cdf, scipy.stats.norm.cdf),
     (duck.norm_ppf, scipy.stats.norm.ppf),
     (duck.sqrt, np.sqrt),
 ])
@@ -53,10 +52,8 @@ def test_map_blocks(func, wrapped, chunk):
     [[.1, .2, .3], [.4, .5, .6]],
 ])
 @pytest.mark.parametrize('func,wrapped', [
-    (duck.chi2_cdf, scipy.stats.chi2.cdf),
     (duck.chi2_ppf, scipy.stats.chi2.ppf),
     (duck.t_cdf, scipy.stats.t.cdf),
-    (duck.t_ppf, scipy.stats.t.ppf),
 ])
 def test_map_blocks_df(func, wrapped, x, chunk_x, df, chunk_df):
     y = wrapped(x, df)
@@ -80,26 +77,6 @@ def test_map_blocks_df(func, wrapped, x, chunk_x, df, chunk_df):
     else:
         # All inputs are 0-dimensional
         assert isinstance(dy, float)
-
-
-@pytest.mark.parametrize('chunk', [False, True])
-def test_dot(chunk):
-    x = np.random.rand(16).reshape(4, 4)
-    y = np.random.rand(24).reshape(4, 6)
-    z = np.dot(x, y)
-
-    if chunk:
-        dx = da.from_array(x, chunks=2)
-        dy = da.from_array(y, chunks=2)
-    else:
-        dx = x
-        dy = y
-    dz = duck.dot(dx, dy)
-    assert_allclose(z, dz, 1e-12, 0)
-    if chunk:
-        assert dz.chunks == ((2, 2), (2, 2, 2))
-    else:
-        assert isinstance(dz, np.ndarray)
 
 
 @pytest.mark.parametrize('chunk', [False, True])
