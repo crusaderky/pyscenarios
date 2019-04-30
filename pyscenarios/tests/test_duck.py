@@ -40,23 +40,17 @@ def test_map_blocks(func, wrapped, chunk):
         assert isinstance(dy, np.ndarray)
 
 
-@pytest.mark.parametrize('df,chunk_df', [
-    (3, False),
-    ([1, 2, 3], False),
-    (np.array([1, 2, 3]), False),
-    (np.array([1, 2, 3]), True)
-])
-@pytest.mark.parametrize('x,chunk_x', [
-    (np.random.rand(4).reshape(4, 1), False),
-    (np.random.rand(4).reshape(4, 1), True),
-    # dask fails to broadcast a np.ndarray with shape[i] != 1
-    # against a da.Array with len(chunks[i]) != 1
-    pytest.param(np.random.rand(30).reshape(10, 3), False,
-                 marks=pytest.mark.xfail),
-    pytest.param(np.random.rand(30).reshape(10, 3), True,
-                 marks=pytest.mark.xfail),
-    pytest.param([[1, 2, 3], [4, 5, 6]], False,
-                 marks=pytest.mark.xfail),
+@pytest.mark.parametrize('chunk_df', [False, True])
+@pytest.mark.parametrize('chunk_x', [False, True])
+@pytest.mark.parametrize('df', [
+    3,
+    [1, 2, 3],
+    np.array([1, 2, 3])])
+@pytest.mark.parametrize('x', [
+    .2,
+    np.random.rand(4).reshape(4, 1),
+    np.random.rand(30).reshape(10, 3),
+    [[.1, .2, .3], [.4, .5, .6]],
 ])
 @pytest.mark.parametrize('func,wrapped', [
     (duck.chi2_cdf, scipy.stats.chi2.cdf),
@@ -68,21 +62,24 @@ def test_map_blocks_df(func, wrapped, x, chunk_x, df, chunk_df):
     y = wrapped(x, df)
 
     if chunk_x:
-        dx = da.from_array(x, chunks=2)
+        dx = da.from_array(np.asarray(x), chunks=2)
     else:
         dx = x
     if chunk_df:
-        ddf = da.from_array(df, chunks=2)
+        ddf = da.from_array(np.asarray(df), chunks=2)
     else:
         ddf = df
 
     dy = func(dx, ddf)
-
     assert_array_equal(y, dy)
+
     if chunk_x or chunk_df:
         assert isinstance(dy, da.Array)
-    else:
+    elif np.asarray(x).ndim or np.asarray(df).ndim:
         assert isinstance(dy, np.ndarray)
+    else:
+        # All inputs are 0-dimensional
+        assert isinstance(dy, float)
 
 
 @pytest.mark.parametrize('chunk', [False, True])

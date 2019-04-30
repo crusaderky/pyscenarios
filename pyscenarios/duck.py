@@ -9,6 +9,13 @@ import scipy.stats
 from .typing import Chunks2D
 
 
+try:
+    blockwise = da.blockwise
+except AttributeError:
+    # dask < 1.1
+    blockwise = da.atop
+
+
 def array(x: Any) -> Union[np.ndarray, da.Array]:
     """Convert x to numpy array, unless it's a da.array
     """
@@ -17,35 +24,36 @@ def array(x: Any) -> Union[np.ndarray, da.Array]:
     return np.array(x)
 
 
-def _map_blocks(func: Callable[..., np.ndarray]
-                ) -> Callable[..., Union[np.ndarray, da.Array]]:
-    """Wrap an arbitrary function that takes one or more arrays in input.
-    If any is a Dask Array, invoke :func:`dask.array.map_blocks`, otherwise
-    apply the function directly.
+def _apply_unary(func: Callable[[Any], Any]) -> Callable[[Any], Any]:
+    """Apply a function to an array-like. If the argument is a dask array, wrap
+    it in :func:`dask.array.blockwise`
     """
     @wraps(func)
-    def wrapper(*args, **kwargs):
-        if any(isinstance(arg, da.Array) for arg in args):
-            return da.map_blocks(func, *args, **kwargs, dtype=args[0].dtype)
-        return func(*args, **kwargs)
+    def wrapper(x):
+        if isinstance(x, da.Array):
+            sig = tuple(range(x.ndim))
+            return blockwise(func, sig, x, sig, dtype=float)
+        return func(x)
     return wrapper
 
 
-def _map_blocks_df(func: Callable[[Any, Any], np.ndarray]
-                   ) -> Callable[[Any, Any], Union[np.ndarray, da.Array]]:
-    """Specialized variant for functions with degrees of freedom - adds
-    auto-chunking in case of mismatched arguments
+def _apply_binary(func: Callable[[Any, Any], Any]
+                  ) -> Callable[[Any, Any], Any]:
+    """Apply a function to two array-likes. If either argument is a dask array,
+    wrap it in :func:`dask.array.blockwise`
     """
     @wraps(func)
-    def wrapper(x, df):
+    def wrapper(x, y):
         x = array(x)
-        df = array(df)
-        if isinstance(x, da.Array) or isinstance(df, da.Array):
-            # map_blocks auto-broadcasting broken since dask 1.1
-            # https://github.com/dask/dask/issues/4739
-            x, df = da.broadcast_arrays(x, df)
-            return da.map_blocks(func, x, df, dtype=float)
-        return func(x, df)
+        y = array(y)
+        if isinstance(x, da.Array) or isinstance(y, da.Array):
+            out_ndim = max(x.ndim, y.ndim)
+            return blockwise(
+                func, tuple(range(out_ndim)),
+                x, tuple(range(out_ndim - x.ndim, out_ndim)),
+                y, tuple(range(out_ndim - y.ndim, out_ndim)),
+                dtype=float)
+        return func(x, y)
     return wrapper
 
 
@@ -62,12 +70,12 @@ def _toplevel(func_name: str) -> Callable[..., Union[np.ndarray, da.Array]]:
     return wrapper
 
 
-norm_cdf = _map_blocks(scipy.stats.norm.cdf)
-norm_ppf = _map_blocks(scipy.stats.norm.ppf)
-chi2_cdf = _map_blocks_df(scipy.stats.chi2.cdf)
-chi2_ppf = _map_blocks_df(scipy.stats.chi2.ppf)
-t_cdf = _map_blocks_df(scipy.stats.t.cdf)
-t_ppf = _map_blocks_df(scipy.stats.t.ppf)
+norm_cdf = _apply_unary(scipy.stats.norm.cdf)
+norm_ppf = _apply_unary(scipy.stats.norm.ppf)
+chi2_cdf = _apply_binary(scipy.stats.chi2.cdf)
+chi2_ppf = _apply_binary(scipy.stats.chi2.ppf)
+t_cdf = _apply_binary(scipy.stats.t.cdf)
+t_ppf = _apply_binary(scipy.stats.t.ppf)
 dot = _toplevel('dot')
 sqrt = _toplevel('sqrt')
 where = _toplevel('where')
