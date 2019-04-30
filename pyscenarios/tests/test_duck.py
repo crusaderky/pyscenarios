@@ -62,11 +62,11 @@ def test_map_blocks_df(func, wrapped, x, chunk_x, df, chunk_df):
     y = wrapped(x, df)
 
     if chunk_x:
-        dx = da.from_array(x, chunks=2)
+        dx = da.from_array(np.asarray(x), chunks=2)
     else:
         dx = x
     if chunk_df:
-        ddf = da.from_array(df, chunks=2)
+        ddf = da.from_array(np.asarray(df), chunks=2)
     else:
         ddf = df
 

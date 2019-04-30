@@ -9,6 +9,13 @@ import scipy.stats
 from .typing import Chunks2D
 
 
+try:
+    blockwise = da.blockwise
+except AttributeError:
+    # dask < 1.1
+    blockwise = da.atop
+
+
 def array(x: Any) -> Union[np.ndarray, da.Array]:
     """Convert x to numpy array, unless it's a da.array
     """
@@ -42,7 +49,7 @@ def _map_blocks_df(func: Callable[[Any, Any], np.ndarray]
         df = array(df)
         if isinstance(x, da.Array) or isinstance(df, da.Array):
             out_ndim = max(x.ndim, df.ndim)
-            return da.blockwise(
+            return blockwise(
                 func, tuple(range(out_ndim)),
                 x, tuple(range(out_ndim - x.ndim, out_ndim)),
                 df, tuple(range(out_ndim - df.ndim, out_ndim)),

@@ -12,6 +12,7 @@ v0.2.1 (Unreleased)
 - Work around readthedocs build failure
 - A more robust fix for `dask#4739 <https://github.com/dask/dask/issues/4739>`_
 
+
 .. _whats-new.0.2.0:
 
 v0.2.0 (2019-04-29)
