@@ -73,7 +73,7 @@ def _toplevel(func_name: str) -> Callable[..., Union[np.ndarray, da.Array]]:
 norm_ppf = _apply_unary(scipy.stats.norm.ppf)
 chi2_ppf = _apply_binary(scipy.stats.chi2.ppf)
 t_cdf = _apply_binary(scipy.stats.t.cdf)
-sqrt = _toplevel('sqrt')
+sqrt = np.sqrt  # NEP-18 gufunc
 where = _toplevel('where')
 
 
