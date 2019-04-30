@@ -41,10 +41,12 @@ def _map_blocks_df(func: Callable[[Any, Any], np.ndarray]
         x = array(x)
         df = array(df)
         if isinstance(x, da.Array) or isinstance(df, da.Array):
-            # map_blocks auto-broadcasting broken since dask 1.1
-            # https://github.com/dask/dask/issues/4739
-            x, df = da.broadcast_arrays(x, df)
-            return da.map_blocks(func, x, df, dtype=float)
+            out_ndim = max(x.ndim, df.ndim)
+            return da.blockwise(
+                func, tuple(range(out_ndim)),
+                x, tuple(range(out_ndim - x.ndim, out_ndim)),
+                df, tuple(range(out_ndim - df.ndim, out_ndim)),
+                dtype=float)
         return func(x, df)
     return wrapper
 
