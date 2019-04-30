@@ -1,6 +1,6 @@
 """High performance copula generators
 """
-from typing import List, Optional, Union, cast
+from typing import List, Union, cast
 
 import numpy as np
 import numpy.random
@@ -161,10 +161,12 @@ def _copula_impl(cov: Union[List[List[float]], np.ndarray],
                  ) -> Union[np.ndarray, da.Array]:
     """Implementation of gaussian_copula and t_copula
     """
-    assert samples > 0
+    samples = int(samples)
+    if samples <= 0:
+        raise ValueError('Number of samples must be positive')
     cov = np.asarray(cov)
-    assert cov.ndim == 2
-    assert cov.shape[0] == cov.shape[1]
+    if cov.ndim != 2 or cov.shape[0] != cov.shape[1]:
+        raise ValueError('cov must be a square matrix')
     dimensions = cov.shape[0]
 
     L = numpy.linalg.cholesky(cov)
@@ -202,9 +204,7 @@ def _copula_impl(cov: Union[List[List[float]], np.ndarray],
         df = da.from_array(df, chunks=(chunks[1], ))
 
     # Define chunks for the S chi-square matrix
-    chunks_r = None  # type: Optional[NormalizedChunks2D]
-    if chunks is not None:
-        chunks_r = (chunks[0], (1, ))
+    chunks_r = (chunks[0], (1, )) if chunks else None
 
     if rng == 'mersenne twister':
         # Use two separate random states for the normal and the chi2
