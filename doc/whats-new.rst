@@ -5,11 +5,10 @@ What's New
 
 .. _whats-new.0.2.1:
 
-v0.2.1 (Unreleased)
+v0.2.1 (2019-05-01)
 -------------------
 
 - Make package discoverable by mypy
-- Work around readthedocs build failure
 - A more robust fix for `dask#4739 <https://github.com/dask/dask/issues/4739>`_
 
 
