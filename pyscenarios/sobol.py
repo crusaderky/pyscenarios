@@ -8,26 +8,16 @@ import lzma
 import pkg_resources
 from typing import Iterator, Tuple, Union, cast
 
-import numba
 import numpy as np
 import dask.array as da
 from dask.array.core import normalize_chunks
+from numba import jit
 
 from .typing import Chunks2D, NormalizedChunks2D
 
 __all__ = ('sobol', 'max_dimensions')
 
 DIRECTIONS = 'new-joe-kuo-6.21201.txt.xz'
-
-
-def jit(sig: str):
-    def decorator(func):
-        try:
-            return numba.jit(sig, nopython=True, nogil=True, cache=True)(func)
-        except RuntimeError:
-            # Work around issues with permissions on readthedocs
-            return numba.jit(sig, nopython=True, nogil=True, cache=False)(func)
-    return decorator
 
 
 v_cache = None
@@ -73,7 +63,7 @@ def _load_directions(fh: Iterator[str]) -> np.ndarray:
     return np.array(rows, dtype='uint32')
 
 
-@jit('uint32[:,:](uint32[:,:])')
+@jit('uint32[:,:](uint32[:,:])', nopython=True, nogil=True, cache=True)
 def _calc_v_kernel(directions: np.ndarray) -> np.ndarray:
     """Numba kernel for :func:`calc_v`
     """
@@ -118,7 +108,8 @@ def _sobol_kernel(samples: int, dimensions: int, s0: int, d0: int
     return output
 
 
-@jit('void(uint32, uint32, uint32, uint32, uint32[:, :], float64[:, :])')
+@jit('void(uint32, uint32, uint32, uint32, uint32[:, :], float64[:, :])',
+     nopython=True, nogil=True, cache=True)
 def _sobol_kernel_jit(samples: int, dimensions: int, s0: int, d0: int,
                       V: np.ndarray, output: np.ndarray) -> None:
     """Jit-compiled core of :func:`_sobol_kernel
