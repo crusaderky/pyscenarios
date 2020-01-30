@@ -7,12 +7,13 @@ notifications:
 matrix:
   fast_finish: true
   include:
-  - env: CONDA_ENV=minimal
-  - env: CONDA_ENV=py36
-  - env: CONDA_ENV=py37
-  - env: CONDA_ENV=py38
-  - env: CONDA_ENV=py38 NUMBA_DISABLE_JIT=1  # coveralls for @jit-compiled functions
-  - env: CONDA_ENV=docs
+  - env: CONDA_ENV=py38 LINT=1
+  - env: CONDA_ENV=minimal PYTEST=1
+  - env: CONDA_ENV=py36 PYTEST=1
+  - env: CONDA_ENV=py37 PYTEST=1
+  - env: CONDA_ENV=py38 PYTEST=1
+  - env: CONDA_ENV=py38 PYTEST=1 NUMBA_DISABLE_JIT=1  # coveralls for @jit-compiled functions
+  - env: CONDA_ENV=docs SPHINX=1
 
 before_install:
   - wget http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
@@ -31,12 +32,14 @@ install:
 
 script:
   - python -c "import pyscenarios"
-  - if [[ "$CONVA_ENV" == "py38" ]]; then flake8; fi
-  - if [[ "$CONVA_ENV" == "py38" ]]; then mypy .; fi
-  - if [[ "$CONDA_ENV" == "docs" ]]; then
-      sphinx-build -n -j auto -b html -d _build/doctrees doc _build/html;
-    else
-      py.test pyscenarios --cov=pyscenarios --cov-config ci/.coveragerc --cov-report term-missing --verbose;
-    fi
+  - if [[ -n "$LINT" ]]; then flake8; fi
+  - if [[ -n "$LINT" ]]; then mypy .; fi
+  - if [[ -n "$LINT" ]]; then isort -rc --check .; fi
+  - if [[ -n "$LINT" ]]; then black -t py36 --check .; fi
+  - if [[ -n "$PYTEST" ]]; then
+      pytest -v pyscenarios --cov=pyscenarios --cov-config ci/.coveragerc --cov-report term-missing; fi
+  - if [[ -n "$SPHINX" ]]; then
+      sphinx-build -n -j auto -b html -d _build/doctrees doc _build/html; fi
+
 after_success:
   - coveralls

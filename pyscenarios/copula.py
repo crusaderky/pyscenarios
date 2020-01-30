@@ -2,25 +2,26 @@
 """
 from typing import List, Union, cast
 
-import numpy as np
-import numpy.random
-import numpy.linalg
 import dask.array as da
+import numpy as np
+import numpy.linalg
+import numpy.random
 from dask.array.core import normalize_chunks
 
 from . import duck
 from .sobol import sobol
 from .typing import Chunks2D, NormalizedChunks2D
 
+__all__ = ("gaussian_copula", "t_copula")
 
-__all__ = ('gaussian_copula', 't_copula')
 
-
-def gaussian_copula(cov: Union[List[List[float]], np.ndarray],
-                    samples: int, seed: int = 0,
-                    chunks: Chunks2D = None,
-                    rng: str = 'Mersenne Twister'
-                    ) -> Union[np.ndarray, da.Array]:
+def gaussian_copula(
+    cov: Union[List[List[float]], np.ndarray],
+    samples: int,
+    seed: int = 0,
+    chunks: Chunks2D = None,
+    rng: str = "Mersenne Twister",
+) -> Union[np.ndarray, da.Array]:
     """Gaussian Copula scenario generator.
 
     Simplified algorithm::
@@ -76,16 +77,19 @@ def gaussian_copula(cov: Union[List[List[float]], np.ndarray],
         If chunks is not None, :class:`dask.array.Array`; else
         :class:`numpy.ndarray`
     """
-    return _copula_impl(cov=cov, df=None, samples=samples, seed=seed,
-                        chunks=chunks, rng=rng)
+    return _copula_impl(
+        cov=cov, df=None, samples=samples, seed=seed, chunks=chunks, rng=rng
+    )
 
 
-def t_copula(cov: Union[List[List[float]], np.ndarray],
-             df: Union[int, List[int], np.ndarray],
-             samples: int, seed: int = 0,
-             chunks: Chunks2D = None,
-             rng: str = 'Mersenne Twister'
-             ) -> Union[np.ndarray, da.Array]:
+def t_copula(
+    cov: Union[List[List[float]], np.ndarray],
+    df: Union[int, List[int], np.ndarray],
+    samples: int,
+    seed: int = 0,
+    chunks: Chunks2D = None,
+    rng: str = "Mersenne Twister",
+) -> Union[np.ndarray, da.Array]:
     """Student T Copula / IT Copula scenario generator.
 
     Simplified algorithm::
@@ -151,39 +155,44 @@ def t_copula(cov: Union[List[List[float]], np.ndarray],
         If chunks is not None, :class:`dask.array.Array`; else
         :class:`numpy.ndarray`
     """
-    return _copula_impl(cov=cov, df=df, samples=samples, seed=seed,
-                        chunks=chunks, rng=rng)
+    return _copula_impl(
+        cov=cov, df=df, samples=samples, seed=seed, chunks=chunks, rng=rng
+    )
 
 
-def _copula_impl(cov: Union[List[List[float]], np.ndarray],
-                 df: Union[None, int, List[int], np.ndarray],
-                 samples: int, seed: int, chunks: Chunks2D, rng: str
-                 ) -> Union[np.ndarray, da.Array]:
+def _copula_impl(
+    cov: Union[List[List[float]], np.ndarray],
+    df: Union[None, int, List[int], np.ndarray],
+    samples: int,
+    seed: int,
+    chunks: Chunks2D,
+    rng: str,
+) -> Union[np.ndarray, da.Array]:
     """Implementation of gaussian_copula and t_copula
     """
     samples = int(samples)
     if samples <= 0:
-        raise ValueError('Number of samples must be positive')
+        raise ValueError("Number of samples must be positive")
     cov = np.asarray(cov)
     if cov.ndim != 2 or cov.shape[0] != cov.shape[1]:
-        raise ValueError('cov must be a square matrix')
+        raise ValueError("cov must be a square matrix")
     dimensions = cov.shape[0]
 
     L = numpy.linalg.cholesky(cov)
     if chunks is not None:
-        chunks = cast(NormalizedChunks2D,
-                      normalize_chunks(chunks, shape=(samples, dimensions)))
+        chunks = cast(
+            NormalizedChunks2D, normalize_chunks(chunks, shape=(samples, dimensions))
+        )
         L = da.from_array(L, chunks=(chunks[1], chunks[1]))
 
     rng = rng.lower()
-    if rng == 'mersenne twister':
+    if rng == "mersenne twister":
         # When pulling samples from the Mersenne Twister generator, we have
         # the samples on the rows. This guarantees that if we draw more
         # samples, the original samples won't change.
         rnd_state_y = duck.RandomState(seed)
-        y = rnd_state_y.standard_normal(size=(samples, dimensions),
-                                        chunks=chunks)
-    elif rng == 'sobol':
+        y = rnd_state_y.standard_normal(size=(samples, dimensions), chunks=chunks)
+    elif rng == "sobol":
         y = sobol(size=(samples, dimensions), d0=seed, chunks=chunks)
         y = duck.norm_ppf(y)
     else:
@@ -197,16 +206,18 @@ def _copula_impl(cov: Union[List[List[float]], np.ndarray],
     df = np.asarray(df)
     if (df <= 0).any():
         raise ValueError("df must always be greater than zero")
-    if df.shape not in ((), (dimensions, )):
-        raise ValueError("df must be either a scalar or a 1D vector with as "
-                         "many points as the width of the correlation matrix")
+    if df.shape not in ((), (dimensions,)):
+        raise ValueError(
+            "df must be either a scalar or a 1D vector with as "
+            "many points as the width of the correlation matrix"
+        )
     if df.ndim == 1 and chunks is not None:
-        df = da.from_array(df, chunks=(chunks[1], ))
+        df = da.from_array(df, chunks=(chunks[1],))
 
     # Define chunks for the S chi-square matrix
-    chunks_r = (chunks[0], (1, )) if chunks else None
+    chunks_r = (chunks[0], (1,)) if chunks else None
 
-    if rng == 'mersenne twister':
+    if rng == "mersenne twister":
         # Use two separate random states for the normal and the chi2
         # distributions. This is NOT the same as just extracting two series
         # from the same RandomState, as we must guarantee that, if you extract
@@ -214,10 +225,10 @@ def _copula_impl(cov: Union[List[List[float]], np.ndarray],
         # samples must remain the same.
         # Don't just do seed + 1 as that would have unwanted repercussions
         # when one tries to extract different series from different seeds.
-        seed_r = (seed + 190823761298456) % 2**32
+        seed_r = (seed + 190823761298456) % 2 ** 32
         rnd_state_r = duck.RandomState(seed_r)
         r = rnd_state_r.uniform(size=(samples, 1), chunks=chunks_r)
-    elif rng == 'sobol':
+    elif rng == "sobol":
         seed_r = seed + dimensions
         r = sobol(size=(samples, 1), d0=seed_r, chunks=chunks_r)
     else:
