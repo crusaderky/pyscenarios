@@ -15,9 +15,9 @@ v0.3.0 (Unreleased)
   Bumped up minimum versions for all dependencies:
 
   ==========  ====== ====
-  Dependency  v0.1   v0.2
+  Dependency  v0.2   v0.3
   ==========  ====== ====
-  python      3.5    3.6
+  python      3.5.0  3.6
   dask        0.17.3 2.2
   numba       0.34   0.44
   numpy       1.13   1.15
