@@ -25,7 +25,8 @@ v0.3.0 (Unreleased)
   ==========  ====== ====
 
 - Now using setuptools-scm for versioning
-- jit-compiled functions are now covered by coveralls
+- Functions decorated by numba are now covered by coveralls
+- Added black and isort to CI
 
 
 .. _whats-new.0.2.1:

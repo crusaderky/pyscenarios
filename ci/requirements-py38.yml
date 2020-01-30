@@ -12,5 +12,7 @@ dependencies:
   - pytest-cov
   - scipy
   # linter tools (only in the latest version of Python)
+  - black
   - flake8
+  - isort
   - mypy

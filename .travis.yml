@@ -33,6 +33,8 @@ script:
   - python -c "import pyscenarios"
   - if [[ "$CONVA_ENV" == "py38" ]]; then flake8; fi
   - if [[ "$CONVA_ENV" == "py38" ]]; then mypy .; fi
+  - if [[ "$CONVA_ENV" == "py38" ]]; then isort -rc --check .; fi
+  - if [[ "$CONVA_ENV" == "py38" ]]; then black -t py36 --check .; fi
   - if [[ "$CONDA_ENV" == "docs" ]]; then
       sphinx-build -n -j auto -b html -d _build/doctrees doc _build/html;
     else
