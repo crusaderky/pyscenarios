@@ -20,7 +20,7 @@ def test_array():
 
 @pytest.mark.parametrize("chunk", [False, True])
 @pytest.mark.parametrize(
-    "func,wrapped", [(duck.norm_ppf, scipy.stats.norm.ppf), (duck.sqrt, np.sqrt),]
+    "func,wrapped", [(duck.norm_ppf, scipy.stats.norm.ppf), (duck.sqrt, np.sqrt)]
 )
 def test_map_blocks(func, wrapped, chunk):
     x = np.random.rand(10)
@@ -53,7 +53,7 @@ def test_map_blocks(func, wrapped, chunk):
 )
 @pytest.mark.parametrize(
     "func,wrapped",
-    [(duck.chi2_ppf, scipy.stats.chi2.ppf), (duck.t_cdf, scipy.stats.t.cdf),],
+    [(duck.chi2_ppf, scipy.stats.chi2.ppf), (duck.t_cdf, scipy.stats.t.cdf)],
 )
 def test_map_blocks_df(func, wrapped, x, chunk_x, df, chunk_df):
     y = wrapped(x, df)
