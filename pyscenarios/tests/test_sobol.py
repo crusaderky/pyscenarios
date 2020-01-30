@@ -3,6 +3,8 @@ import numpy as np
 from numpy.testing import assert_array_equal
 from pyscenarios.sobol import sobol, max_dimensions
 
+from . import requires_jit
+
 
 EXPECT = np.array(
     [[0.5   , 0.5   , 0.5   , 0.5   ],  # noqa
@@ -55,6 +57,7 @@ def test_dask_2d():
     assert_array_equal(EXPECT, output.compute())
 
 
+@requires_jit
 @pytest.mark.parametrize('n', list(range(8, 13)))
 def test_samepoints(n):
     """Given exactly 2^n-1 samples, all series produce exactly the same

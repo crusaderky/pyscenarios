@@ -7,6 +7,7 @@ __pycache__
 # Packages
 *.egg
 *.egg-info
+.eggs
 dist
 build
 eggs
@@ -54,7 +55,6 @@ dask-worker-space/
 Icon*
 
 .ipynb_checkpoints
-pyscenarios/version.py
 
 doc/_build
 _build

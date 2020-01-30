@@ -1,6 +1,6 @@
 name: test_env
 channels:
-  - anaconda
+  - conda-forge
 dependencies:
   - python=3.7
   - coveralls
@@ -11,6 +11,3 @@ dependencies:
   - pytest
   - pytest-cov
   - scipy
-  # linter tools (only in the latest version of Python)
-  - flake8
-  - mypy

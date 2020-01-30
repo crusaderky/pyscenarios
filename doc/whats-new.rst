@@ -9,6 +9,24 @@ What's New
 v0.3.0 (Unreleased)
 -------------------
 
+- Added explicit support for Python 3.8
+- This project now adheres to NEP-29; see :ref:`mindeps_policy`.
+  Bumped up minimum versions for all dependencies:
+
+  ==========  ====== ====
+  Dependency  v0.2   v0.3
+  ==========  ====== ====
+  python      3.5.0  3.6
+  dask        0.17.3 2.2
+  numba       0.34   0.44
+  numpy       1.13   1.15
+  pandas      0.20   0.25
+  scipy       1.0    1.3
+  ==========  ====== ====
+
+- Now using setuptools-scm for versioning
+- jit-compiled functions are now covered by coveralls
+
 
 .. _whats-new.0.2.1:
 

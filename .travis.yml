@@ -3,23 +3,19 @@ language: python
 sudo: false # use container based build
 notifications:
   email: false
-branches:
-  except:
-    - fix-docs
 
 matrix:
   fast_finish: true
   include:
   - env: CONDA_ENV=minimal
-  - env: CONDA_ENV=py35
   - env: CONDA_ENV=py36
   - env: CONDA_ENV=py37
-  - env: CONDA_ENV=conda-forge
+  - env: CONDA_ENV=py38
+  - env: CONDA_ENV=py38 NUMBA_DISABLE_JIT=1  # coveralls for @jit-compiled functions
   - env: CONDA_ENV=docs
-  allow_failures:
 
 before_install:
-  - wget http://repo.continuum.io/miniconda/Miniconda3-3.16.0-Linux-x86_64.sh -O miniconda.sh;
+  - wget http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
   - bash miniconda.sh -b -p $HOME/miniconda
   - export PATH="$HOME/miniconda/bin:$PATH"
   - hash -r
@@ -28,23 +24,19 @@ before_install:
   - conda info -a
 
 install:
-  - conda env create -n test_env --file ci/requirements-$CONDA_ENV.yml;
+  - conda env create -n test_env --file ci/requirements-$CONDA_ENV.yml
   - source activate test_env
   - conda list
-  - pip install --no-deps -e .
+  - python -m pip install --no-deps -e .
 
 script:
   - python -c "import pyscenarios"
-  - if [[ "$CONVA_ENV" == "py37" ]]; then
-      flake8;
-    fi
-  - if [[ "$CONVA_ENV" == "py37" ]]; then
-      mypy .;
-    fi
+  - if [[ "$CONVA_ENV" == "py38" ]]; then flake8; fi
+  - if [[ "$CONVA_ENV" == "py38" ]]; then mypy .; fi
   - if [[ "$CONDA_ENV" == "docs" ]]; then
       sphinx-build -n -j auto -b html -d _build/doctrees doc _build/html;
     else
-      py.test pyscenarios --cov=pyscenarios --cov-config ci/.coveragerc --cov-report term-missing --verbose $EXTRA_FLAGS;
+      py.test pyscenarios --cov=pyscenarios --cov-config ci/.coveragerc --cov-report term-missing --verbose;
     fi
 after_success:
   - coveralls
