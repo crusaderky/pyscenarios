@@ -9,13 +9,6 @@ import scipy.stats
 from .typing import Chunks2D
 
 
-try:
-    blockwise = da.blockwise
-except AttributeError:
-    # dask < 1.1
-    blockwise = da.atop
-
-
 def array(x: Any) -> Union[np.ndarray, da.Array]:
     """Convert x to numpy array, unless it's a da.array
     """
@@ -32,7 +25,7 @@ def _apply_unary(func: Callable[[Any], Any]) -> Callable[[Any], Any]:
     def wrapper(x):
         if isinstance(x, da.Array):
             sig = tuple(range(x.ndim))
-            return blockwise(func, sig, x, sig, dtype=float)
+            return da.blockwise(func, sig, x, sig, dtype=float)
         return func(x)
     return wrapper
 
@@ -48,7 +41,7 @@ def _apply_binary(func: Callable[[Any, Any], Any]
         y = array(y)
         if isinstance(x, da.Array) or isinstance(y, da.Array):
             out_ndim = max(x.ndim, y.ndim)
-            return blockwise(
+            return da.blockwise(
                 func, tuple(range(out_ndim)),
                 x, tuple(range(out_ndim - x.ndim, out_ndim)),
                 y, tuple(range(out_ndim - y.ndim, out_ndim)),
