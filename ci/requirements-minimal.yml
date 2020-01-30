@@ -1,13 +1,14 @@
 name: test_env
 channels:
-  - anaconda
+  - conda-forge
 dependencies:
-  - python=3.5
+  - python=3.6
   - coveralls
-  - dask=0.17.3
-  - numba=0.34
-  - numpy=1.13
-  - pandas=0.20
-  - pytest=3.6
+  - dask=2.2
+  - flake8
+  - numba=0.44
+  - numpy=1.15
+  - pandas=0.25
+  - pytest
   - pytest-cov
-  - scipy=1.0
+  - scipy=1.3

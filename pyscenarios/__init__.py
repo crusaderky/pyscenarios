@@ -1,7 +1,10 @@
+import pkg_resources
+
 try:
-    from .version import version as __version__  # noqa: F401
-except ImportError:  # pragma: no cover
-    raise ImportError('pyscenarios not properly installed. If you are running '
-                      'from the source directory, please instead create a new '
-                      'virtual environment (using conda or virtualenv) and '
-                      'then install it in-place by running pip install -e .')
+    __version__ = pkg_resources.get_distribution("pyscenarios").version
+except Exception:
+    # Local copy or not installed with setuptools.
+    # Disable minimum version checks on downstream libraries.
+    __version__ = "999"
+
+__all__ = ("__version__", )

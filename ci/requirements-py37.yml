@@ -1,10 +1,11 @@
 name: test_env
 channels:
-  - anaconda
+  - conda-forge
 dependencies:
   - python=3.7
   - coveralls
   - dask
+  - flake8
   - numba
   - numpy
   - pandas

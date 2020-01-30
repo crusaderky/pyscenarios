@@ -3,24 +3,18 @@ language: python
 sudo: false # use container based build
 notifications:
   email: false
-branches:
-  except:
-    - fix-docs
 
 matrix:
   fast_finish: true
   include:
-  - env: CONDA_ENV=flake8
   - env: CONDA_ENV=minimal
-  - env: CONDA_ENV=py35
   - env: CONDA_ENV=py36
   - env: CONDA_ENV=py37
-  - env: CONDA_ENV=conda-forge
+  - env: CONDA_ENV=py38
   - env: CONDA_ENV=docs
-  allow_failures:
 
 before_install:
-  - wget http://repo.continuum.io/miniconda/Miniconda3-3.16.0-Linux-x86_64.sh -O miniconda.sh;
+  - wget http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
   - bash miniconda.sh -b -p $HOME/miniconda
   - export PATH="$HOME/miniconda/bin:$PATH"
   - hash -r
@@ -29,21 +23,18 @@ before_install:
   - conda info -a
 
 install:
-  - conda env create -n test_env --file ci/requirements-$CONDA_ENV.yml;
+  - conda env create -n test_env --file ci/requirements-$CONDA_ENV.yml
   - source activate test_env
   - conda list
   - pip install --no-deps -e .
 
 script:
-  - if [[ "$CONDA_ENV" != "flake8" ]]; then
-      python -c "import pyscenarios";
+  - python -c "import pyscenarios"
     fi
-  - if [[ "$CONDA_ENV" == "docs" ]]; then
-      sphinx-build -n -j auto -b html -d _build/doctrees doc _build/html;
-    elif [[ "$CONDA_ENV" == "flake8" ]]; then
-      flake8;
-    else
-      py.test pyscenarios --cov=pyscenarios --cov-config ci/.coveragerc --cov-report term-missing --verbose $EXTRA_FLAGS;
-    fi
+  - flake8
+  - if [[ "$CONDA_ENV" == "docs" ]]; then;
+    sphinx-build -n -j auto -b html -d _build/doctrees doc _build/html; fi
+  - if [[ "$CONDA_ENV" != "docs" ]]; then;
+    py.test pyscenarios -v --cov=pyscenarios --cov-config ci/.coveragerc --cov-report term-missing; fi
 after_success:
   - coveralls

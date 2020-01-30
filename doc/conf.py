@@ -75,7 +75,7 @@ copyright = '2018-%s, pyscenarios Developers' % datetime.datetime.now().year
 # built documents.
 #
 # The short X.Y version.
-version = pyscenarios.version.short_version
+version = pyscenarios.__version__.split("+")[0]
 # The full version, including alpha/beta/rc tags.
 release = pyscenarios.__version__
 
