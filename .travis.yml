@@ -31,14 +31,13 @@ install:
 
 script:
   - python -c "import pyscenarios"
-  - if [[ "$CONVA_ENV" == "py38" ]]; then flake8; fi
-  - if [[ "$CONVA_ENV" == "py38" ]]; then mypy .; fi
-  - if [[ "$CONVA_ENV" == "py38" ]]; then isort -rc --check .; fi
-  - if [[ "$CONVA_ENV" == "py38" ]]; then black -t py36 --check .; fi
+  - if [[ "$CONDA_ENV" == "py38" ]]; then flake8; fi
+  - if [[ "$CONDA_ENV" == "py38" ]]; then mypy .; fi
+  - if [[ "$CONDA_ENV" == "py38" ]]; then isort -rc --check .; fi
+  - if [[ "$CONDA_ENV" == "py38" ]]; then black -t py36 --check .; fi
   - if [[ "$CONDA_ENV" == "docs" ]]; then
-      sphinx-build -n -j auto -b html -d _build/doctrees doc _build/html;
-    else
-      py.test pyscenarios --cov=pyscenarios --cov-config ci/.coveragerc --cov-report term-missing --verbose;
-    fi
+      sphinx-build -n -j auto -b html -d _build/doctrees doc _build/html; fi
+  - if [[ "$CONDA_ENV" != "docs" ]]; then
+      pytest -v pyscenarios --cov=pyscenarios --cov-config ci/.coveragerc --cov-report term-missing; fi
 after_success:
   - coveralls
