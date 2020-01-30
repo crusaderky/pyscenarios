@@ -1,7 +1,7 @@
 .. currentmodule:: pyscenarios
 
 What's New
-**********
+==========
 
 
 .. _whats-new.0.3.0:
@@ -9,28 +9,8 @@ What's New
 v0.3.0 (Unreleased)
 -------------------
 
-
-.. _whats-new.0.2.1:
-
-v0.2.1 (2019-05-01)
--------------------
-
-- Make package discoverable by mypy
-- A more robust fix for `dask#4739 <https://github.com/dask/dask/issues/4739>`_
-
-
-.. _whats-new.0.2.0:
-
-v0.2.0 (unreleased)
-===================
-
-Code changes
-------------
-- Fixed IT copula for newer versions of dask
-
-Project and CI changes
-----------------------
-- Added explicit CI for Windows, Python 3.7, and 3.8
+- Added explicit support for Python 3.8
+- Now using setuptools-scm for versioning
 - This project now adheres to NEP-29; see :ref:`mindeps_policy`.
   Bumped up minimum versions for all dependencies:
 
@@ -45,6 +25,18 @@ Project and CI changes
   scipy       1.0    1.3
   ==========  ====== ====
 
+
+.. _whats-new.0.2.1:
+
+v0.2.1 (2019-05-01)
+-------------------
+
+- Make package discoverable by mypy
+- A more robust fix for `dask#4739 <https://github.com/dask/dask/issues/4739>`_
+
+
+.. _whats-new.0.2.0:
+
 v0.2.0 (2019-04-29)
 -------------------
 
@@ -56,13 +48,11 @@ v0.2.0 (2019-04-29)
 - Explicit CI tests for Windows, Python 3.5.0, and Python 3.7
 - Mandatory flake8 and mypy in CI
 - Changed license to Apache 2.0
-- Mandatory flake8 in CI
-- Now using setuptools-scm for versioning
 
 
 .. _whats-new.0.1.0:
 
 v0.1.0 (2018-05-27)
-===================
+-------------------
 
 Initial release.

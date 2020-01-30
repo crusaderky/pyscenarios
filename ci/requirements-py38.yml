@@ -5,10 +5,12 @@ dependencies:
   - python=3.8
   - coveralls
   - dask
-  - flake8
   - numba
   - numpy
   - pandas
   - pytest
   - pytest-cov
   - scipy
+  # linter tools (only in the latest version of Python)
+  - flake8
+  - mypy
