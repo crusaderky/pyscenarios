@@ -11,6 +11,7 @@ matrix:
   - env: CONDA_ENV=py36
   - env: CONDA_ENV=py37
   - env: CONDA_ENV=py38
+  - env: CONDA_ENV=py38 NUMBA_DISABLE_JIT=1  # coveralls for @jit-compiled functions
   - env: CONDA_ENV=docs
 
 before_install:
