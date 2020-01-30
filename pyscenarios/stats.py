@@ -1,12 +1,13 @@
 """Statistical functions
 """
 from typing import Any, Union
+
 import dask.array as da
 import numpy as np
+
 from . import duck
 
-
-__all__ = ('tail_dependence', )
+__all__ = ("tail_dependence",)
 
 
 def tail_dependence(x: Any, y: Any, q: Any) -> Union[np.ndarray, da.Array]:
@@ -42,9 +43,9 @@ def tail_dependence(x: Any, y: Any, q: Any) -> Union[np.ndarray, da.Array]:
     q = q[..., np.newaxis]
     x_lt_q = x < q
     x_ge_q = x >= q
-    xcount = duck.where(q < .5, x_lt_q, x_ge_q)
+    xcount = duck.where(q < 0.5, x_lt_q, x_ge_q)
     ltail = x_lt_q & (y < q)
     htail = x_ge_q & (y >= q)
-    tail = duck.where(q < .5, ltail, htail)
+    tail = duck.where(q < 0.5, ltail, htail)
 
     return tail.sum(axis=-1) / xcount.sum(axis=-1)

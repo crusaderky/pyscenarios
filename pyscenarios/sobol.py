@@ -5,19 +5,19 @@ This is a reimplementation of a C++ algorithm by
 Directions are based on :file:`new-joe-kuo-6.21201` from the URL above.
 """
 import lzma
-import pkg_resources
 from typing import Iterator, Tuple, Union, cast
 
-import numpy as np
 import dask.array as da
+import numpy as np
+import pkg_resources
 from dask.array.core import normalize_chunks
 from numba import jit
 
 from .typing import Chunks2D, NormalizedChunks2D
 
-__all__ = ('sobol', 'max_dimensions')
+__all__ = ("sobol", "max_dimensions")
 
-DIRECTIONS = 'new-joe-kuo-6.21201.txt.xz'
+DIRECTIONS = "new-joe-kuo-6.21201.txt.xz"
 
 
 v_cache = None
@@ -33,8 +33,8 @@ def load_v() -> np.ndarray:
     """
     global v_cache
     if v_cache is None:
-        with pkg_resources.resource_stream('pyscenarios', DIRECTIONS) as fh:
-            with lzma.open(fh, 'rt') as zfh:
+        with pkg_resources.resource_stream("pyscenarios", DIRECTIONS) as fh:
+            with lzma.open(fh, "rt") as zfh:
                 directions = _load_directions(zfh)
         v_cache = _calc_v_kernel(directions)
     return v_cache
@@ -58,12 +58,12 @@ def _load_directions(fh: Iterator[str]) -> np.ndarray:
     # Replace header with element for d=1
     rowlen = len(rows[-1])
     for row in rows:
-        row[:] = row[2:] + ['0'] * (rowlen - len(row))
-    rows[0] = ['0'] + ['1'] * (rowlen - 3)
-    return np.array(rows, dtype='uint32')
+        row[:] = row[2:] + ["0"] * (rowlen - len(row))
+    rows[0] = ["0"] + ["1"] * (rowlen - 3)
+    return np.array(rows, dtype="uint32")
 
 
-@jit('uint32[:,:](uint32[:,:])', nopython=True, nogil=True, cache=True)
+@jit("uint32[:,:](uint32[:,:])", nopython=True, nogil=True, cache=True)
 def _calc_v_kernel(directions: np.ndarray) -> np.ndarray:
     """Numba kernel for :func:`calc_v`
     """
@@ -76,7 +76,7 @@ def _calc_v_kernel(directions: np.ndarray) -> np.ndarray:
         for s in range(directions.shape[1] - 1):
             if directions[j, s + 1] == 0:
                 break
-            v[j, s] = directions[j, s + 1] * 2**(31 - s)
+            v[j, s] = directions[j, s + 1] * 2 ** (31 - s)
         else:
             # need a C-style for loop
             # for(s=0; s<m.size; s++)
@@ -84,17 +84,14 @@ def _calc_v_kernel(directions: np.ndarray) -> np.ndarray:
             s += 1
 
         for t in range(s, 32):
-            v[j, t] = v[j, t - s] ^ (v[j, t - s] // 2**s)
+            v[j, t] = v[j, t - s] ^ (v[j, t - s] // 2 ** s)
             for k in range(1, s):
-                v[j, t] ^= (
-                    ((directions[j, 0] // 2**(s - 1 - k)) & 1)
-                    * v[j, t - k])
+                v[j, t] ^= ((directions[j, 0] // 2 ** (s - 1 - k)) & 1) * v[j, t - k]
 
     return v
 
 
-def _sobol_kernel(samples: int, dimensions: int, s0: int, d0: int
-                  ) -> np.ndarray:
+def _sobol_kernel(samples: int, dimensions: int, s0: int, d0: int) -> np.ndarray:
     """Numba kernel for :func:`sobol`
 
     :returns:
@@ -103,15 +100,20 @@ def _sobol_kernel(samples: int, dimensions: int, s0: int, d0: int
         points[i, j] = the jth component of the ith point
         with i indexed from 0 to N-1 and j indexed from 0 to D-1
     """
-    output = np.empty((samples, dimensions), order='F')
+    output = np.empty((samples, dimensions), order="F")
     _sobol_kernel_jit(samples, dimensions, s0, d0, load_v(), output)
     return output
 
 
-@jit('void(uint32, uint32, uint32, uint32, uint32[:, :], float64[:, :])',
-     nopython=True, nogil=True, cache=True)
-def _sobol_kernel_jit(samples: int, dimensions: int, s0: int, d0: int,
-                      V: np.ndarray, output: np.ndarray) -> None:
+@jit(
+    "void(uint32, uint32, uint32, uint32, uint32[:, :], float64[:, :])",
+    nopython=True,
+    nogil=True,
+    cache=True,
+)
+def _sobol_kernel_jit(
+    samples: int, dimensions: int, s0: int, d0: int, V: np.ndarray, output: np.ndarray
+) -> None:
     """Jit-compiled core of :func:`_sobol_kernel
 
     When running in dask and there are multiple chunks on the
@@ -131,11 +133,12 @@ def _sobol_kernel_jit(samples: int, dimensions: int, s0: int, d0: int,
 
             state ^= V[j + d0, c]
             if i >= s0:
-                output[i - s0, j] = np.double(state) / np.double(2**32)
+                output[i - s0, j] = np.double(state) / np.double(2 ** 32)
 
 
-def sobol(size: Union[int, Tuple[int, int]], d0: int = 0,
-          chunks: Chunks2D = None) -> Union[np.ndarray, da.Array]:
+def sobol(
+    size: Union[int, Tuple[int, int]], d0: int = 0, chunks: Chunks2D = None
+) -> Union[np.ndarray, da.Array]:
     """Sobol points generator based on Gray code order
 
     :param size:
@@ -177,11 +180,12 @@ def sobol(size: Union[int, Tuple[int, int]], d0: int = 0,
     else:
         samples, dimensions = size
 
-    if not 0 < samples < 2**32:
+    if not 0 < samples < 2 ** 32:
         raise ValueError("samples must be between 1 and 2^32")
     if not 0 < dimensions + d0 <= max_dimensions():
-        raise ValueError("(dimensions + d0) must be between 1 and %d" %
-                         max_dimensions())
+        raise ValueError(
+            "(dimensions + d0) must be between 1 and %d" % max_dimensions()
+        )
 
     if chunks is None:
         res = _sobol_kernel(samples, dimensions, 0, d0)
@@ -190,17 +194,17 @@ def sobol(size: Union[int, Tuple[int, int]], d0: int = 0,
         return res
 
     # dask-specific code
-    chunks = cast(NormalizedChunks2D,
-                  normalize_chunks(chunks, shape=(samples, dimensions)))
-    name = 'sobol-%d-%d-%d' % (samples, dimensions, d0)
+    chunks = cast(
+        NormalizedChunks2D, normalize_chunks(chunks, shape=(samples, dimensions))
+    )
+    name = "sobol-%d-%d-%d" % (samples, dimensions, d0)
     dsk = {}
 
     offset_i = 0
     for i, size_i in enumerate(chunks[0]):
         offset_j = 0
         for j, size_j in enumerate(chunks[1]):
-            dsk[name, i, j] = (_sobol_kernel, size_i, size_j,
-                               offset_i, d0 + offset_j)
+            dsk[name, i, j] = (_sobol_kernel, size_i, size_j, offset_i, d0 + offset_j)
             offset_j += size_j
         offset_i += size_i
 

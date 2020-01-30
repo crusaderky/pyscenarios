@@ -7,4 +7,4 @@ except Exception:  # pragma: nocover
     # Disable minimum version checks on downstream libraries.
     __version__ = "999"
 
-__all__ = ("__version__", )
+__all__ = ("__version__",)

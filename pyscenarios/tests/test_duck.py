@@ -1,8 +1,9 @@
-import pytest
 import dask.array as da
 import numpy as np
+import pytest
 import scipy.stats
 from numpy.testing import assert_array_equal, assert_equal
+
 from pyscenarios import duck
 
 
@@ -17,11 +18,10 @@ def test_array():
     assert x is y
 
 
-@pytest.mark.parametrize('chunk', [False, True])
-@pytest.mark.parametrize('func,wrapped', [
-    (duck.norm_ppf, scipy.stats.norm.ppf),
-    (duck.sqrt, np.sqrt),
-])
+@pytest.mark.parametrize("chunk", [False, True])
+@pytest.mark.parametrize(
+    "func,wrapped", [(duck.norm_ppf, scipy.stats.norm.ppf), (duck.sqrt, np.sqrt),]
+)
 def test_map_blocks(func, wrapped, chunk):
     x = np.random.rand(10)
     y = wrapped(x)
@@ -34,27 +34,27 @@ def test_map_blocks(func, wrapped, chunk):
 
     assert_array_equal(y, dy)
     if chunk:
-        assert dy.chunks == ((5, 5), )
+        assert dy.chunks == ((5, 5),)
     else:
         assert isinstance(dy, np.ndarray)
 
 
-@pytest.mark.parametrize('chunk_df', [False, True])
-@pytest.mark.parametrize('chunk_x', [False, True])
-@pytest.mark.parametrize('df', [
-    3,
-    [1, 2, 3],
-    np.array([1, 2, 3])])
-@pytest.mark.parametrize('x', [
-    .2,
-    np.random.rand(4).reshape(4, 1),
-    np.random.rand(30).reshape(10, 3),
-    [[.1, .2, .3], [.4, .5, .6]],
-])
-@pytest.mark.parametrize('func,wrapped', [
-    (duck.chi2_ppf, scipy.stats.chi2.ppf),
-    (duck.t_cdf, scipy.stats.t.cdf),
-])
+@pytest.mark.parametrize("chunk_df", [False, True])
+@pytest.mark.parametrize("chunk_x", [False, True])
+@pytest.mark.parametrize("df", [3, [1, 2, 3], np.array([1, 2, 3])])
+@pytest.mark.parametrize(
+    "x",
+    [
+        0.2,
+        np.random.rand(4).reshape(4, 1),
+        np.random.rand(30).reshape(10, 3),
+        [[0.1, 0.2, 0.3], [0.4, 0.5, 0.6]],
+    ],
+)
+@pytest.mark.parametrize(
+    "func,wrapped",
+    [(duck.chi2_ppf, scipy.stats.chi2.ppf), (duck.t_cdf, scipy.stats.t.cdf),],
+)
 def test_map_blocks_df(func, wrapped, x, chunk_x, df, chunk_df):
     y = wrapped(x, df)
 
@@ -79,7 +79,7 @@ def test_map_blocks_df(func, wrapped, x, chunk_x, df, chunk_df):
         assert isinstance(dy, float)
 
 
-@pytest.mark.parametrize('chunk', [False, True])
+@pytest.mark.parametrize("chunk", [False, True])
 def test_where(chunk):
     x = np.array([1, 2, 3])
     y = np.array([0, 5, 2])
@@ -99,7 +99,7 @@ def test_where(chunk):
         assert isinstance(dz, np.ndarray)
 
 
-@pytest.mark.parametrize('chunks', [None, 2, ((2, 1), (2, 1))])
+@pytest.mark.parametrize("chunks", [None, 2, ((2, 1), (2, 1))])
 def test_randomstate_uniform(chunks):
     state = duck.RandomState(123)
     ref_np = np.random.RandomState(123)
@@ -107,15 +107,14 @@ def test_randomstate_uniform(chunks):
 
     seq = state.uniform(size=(3, 3), chunks=chunks)
     if chunks:
-        assert_array_equal(
-            seq, ref_da.uniform(size=(3, 3), chunks=chunks))
+        assert_array_equal(seq, ref_da.uniform(size=(3, 3), chunks=chunks))
         assert seq.chunks == ((2, 1), (2, 1))
     else:
         assert_array_equal(seq, ref_np.uniform(size=(3, 3)))
         assert isinstance(seq, np.ndarray)
 
 
-@pytest.mark.parametrize('chunks', [None, 2, ((2, 1), (2, 1))])
+@pytest.mark.parametrize("chunks", [None, 2, ((2, 1), (2, 1))])
 def test_randomstate_standard_normal(chunks):
     state = duck.RandomState(123)
     ref_np = np.random.RandomState(123)
@@ -123,8 +122,7 @@ def test_randomstate_standard_normal(chunks):
 
     seq = state.standard_normal(size=(3, 3), chunks=chunks)
     if chunks:
-        assert_array_equal(
-            seq, ref_da.standard_normal(size=(3, 3), chunks=chunks))
+        assert_array_equal(seq, ref_da.standard_normal(size=(3, 3), chunks=chunks))
         assert seq.chunks == ((2, 1), (2, 1))
     else:
         assert_array_equal(seq, ref_np.standard_normal(size=(3, 3)))
