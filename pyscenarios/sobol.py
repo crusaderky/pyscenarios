@@ -1,41 +1,46 @@
-#!/usr/bin/env python
 """Sobol sequence generator
 
 This is a reimplementation of a C++ algorithm by
 `Stephen Joe and Frances Y. Kuo <http://web.maths.unsw.edu.au/~fkuo/sobol/>`_.
 Directions are based on :file:`new-joe-kuo-6.21201` from the URL above.
 """
-from functools import lru_cache
+import lzma
 import pkg_resources
+from typing import Iterator, Tuple, Union, cast
+
 import numpy as np
 import dask.array as da
 from dask.array.core import normalize_chunks
 from numba import jit
 
+from .typing import Chunks2D, NormalizedChunks2D
+
 __all__ = ('sobol', 'max_dimensions')
 
-DIRECTIONS = 'new-joe-kuo-6.21201'
+DIRECTIONS = 'new-joe-kuo-6.21201.txt.xz'
 
 
-def calc_v():
-    """Precalculate V array from the original author's file and then store the
-    result to disk, in the same directory of this script. This function is
-    invoked by ``setup.py build_ext``.
+v_cache = None
+
+
+def load_v() -> np.ndarray:
+    """Load V from the original author's file. This function is executed
+    automatically the first time you call the :func:`sobol` function.
+    When using a dask backend, the V array is only loaded when
+    actually needed by the kernel; this results in smaller pickle files.
+    When using dask distributed, V is loaded locally on the workers instead of
+    being transferred over the network.
     """
-    import os.path
-    fdata = pkg_resources.resource_string(
-        'pyscenarios.resources', DIRECTIONS + '.txt').decode('ascii')
-    directions = _load_directions(fdata)
-    v = _calc_v_kernel(directions)
-
-    # This is dirty, but this function is exclusively invoked by setup.py
-    output_fname = os.path.join(
-        os.path.dirname(__file__), 'resources', DIRECTIONS + '.npy')
-    np.save(output_fname, v)
-    print("Generated SOBOl V matrix: %s" % output_fname)
+    global v_cache
+    if v_cache is None:
+        with pkg_resources.resource_stream('pyscenarios', DIRECTIONS) as fh:
+            with lzma.open(fh, 'rt') as zfh:
+                directions = _load_directions(zfh)
+        v_cache = _calc_v_kernel(directions)
+    return v_cache
 
 
-def _load_directions(fdata):
+def _load_directions(fh: Iterator[str]) -> np.ndarray:
     """Load input file containing direction numbers.
     The file must one of those available on the website of the
     original author, or formatted like one.
@@ -46,20 +51,20 @@ def _load_directions(fdata):
         Column 0 contains the a values, while columns 1+ contain the m values.
         The m values are padded on the right with zeros.
     """
-    rows = [row.split() for row in fdata.splitlines()]
+    rows = [row.split() for row in fh]
 
     # Add padding at end of rows
     # Drop first 2 columns
     # Replace header with element for d=1
-    rowlen = max(len(row) for row in rows) - 2
+    rowlen = len(rows[-1])
     for row in rows:
-        row[:] = row[2:] + [0] * (rowlen - len(row) + 2)
-    rows[0] = [0] + [1] * (rowlen - 1)
+        row[:] = row[2:] + ['0'] * (rowlen - len(row))
+    rows[0] = ['0'] + ['1'] * (rowlen - 3)
     return np.array(rows, dtype='uint32')
 
 
 @jit('uint32[:,:](uint32[:,:])', nopython=True, nogil=True, cache=True)
-def _calc_v_kernel(directions):
+def _calc_v_kernel(directions: np.ndarray) -> np.ndarray:
     """Numba kernel for :func:`calc_v`
     """
     # Initialise temp array of direction numbers
@@ -88,21 +93,8 @@ def _calc_v_kernel(directions):
     return v
 
 
-@lru_cache(None)
-def load_v():
-    """Load V from the on-disk cache. This function is executed
-    automatically the first time you call the :func:`sobol` function.
-    When using a dask backend, the V array is only loaded when
-    actually needed by the kernel; this results in smaller pickle files.
-    When using dask distributed, V is loaded locally on the workers instead of
-    being transferred over the network.
-    """
-    buf = pkg_resources.resource_stream(
-        'pyscenarios.resources', DIRECTIONS + '.npy')
-    return np.load(buf)
-
-
-def _sobol_kernel(samples, dimensions, s0, d0):
+def _sobol_kernel(samples: int, dimensions: int, s0: int, d0: int
+                  ) -> np.ndarray:
     """Numba kernel for :func:`sobol`
 
     :returns:
@@ -118,7 +110,8 @@ def _sobol_kernel(samples, dimensions, s0, d0):
 
 @jit('void(uint32, uint32, uint32, uint32, uint32[:, :], float64[:, :])',
      nopython=True, nogil=True, cache=True)
-def _sobol_kernel_jit(samples, dimensions, s0, d0, V, output):
+def _sobol_kernel_jit(samples: int, dimensions: int, s0: int, d0: int,
+                      V: np.ndarray, output: np.ndarray) -> None:
     """Jit-compiled core of :func:`_sobol_kernel
 
     When running in dask and there are multiple chunks on the
@@ -141,8 +134,9 @@ def _sobol_kernel_jit(samples, dimensions, s0, d0, V, output):
                 output[i - s0, j] = np.double(state) / np.double(2**32)
 
 
-def sobol(size, d0=0, chunks=None):
-    """SOBOL points generator based on Gray code order
+def sobol(size: Union[int, Tuple[int, int]], d0: int = 0,
+          chunks: Chunks2D = None) -> Union[np.ndarray, da.Array]:
+    """Sobol points generator based on Gray code order
 
     :param size:
         number of samples (cannot be greater than :math:`2^{32}`) to extract
@@ -196,7 +190,8 @@ def sobol(size, d0=0, chunks=None):
         return res
 
     # dask-specific code
-    chunks = normalize_chunks(chunks, shape=(samples, dimensions))
+    chunks = cast(NormalizedChunks2D,
+                  normalize_chunks(chunks, shape=(samples, dimensions)))
     name = 'sobol-%d-%d-%d' % (samples, dimensions, d0)
     dsk = {}
 
@@ -215,7 +210,7 @@ def sobol(size, d0=0, chunks=None):
     return res
 
 
-def max_dimensions():
+def max_dimensions() -> int:
     """Return number of dimensions available. When invoking :func:`sobol`,
     ``size[1] + d0`` must be smaller than this.
     """

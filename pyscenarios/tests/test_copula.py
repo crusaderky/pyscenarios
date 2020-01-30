@@ -40,7 +40,7 @@ def test_gaussian_mersenne_da():
 ])
 def test_gaussian_sobol(chunks, expect_chunks):
     actual = gaussian_copula(cov, samples=4, seed=123, chunks=chunks,
-                             rng='SOBOL')
+                             rng='Sobol')
     expect = [[ 0.        ,  0.        ,  0.        ],  # noqa
               [-0.67448975, -0.31303751, -1.15262386],
               [ 0.67448975,  0.31303751,  1.15262386],  # noqa
@@ -81,7 +81,7 @@ def test_student_t_mersenne_da():
 ])
 def test_student_t_sobol(chunks, expect_chunks):
     actual = t_copula(cov, df=3, samples=4, seed=123, chunks=chunks,
-                      rng='SOBOL')
+                      rng='Sobol')
     expect = [[ 0.        ,  0.        ,  0.        ],  # noqa
               [-0.90292647, -0.44513114, -1.38033019],
               [ 0.51756147,  0.24504617,  0.84650386],  # noqa
@@ -122,7 +122,7 @@ def test_it_mersenne_da():
 ])
 def test_it_sobol(chunks, expect_chunks):
     actual = t_copula(cov, df=[3, 4, 5], samples=4, seed=123,
-                      chunks=chunks, rng='SOBOL')
+                      chunks=chunks, rng='Sobol')
     expect = [[ 0.        ,  0.        ,  0.        ],  # noqa
               [-0.90292647, -0.41928686, -1.35361744],
               [ 0.51756147,  0.25248047,  0.91032037],  # noqa
@@ -138,14 +138,14 @@ all_copulas = pytest.mark.parametrize(
     'func,kwargs', [
         (gaussian_copula, {'rng': 'Mersenne Twister'}),
         (gaussian_copula, {'rng': 'Mersenne Twister', 'chunks': (4096, 2)}),
-        (gaussian_copula, {'rng': 'SOBOL'}),
+        (gaussian_copula, {'rng': 'Sobol'}),
         (t_copula, {'df': 8, 'rng': 'Mersenne Twister'}),
         (t_copula, {'df': 8, 'rng': 'Mersenne Twister', 'chunks': (4096, 2)}),
-        (t_copula, {'df': 8, 'rng': 'SOBOL'}),
+        (t_copula, {'df': 8, 'rng': 'Sobol'}),
         (t_copula, {'df': [8, 9, 10], 'rng': 'Mersenne Twister'}),
         (t_copula, {'df': [8, 9, 10], 'rng': 'Mersenne Twister',
                     'chunks': (4096, 2)}),
-        (t_copula, {'df': [8, 9, 10], 'rng': 'SOBOL'}),
+        (t_copula, {'df': [8, 9, 10], 'rng': 'Sobol'}),
     ])
 
 
@@ -185,7 +185,7 @@ def test_cov_roundtrip(func, kwargs):
     (999, [.13, .13, .13]),
     ([3, 3, 999, 999], [.33, .08, .13])
 ])
-@pytest.mark.parametrize('rng', ['Mersenne Twister', 'SOBOL'])
+@pytest.mark.parametrize('rng', ['Mersenne Twister', 'Sobol'])
 @pytest.mark.parametrize('chunks', [None, (65536, 1)])
 def test_tail_dependence(df, expect_td, rng, chunks):
     cov2 = [[1.0, 0.5, 0.5, 0.5],

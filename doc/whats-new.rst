@@ -3,6 +3,22 @@
 What's New
 **********
 
+
+.. _whats-new.0.3.0:
+
+v0.3.0 (Unreleased)
+-------------------
+
+
+.. _whats-new.0.2.1:
+
+v0.2.1 (2019-05-01)
+-------------------
+
+- Make package discoverable by mypy
+- A more robust fix for `dask#4739 <https://github.com/dask/dask/issues/4739>`_
+
+
 .. _whats-new.0.2.0:
 
 v0.2.0 (unreleased)
@@ -29,6 +45,16 @@ Project and CI changes
   scipy       1.0    1.3
   ==========  ====== ====
 
+v0.2.0 (2019-04-29)
+-------------------
+
+- Type annotations
+- 'rng' parameter in copula functions is now case insensitive
+- Work around regression in IT copula with dask >= 1.1
+  (`dask#4739 <https://github.com/dask/dask/issues/4739>`_)
+- Smaller binary package; simplified setup
+- Explicit CI tests for Windows, Python 3.5.0, and Python 3.7
+- Mandatory flake8 and mypy in CI
 - Changed license to Apache 2.0
 - Mandatory flake8 in CI
 - Now using setuptools-scm for versioning

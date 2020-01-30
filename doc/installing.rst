@@ -40,10 +40,11 @@ You can see the actual minimum tested versions in the `anaconda requirements fil
 Testing
 -------
 
-To run the test suite after installing pyscenarios, first install (via pypi or conda)
+To run the test suite after installing pyscenarios, first install
+(via pypi or conda)
 
 - `py.test <https://pytest.org>`__: Simple unit testing library
 
 and run
-``py.test --pyargs pyscenarios``.
+``py.test``.
 

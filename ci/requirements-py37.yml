@@ -12,3 +12,6 @@ dependencies:
   - pytest
   - pytest-cov
   - scipy
+  # linter tools (only in the latest version of Python)
+  - flake8
+  - mypy
