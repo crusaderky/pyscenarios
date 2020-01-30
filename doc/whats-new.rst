@@ -10,7 +10,6 @@ v0.3.0 (Unreleased)
 -------------------
 
 - Added explicit support for Python 3.8
-- Now using setuptools-scm for versioning
 - This project now adheres to NEP-29; see :ref:`mindeps_policy`.
   Bumped up minimum versions for all dependencies:
 
@@ -24,6 +23,9 @@ v0.3.0 (Unreleased)
   pandas      0.20   0.25
   scipy       1.0    1.3
   ==========  ====== ====
+
+- Now using setuptools-scm for versioning
+- jit-compiled functions are now covered by coveralls
 
 
 .. _whats-new.0.2.1:
