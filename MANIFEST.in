@@ -1,6 +1,14 @@
-include pyscenarios/*.txt.xz
-include pyscenarios/py.typed
+include HOW_TO_RELEASE
 include LICENSE
+include *.md
+include *.py
+recursive-include ci *
 recursive-include doc *
+recursive-include notebooks *
+recursive-include pyscenarios *
 prune doc/_build
+global-exclude __pycache__
+global-exclude *.pyc
 global-exclude .DS_Store
+global-exclude .ipynb_checkpoints
+global-exclude dask-worker-space
