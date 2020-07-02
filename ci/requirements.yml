@@ -1,13 +1,14 @@
-name: test_env
+name: pyscenarios
 channels:
   - conda-forge
+  - defaults
 dependencies:
-  - python=3.8
-  - coveralls
   - dask
   - numba
   - numpy
   - pandas
-  - pytest
-  - pytest-cov
   - scipy
+
+  - coverage
+  - pytest
+
