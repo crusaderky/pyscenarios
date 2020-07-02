@@ -7,10 +7,11 @@ Required dependencies
 ---------------------
 
 - Python 3.6
-- `dask <https://dask.org>`__
-- `numba <http://numba.pydata.org>`__
-- `numpy <http://www.numpy.org>`__
-- `scipy <https://www.scipy.org>`__
+- `dask <https://dask.org>`_
+- `numba <http://numba.pydata.org>`_
+- `numpy <http://www.numpy.org>`_
+- `pandas <https://pandas.pydata.org/>`_
+- `scipy <https://www.scipy.org>`_
 
 
 .. _mindeps_policy:
@@ -43,8 +44,7 @@ Testing
 To run the test suite after installing pyscenarios, first install
 (via pypi or conda)
 
-- `py.test <https://pytest.org>`__: Simple unit testing library
+- `py.test <https://pytest.org>`_: Simple unit testing library
 
 and run
 ``py.test``.
-

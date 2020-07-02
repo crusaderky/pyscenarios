@@ -1,4 +1,4 @@
-name: Test without numba JIT
+name: Test without JIT
 # Allow coverage tool to cover jit-compiled code
 
 on:
