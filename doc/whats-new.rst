@@ -6,7 +6,7 @@ What's New
 
 .. _whats-new.0.3.0:
 
-v0.3.0 (Unreleased)
+v0.3.0 (2020-07-02)
 -------------------
 
 - Added explicit support for Python 3.8

@@ -35,7 +35,7 @@ than N months ago*. Patch versions (x.y.Z) are not pinned, and only the latest a
 at the moment of publishing the xarray release is guaranteed to work.
 
 You can see the actual minimum tested versions in the `anaconda requirements file
-<https://github.com/crusaderky/pyscenarios/blob/master/ci/requirements-py36-minimal.yml>`_.
+<https://github.com/crusaderky/pyscenarios/blob/master/ci/requirements-minimal.yml>`_.
 
 
 Testing
