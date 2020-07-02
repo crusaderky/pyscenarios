@@ -1,11 +1,13 @@
 name: pyscenarios-docs
 channels:
   - conda-forge
+  - defaults
 dependencies:
-  - python=3.8
   - dask
   - numba
   - numpy
+  - pandas
   - scipy
-  - sphinx
+
+  - sphinx<3
   - sphinx_rtd_theme

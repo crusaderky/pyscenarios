@@ -26,6 +26,7 @@ v0.3.0 (Unreleased)
 
 - Now using setuptools-scm for versioning
 - Functions decorated by numba are now covered by coveralls
+- Migrated CI from travis + appveyor + coveralls to GitHub actions + codecov.io
 - Added black and isort to CI
 
 

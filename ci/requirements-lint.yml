@@ -1,13 +1,15 @@
-name: test_env
+name: pyscenarios-lint
 channels:
   - conda-forge
+  - defaults
 dependencies:
-  - python=3.6
-  - coveralls
   - dask
   - numba
   - numpy
   - pandas
-  - pytest
-  - pytest-cov
   - scipy
+
+  - black
+  - flake8
+  - isort
+  - mypy

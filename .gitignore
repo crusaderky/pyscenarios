@@ -58,3 +58,5 @@ Icon*
 
 doc/_build
 _build
+htmlcov
+coverage.xml

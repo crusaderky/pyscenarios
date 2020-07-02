@@ -196,7 +196,7 @@ def _copula_impl(
         y = sobol(size=(samples, dimensions), d0=seed, chunks=chunks)
         y = duck.norm_ppf(y)
     else:
-        raise ValueError("Unknown rng: %s" % rng)
+        raise ValueError(f"Unknown rng: {rng}")
 
     p = (L @ y.T).T  # Gaussian Copula
     if df is None:
@@ -232,7 +232,7 @@ def _copula_impl(
         seed_r = seed + dimensions
         r = sobol(size=(samples, 1), d0=seed_r, chunks=chunks_r)
     else:
-        assert False
+        assert False  # pragma: nocover
 
     s = duck.chi2_ppf(r, df)
     z = duck.sqrt(df / s) * p
