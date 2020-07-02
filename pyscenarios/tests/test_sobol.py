@@ -70,3 +70,10 @@ def test_samepoints(n):
     s = s.map_blocks(np.sort, axis=0)
     s = s.T - s[:, 0]
     assert not s.any()
+
+
+@pytest.mark.parametrize("n", [-1, 0, int(2**33)])
+def test_bad_samples(n):
+    with pytest.raises(ValueError) as e:
+        sobol(n)
+    assert str(e.value) == "samples must be between 1 and 2^32"

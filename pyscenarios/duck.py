@@ -95,9 +95,6 @@ class RandomState:
     def _numpy_state(self) -> np.random.RandomState:
         return self._dask_state._numpy_state
 
-    def seed(self, seed: Optional[int] = None) -> None:
-        self._dask_state.seed(seed)
-
     def _apply(
         self,
         func_name: str,
