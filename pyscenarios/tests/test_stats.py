@@ -3,7 +3,7 @@ import numpy as np
 import pytest
 from numpy.testing import assert_array_equal
 
-from pyscenarios.stats import tail_dependence
+from pyscenarios import tail_dependence
 
 
 @pytest.mark.parametrize("chunk", [False, True])

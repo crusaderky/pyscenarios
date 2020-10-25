@@ -7,8 +7,6 @@ import numpy as np
 
 from . import duck
 
-__all__ = ("tail_dependence",)
-
 
 def tail_dependence(x: Any, y: Any, q: Any) -> Union[np.ndarray, da.Array]:
     r"""Calculate `tail dependence

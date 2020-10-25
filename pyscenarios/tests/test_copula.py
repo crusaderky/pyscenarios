@@ -5,8 +5,7 @@ import pytest
 import scipy.stats
 from numpy.testing import assert_allclose
 
-from pyscenarios.copula import gaussian_copula, t_copula
-from pyscenarios.stats import tail_dependence
+from pyscenarios import gaussian_copula, t_copula, tail_dependence
 
 from . import requires_jit
 
@@ -170,8 +169,7 @@ all_copulas = pytest.mark.parametrize(
 
 @all_copulas
 def test_normal_01(func, kwargs):
-    """All copulas produce normal (0, 1) distributions for all series
-    """
+    """All copulas produce normal (0, 1) distributions for all series"""
     s = func(cov, samples=65535, **kwargs)
     s = scipy.stats.norm.cdf(s)
     hist, bin_edges = np.histogram(s)

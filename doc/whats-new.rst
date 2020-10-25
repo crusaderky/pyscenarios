@@ -8,6 +8,18 @@ What's New
 v0.4.0 (unreleased)
 -------------------
 
+- Moved and renamed functions:
+
+  ================================== ================================
+  v0.3.0                             v0.4.0
+  ================================== ================================
+  pyscenarios.copula.gaussian_copula pyscenarios.gaussian_copula
+  pyscenarios.copula.t_copula        pyscenarios.t_copula
+  pyscenarios.sobol.sobol            pyscenarios.sobol
+  pyscenarios.sobol.max_dimensions   pyscenarios.max_sobol_dimensions
+  pyscenarios.stats.tail_dependence  pyscenarios.tail_dependence
+  ================================== ================================
+
 
 .. _whats-new.0.3.0:
 
