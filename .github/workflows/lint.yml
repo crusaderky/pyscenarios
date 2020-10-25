@@ -41,7 +41,7 @@ jobs:
 
       - name: isort
         shell: bash -l {0}
-        run: isort -rc --check .
+        run: isort --py 36 --check .
 
       - name: mypy
         shell: bash -l {0}

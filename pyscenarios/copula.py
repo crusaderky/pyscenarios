@@ -12,8 +12,6 @@ from . import duck
 from .sobol import sobol
 from .typing import Chunks2D, NormalizedChunks2D
 
-__all__ = ("gaussian_copula", "t_copula")
-
 
 def gaussian_copula(
     cov: Union[List[List[float]], np.ndarray],
@@ -64,7 +62,7 @@ def gaussian_copula(
 
         The maximum seed when using sobol is::
 
-            pyscenarios.sobol.max_dimensions() - cov.shape[0] - 1
+            pyscenarios.sobol.max_sobol_dimensions() - cov.shape[0] - 1
 
     :param str rng:
         Either ``Mersenne Twister`` or ``Sobol``
@@ -142,7 +140,7 @@ def t_copula(
 
         The maximum seed when using sobol is::
 
-            pyscenarios.sobol.max_dimensions() - cov.shape[0] - 2
+            pyscenarios.sobol.max_sobol_dimensions() - cov.shape[0] - 2
 
     :param str rng:
         Either ``Mersenne Twister`` or ``Sobol``
@@ -168,8 +166,7 @@ def _copula_impl(
     chunks: Chunks2D,
     rng: str,
 ) -> Union[np.ndarray, da.Array]:
-    """Implementation of gaussian_copula and t_copula
-    """
+    """Implementation of gaussian_copula and t_copula"""
     samples = int(samples)
     if samples <= 0:
         raise ValueError("Number of samples must be positive")

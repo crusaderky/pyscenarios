@@ -1,5 +1,10 @@
+version: 2
 conda:
     file: ci/requirements-docs.yml
 python:
-   version: 3.7
+   version: 3.8
    setup_py_install: true
+sphinx:
+  builder: html
+  configuration: doc/conf.py
+  fail_on_warning: true

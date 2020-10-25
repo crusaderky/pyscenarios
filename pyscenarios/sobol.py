@@ -5,7 +5,7 @@ This is a reimplementation of a C++ algorithm by
 Directions are based on :file:`new-joe-kuo-6.21201` from the URL above.
 """
 import lzma
-from typing import Iterator, Tuple, Union, cast
+from typing import Iterable, Tuple, Union, cast
 
 import dask.array as da
 import numpy as np
@@ -15,15 +15,13 @@ from numba import jit
 
 from .typing import Chunks2D, NormalizedChunks2D
 
-__all__ = ("sobol", "max_dimensions")
-
 DIRECTIONS = "new-joe-kuo-6.21201.txt.xz"
 
 
 v_cache = None
 
 
-def load_v() -> np.ndarray:
+def _load_v() -> np.ndarray:
     """Load V from the original author's file. This function is executed
     automatically the first time you call the :func:`sobol` function.
     When using a dask backend, the V array is only loaded when
@@ -35,12 +33,12 @@ def load_v() -> np.ndarray:
     if v_cache is None:
         with pkg_resources.resource_stream("pyscenarios", DIRECTIONS) as fh:
             with lzma.open(fh, "rt") as zfh:
-                directions = _load_directions(zfh)
+                directions = _load_directions(zfh)  # type: ignore
         v_cache = _calc_v_kernel(directions)
     return v_cache
 
 
-def _load_directions(fh: Iterator[str]) -> np.ndarray:
+def _load_directions(fh: Iterable[str]) -> np.ndarray:
     """Load input file containing direction numbers.
     The file must one of those available on the website of the
     original author, or formatted like one.
@@ -65,8 +63,7 @@ def _load_directions(fh: Iterator[str]) -> np.ndarray:
 
 @jit("uint32[:,:](uint32[:,:])", nopython=True, nogil=True, cache=True)
 def _calc_v_kernel(directions: np.ndarray) -> np.ndarray:
-    """Numba kernel for :func:`calc_v`
-    """
+    """Numba kernel for :func:`calc_v`"""
     # Initialise temp array of direction numbers
     v = np.empty((directions.shape[0], 32), dtype=np.uint32)
 
@@ -101,7 +98,7 @@ def _sobol_kernel(samples: int, dimensions: int, s0: int, d0: int) -> np.ndarray
         with i indexed from 0 to N-1 and j indexed from 0 to D-1
     """
     output = np.empty((samples, dimensions), order="F")
-    _sobol_kernel_jit(samples, dimensions, s0, d0, load_v(), output)
+    _sobol_kernel_jit(samples, dimensions, s0, d0, _load_v(), output)
     return output
 
 
@@ -149,7 +146,7 @@ def sobol(
     :param int d0:
         first dimension. This can be used as a functional equivalent of a
         a random seed. dimensions + d0 can't be greater than
-        :func:`max_dimensions()` - 1.
+        :func:`max_sobol_dimensions()` - 1.
     :param chunks:
         If None, return a numpy array.
 
@@ -182,9 +179,9 @@ def sobol(
 
     if not 0 < samples < 2 ** 32:
         raise ValueError("samples must be between 1 and 2^32")
-    if not 0 < dimensions + d0 <= max_dimensions():
+    if not 0 < dimensions + d0 <= max_sobol_dimensions():
         raise ValueError(
-            "(dimensions + d0) must be between 1 and %d" % max_dimensions()
+            "(dimensions + d0) must be between 1 and %d" % max_sobol_dimensions()
         )
 
     if chunks is None:
@@ -214,8 +211,19 @@ def sobol(
     return res
 
 
-def max_dimensions() -> int:
+def max_sobol_dimensions() -> int:
     """Return number of dimensions available. When invoking :func:`sobol`,
     ``size[1] + d0`` must be smaller than this.
     """
-    return load_v().shape[0]
+    return _load_v().shape[0]
+
+
+def max_dimensions() -> int:
+    import warnings
+
+    warnings.warn(
+        "pyscenarios.sobol.max_dimensions has been moved to "
+        "pyscenarios.max_sobol_dimensions",
+        DeprecationWarning,
+    )
+    return max_sobol_dimensions()

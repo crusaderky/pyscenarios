@@ -302,12 +302,17 @@ texinfo_documents = [
 # texinfo_no_detailmenu = False
 
 
-# Example configuration for intersphinx: refer to the Python standard library.
+# Configuration for intersphinx
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3/", None),
-    "dask": ("https://dask.pydata.org/en/latest/", None),
+    "dask": ("https://docs.dask.org/en/stable/", None),
     "numba": ("https://numba.pydata.org/numba-doc/latest/", None),
-    "numpy": ("https://docs.scipy.org/doc/numpy/", None),
+    "numpy": ("https://numpy.org/doc/stable/", None),
     "pandas": ("https://pandas.pydata.org/pandas-docs/stable/", None),
     "scipy": ("https://docs.scipy.org/doc/scipy/reference/", None),
 }
+
+# Hack around intersphinx issue caused by :show-inheritance:
+import dask.array  # isort:skip
+
+dask.array.Array.__module__ = "dask.array"

@@ -11,8 +11,7 @@ from .typing import Chunks2D
 
 
 def array(x: Any) -> Union[np.ndarray, da.Array]:
-    """Convert x to numpy array, unless it's a da.array
-    """
+    """Convert x to numpy array, unless it's a da.array"""
     if isinstance(x, (np.ndarray, da.Array)):
         return x
     return np.array(x)

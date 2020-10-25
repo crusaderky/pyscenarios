@@ -2,7 +2,8 @@ import numpy as np
 import pytest
 from numpy.testing import assert_array_equal
 
-from pyscenarios.sobol import max_dimensions, sobol
+from pyscenarios import max_sobol_dimensions, sobol
+from pyscenarios.sobol import max_dimensions
 
 from . import requires_jit
 
@@ -27,8 +28,8 @@ EXPECT = np.array(
 )
 
 
-def test_max_dimensions():
-    assert max_dimensions() == 21201
+def test_max_sobol_dimensions():
+    assert max_sobol_dimensions() == 21201
     assert sobol((4, 21201)).shape == (4, 21201)
     assert sobol((4, 201), d0=21000).shape == (4, 201)
     with pytest.raises(ValueError):
@@ -36,6 +37,11 @@ def test_max_dimensions():
     assert sobol(4, d0=21200).shape == (4,)
     with pytest.raises(ValueError):
         sobol(4, d0=21201)
+
+
+def test_max_dimensions():
+    with pytest.warns(DeprecationWarning):
+        assert max_dimensions() == 21201
 
 
 def test_numpy_1d():
@@ -66,7 +72,7 @@ def test_samepoints(n):
     """Given exactly 2^n-1 samples, all series produce exactly the same
     points in different order
     """
-    s = sobol((2 ** n - 1, max_dimensions()), chunks=(2 ** n - 1, 2000))
+    s = sobol((2 ** n - 1, max_sobol_dimensions()), chunks=(2 ** n - 1, 2000))
     s = s.map_blocks(np.sort, axis=0)
     s = s.T - s[:, 0]
     assert not s.any()
