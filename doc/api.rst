@@ -5,6 +5,7 @@ Sobol
 -----
 .. autofunction:: pyscenarios.sobol
 .. autofunction:: pyscenarios.max_sobol_dimensions
+.. autofunction:: pyscenarios.scramble
 
 
 Copulas

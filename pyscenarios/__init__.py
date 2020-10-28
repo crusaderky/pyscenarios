@@ -1,7 +1,7 @@
 import pkg_resources
 
 from .copula import gaussian_copula, t_copula
-from .sobol import max_sobol_dimensions, sobol
+from .sobol import max_sobol_dimensions, scramble, sobol
 from .stats import clusterization, tail_dependence
 from .visualization import plot_couples
 
@@ -25,6 +25,7 @@ __all__ = (
     "t_copula",
     "sobol",
     "max_sobol_dimensions",
+    "scramble",
     "clusterization",
     "tail_dependence",
     "plot_couples",

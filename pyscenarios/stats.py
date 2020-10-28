@@ -60,6 +60,7 @@ def clusterization(samples: Union[np.ndarray, da.Array]) -> Any:
     #. For each sample, calculate the r^2 from each other sample:
        sum[i=0...d] (xi - yi)^2
     #. Then sum[j=0...s] 1 / rj^2
+    #. Finally, normalize the output by dividing it by its own median
 
     :param samples:
         numpy or dask array with dimensions (sample, dimension)
@@ -74,8 +75,8 @@ def clusterization(samples: Union[np.ndarray, da.Array]) -> Any:
 
     if isinstance(samples, np.ndarray):
         rq = square_radius(samples, samples2)
-        # The diagonal between a point and itself) is now full of zeros;
-        # set it to inf so that 1 / r^2 = 0.
+        # The diagonal (squared distance between a point and itself) is now full of
+        # zeros; set it to inf so that 1 / r^2 = 0.
         eye = np.eye(rq.shape[0], dtype=bool)
         irq = 1.0 / np.where(eye, np.inf, rq)
 
@@ -128,7 +129,8 @@ def clusterization(samples: Union[np.ndarray, da.Array]) -> Any:
     else:
         raise TypeError(samples)
 
-    return irq.sum(axis=1)
+    out = irq.sum(axis=1)
+    return out / np.median(out, axis=0)
 
 
 @guvectorize(["f8[:],f8[:],f8[:]"], "(d),(d)->()", nopython=True, cache=True)

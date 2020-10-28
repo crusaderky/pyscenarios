@@ -1,13 +1,11 @@
 """Duck-typed functions that call numpy or dask depending on the inputs
 """
 from functools import wraps
-from typing import Any, Callable, Optional, Tuple, Union
+from typing import Any, Callable, Optional, Union
 
 import dask.array as da
 import numpy as np
 import scipy.stats
-
-from .typing import Chunks2D
 
 
 def array(x: Any) -> Union[np.ndarray, da.Array]:
@@ -97,20 +95,30 @@ class RandomState:
     def _apply(
         self,
         func_name: str,
-        size: Optional[Tuple[int, int]] = None,
-        chunks: Chunks2D = None,
+        *args,
+        size=None,
+        chunks=None,
+        **kwargs,
     ):
         if chunks is not None:
             func = getattr(self._dask_state, func_name)
-            return func(size=size, chunks=chunks)
+            return func(*args, **kwargs, size=size, chunks=chunks)
         else:
             func = getattr(self._numpy_state, func_name)
-            return func(size=size)
+            return func(*args, **kwargs, size=size)
 
-    def uniform(self, size: Optional[Tuple[int, int]] = None, chunks: Chunks2D = None):
+    def uniform(self, size=None, chunks=None):
         return self._apply("uniform", size=size, chunks=chunks)
 
-    def standard_normal(
-        self, size: Optional[Tuple[int, int]] = None, chunks: Chunks2D = None
+    def randint(
+        self,
+        low,
+        high=None,
+        size=None,
+        chunks=None,
+        dtype=None,
     ):
+        return self._apply("randint", low, high, size=size, chunks=chunks, dtype=dtype)
+
+    def standard_normal(self, size=None, chunks=None):
         return self._apply("standard_normal", size=size, chunks=chunks)
