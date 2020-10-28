@@ -16,3 +16,9 @@ Copulas
 Statistical functions
 ---------------------
 .. autofunction:: pyscenarios.tail_dependence
+.. autofunction:: pyscenarios.clusterization
+
+
+Visualization
+-------------
+.. autofunction:: pyscenarios.plot_couples
