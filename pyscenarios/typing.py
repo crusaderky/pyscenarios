@@ -1,10 +1,7 @@
 from __future__ import annotations
 
-from typing import (  # TODO use builtins (requires Python >=3.9)
-    TYPE_CHECKING,
-    Tuple,
-    Union,
-)
+# TODO use builtins (requires Python >=3.9)
+from typing import TYPE_CHECKING, Tuple, Union
 
 if TYPE_CHECKING:
     # TODO move to typing (requires Python >=3.10)
