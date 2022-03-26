@@ -1,8 +1,9 @@
 import importlib.metadata
 
 from pyscenarios.copula import gaussian_copula, t_copula
-from pyscenarios.sobol import max_sobol_dimensions, sobol
-from pyscenarios.stats import tail_dependence
+from pyscenarios.sobol import max_sobol_dimensions, scramble, sobol
+from pyscenarios.stats import clusterization, tail_dependence
+from pyscenarios.visualization import plot_couples
 
 try:
     __version__ = importlib.metadata.version("pyscenarios")
@@ -21,5 +22,8 @@ __all__ = (
     "t_copula",
     "sobol",
     "max_sobol_dimensions",
+    "scramble",
+    "clusterization",
     "tail_dependence",
+    "plot_couples",
 )

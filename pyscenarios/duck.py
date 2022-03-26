@@ -100,15 +100,17 @@ class RandomState:
     def _apply(
         self,
         func_name: str,
+        *args,
         size: tuple[int, int] | None = None,
         chunks: Chunks2D = None,
+        **kwargs,
     ):
         if chunks is not None:
             func = getattr(self._dask_state, func_name)
-            return func(size=size, chunks=chunks)
+            return func(*args, **kwargs, size=size, chunks=chunks)
         else:
             func = getattr(self._numpy_state, func_name)
-            return func(size=size)
+            return func(*args, **kwargs, size=size)
 
     def uniform(self, size: tuple[int, int] | None = None, chunks: Chunks2D = None):
         return self._apply("uniform", size=size, chunks=chunks)
@@ -117,3 +119,13 @@ class RandomState:
         self, size: tuple[int, int] | None = None, chunks: Chunks2D = None
     ):
         return self._apply("standard_normal", size=size, chunks=chunks)
+
+    def randint(
+        self,
+        low: int,
+        high: int | None = None,
+        size: tuple[int, int] = None,
+        chunks: Chunks2D = None,
+        dtype: Any = None,
+    ):
+        return self._apply("randint", low, high, size=size, chunks=chunks, dtype=dtype)

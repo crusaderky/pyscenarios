@@ -15,6 +15,7 @@ import numpy as np
 from dask.array.core import normalize_chunks
 from numba import jit
 
+from pyscenarios.duck import RandomState
 from pyscenarios.typing import Chunks2D, NormalizedChunks2D
 
 DIRECTIONS = "new-joe-kuo-6.21201.txt.xz"
@@ -233,3 +234,68 @@ def max_dimensions() -> int:
         DeprecationWarning,
     )
     return max_sobol_dimensions()
+
+
+def scramble(samples: np.ndarray | da.Array, seed: int = 0) -> np.ndarray | da.Array:
+    """Scramble function as in Owen (1997)
+
+    Reference:
+
+    .. [1] Saltelli, A., Chan, K., Scott, E.M., "Sensitivity Analysis"
+    """
+    if isinstance(samples, da.Array):
+        orig_chunks = samples.chunks
+        samples = samples.rechunk({0: -1})
+        rnd_chunks: Chunks2D = (-1, samples.chunks[1])
+    else:
+        samples = da.asarray(samples)
+        rnd_chunks = None
+
+    assert samples.ndim == 2
+    rng = RandomState(seed)
+    rnd_shape = (samples.shape[0] // 2 + samples.shape[0] // 4, samples.shape[1])
+    bi = rng.randint(2, size=rnd_shape, chunks=rnd_chunks, dtype=bool)
+    u = rng.uniform(size=rnd_shape, chunks=rnd_chunks)
+
+    if isinstance(samples, da.Array):
+        return da.map_blocks(_scramble_kernel, samples, bi, u, dtype=float).rechunk(
+            orig_chunks
+        )
+    else:
+        return _scramble_kernel(samples, bi, u)
+
+
+@jit(["f8[:],b1[:],f8[:]"], nopython=True, nogil=True, cache=True)
+def _scramble_inplace_1d(samples, bi, u):
+    h = samples.size // 2
+    n = h * 2
+
+    bi, next_bi = bi[:h], bi[h:]
+    u, next_u = u[:h], u[h:]
+    pos = u.argsort()
+    idx = samples[:n].argsort()
+    iidx = idx.argsort()
+
+    # Scramble the indexes
+    tmp = idx[:h][bi]
+    idx[:h][bi] = idx[h:n][pos[bi]]
+    idx[h:n][pos[bi]] = tmp
+
+    # Apply the scrambling
+    samples[:n] = samples[:n][idx[iidx]]
+
+    # Apply scrambling to sub intervals
+    if n > 2:
+        _scramble_inplace_1d(samples[:h], next_bi, next_u)
+        _scramble_inplace_1d(samples[h:n], next_bi, next_u)
+
+
+def _scramble_kernel(samples, bi, u):
+    if samples.flags["F_CONTIGUOUS"]:
+        out = samples.copy()
+    else:
+        out = np.asfortranarray(samples)
+
+    for i in range(samples.shape[1]):
+        _scramble_inplace_1d(out[:, i], bi[:, i], u[:, i])
+    return out

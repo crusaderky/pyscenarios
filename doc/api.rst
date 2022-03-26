@@ -5,6 +5,7 @@ Sobol
 -----
 .. autofunction:: pyscenarios.sobol
 .. autofunction:: pyscenarios.max_sobol_dimensions
+.. autofunction:: pyscenarios.scramble
 
 
 Copulas
@@ -16,3 +17,9 @@ Copulas
 Statistical functions
 ---------------------
 .. autofunction:: pyscenarios.tail_dependence
+.. autofunction:: pyscenarios.clusterization
+
+
+Visualization
+-------------
+.. autofunction:: pyscenarios.plot_couples

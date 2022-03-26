@@ -4,6 +4,7 @@ channels:
   - defaults
 dependencies:
   - dask
+  - matplotlib
   - numba
   - numpy
   - scipy
