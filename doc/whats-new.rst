@@ -21,6 +21,8 @@ v0.4.0 (unreleased)
   ================================== ================================
 
 - Dropped support for Python 3.6 and 3.7
+- Dropped requirement for pandas
+- Dropped requirement for setuptools at runtime
 - Added support for Python 3.9 and 3.10
 
 

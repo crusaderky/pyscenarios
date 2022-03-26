@@ -5,5 +5,4 @@
 dask >= 2.2
 numba >= 0.44
 numpy >= 1.15
-pandas >= 0.25
 scipy >= 1.3

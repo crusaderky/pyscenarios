@@ -6,7 +6,6 @@ dependencies:
   - dask
   - numba
   - numpy
-  - pandas
   - scipy
 
   - sphinx

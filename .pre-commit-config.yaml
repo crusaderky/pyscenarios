@@ -36,6 +36,5 @@ repos:
           # Typed libraries
           - dask
           - numpy
-          - pandas
           # Libraries imported exclusively within `if TYPE_CHECKING:`
           - typing_extensions
