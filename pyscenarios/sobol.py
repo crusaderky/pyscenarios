@@ -8,15 +8,14 @@ from __future__ import annotations
 
 import lzma
 import pkgutil
-from typing import TYPE_CHECKING, cast
+from typing import cast
 
 import dask.array as da
 import numpy as np
 from dask.array.core import normalize_chunks
 from numba import jit
 
-if TYPE_CHECKING:
-    from pyscenarios.typing import Chunks2D, NormalizedChunks2D
+from pyscenarios.typing import Chunks2D, NormalizedChunks2D
 
 DIRECTIONS = "new-joe-kuo-6.21201.txt.xz"
 
@@ -199,7 +198,7 @@ def sobol(
 
     # dask-specific code
     chunks = cast(
-        "NormalizedChunks2D", normalize_chunks(chunks, shape=(samples, dimensions))
+        NormalizedChunks2D, normalize_chunks(chunks, shape=(samples, dimensions))
     )
     name = "sobol-%d-%d-%d" % (samples, dimensions, d0)
     dsk = {}

@@ -2,7 +2,7 @@
 """
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, cast
+from typing import cast
 
 import dask.array as da
 import numpy as np
@@ -12,9 +12,7 @@ from dask.array.core import normalize_chunks
 
 from pyscenarios import duck
 from pyscenarios.sobol import sobol
-
-if TYPE_CHECKING:
-    from pyscenarios.typing import Chunks2D, NormalizedChunks2D
+from pyscenarios.typing import Chunks2D, NormalizedChunks2D
 
 
 def gaussian_copula(
@@ -182,7 +180,7 @@ def _copula_impl(
     L = numpy.linalg.cholesky(cov)
     if chunks is not None:
         chunks = cast(
-            "NormalizedChunks2D", normalize_chunks(chunks, shape=(samples, dimensions))
+            NormalizedChunks2D, normalize_chunks(chunks, shape=(samples, dimensions))
         )
         L = da.from_array(L, chunks=(chunks[1], chunks[1]))
 

@@ -4,14 +4,13 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from functools import wraps
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 import dask.array as da
 import numpy as np
 import scipy.stats
 
-if TYPE_CHECKING:
-    from pyscenarios.typing import Chunks2D
+from pyscenarios.typing import Chunks2D
 
 
 def array(x: Any) -> np.ndarray | da.Array:
