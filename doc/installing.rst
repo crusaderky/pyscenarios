@@ -6,7 +6,7 @@ Installation
 Required dependencies
 ---------------------
 
-- Python 3.6 or later
+- Python 3.8 or later
 - `dask <https://dask.org>`_
 - `numba <http://numba.pydata.org>`_
 - `numpy <http://www.numpy.org>`_
@@ -24,7 +24,6 @@ supported version of its dependencies:
 
 - **Python:** 42 months
   (`NEP-29 <https://numpy.org/neps/nep-0029-deprecation_policy.html>`_)
-- **setuptools:** 42 months (but no older than 38.4)
 - **numpy:** 24 months
   (`NEP-29 <https://numpy.org/neps/nep-0029-deprecation_policy.html>`_)
 - **all other libraries:** 12 months

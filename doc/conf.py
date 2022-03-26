@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 #
 # pyscenarios documentation build configuration file, created by
 # sphinx-quickstart on Thu Feb  6 18:57:54 2014.
@@ -11,26 +10,12 @@
 #
 # All configuration values have a default; values that are commented out
 # serve to show the default.
+from __future__ import annotations
+
 import datetime
-import importlib
 import os
-import sys
 
 import pyscenarios
-
-allowed_failures = set()
-
-print("python exec:", sys.executable)
-print("sys.path:", sys.path)
-for name in ("numpy", "numba", "dask"):
-    try:
-        module = importlib.import_module(name)
-        fname = module.__file__.rstrip("__init__.py")
-        print("%s: %s, %s" % (name, module.__version__, fname))
-    except ImportError:
-        print("no %s" % name)
-
-print("pyscenarios: %s, %s" % (pyscenarios.__version__, pyscenarios.__file__))
 
 # -- General configuration ------------------------------------------------
 
@@ -217,13 +202,13 @@ htmlhelp_basename = "pyscenariosdoc"
 
 # -- Options for LaTeX output ---------------------------------------------
 
-latex_elements = {
+latex_elements: dict[str, str] = {
     # The paper size ('letterpaper' or 'a4paper').
-    #'papersize': 'letterpaper',
+    # 'papersize': 'letterpaper',
     # The font size ('10pt', '11pt' or '12pt').
-    #'pointsize': '10pt',
+    # 'pointsize': '10pt',
     # Additional stuff for the LaTeX preamble.
-    #'preamble': '',
+    # 'preamble': '',
 }
 
 # Grouping the document tree into LaTeX files. List of tuples
@@ -313,6 +298,6 @@ intersphinx_mapping = {
 }
 
 # Hack around intersphinx issue caused by :show-inheritance:
-import dask.array  # isort:skip
+import dask.array  # isort:skip # noqa: E402
 
 dask.array.Array.__module__ = "dask.array"

@@ -20,6 +20,9 @@ v0.4.0 (unreleased)
   pyscenarios.stats.tail_dependence  pyscenarios.tail_dependence
   ================================== ================================
 
+- Dropped support for Python 3.6 and 3.7
+- Added support for Python 3.9 and 3.10
+
 
 .. _whats-new.0.3.0:
 

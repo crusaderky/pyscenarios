@@ -24,7 +24,7 @@ jobs:
         with:
           miniconda-version: "latest"
           auto-update-conda: true
-          python-version: 3.6
+          python-version: 3.8
           environment-file: ci/requirements-minimal.yml
           activate-environment: pyscenarios-minimal
           auto-activate-base: false

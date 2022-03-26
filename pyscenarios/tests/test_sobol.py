@@ -4,8 +4,7 @@ from numpy.testing import assert_array_equal
 
 from pyscenarios import max_sobol_dimensions, sobol
 from pyscenarios.sobol import max_dimensions
-
-from . import requires_jit
+from pyscenarios.tests import requires_jit
 
 EXPECT = np.array(
     [
@@ -72,13 +71,13 @@ def test_samepoints(n):
     """Given exactly 2^n-1 samples, all series produce exactly the same
     points in different order
     """
-    s = sobol((2 ** n - 1, max_sobol_dimensions()), chunks=(2 ** n - 1, 2000))
+    s = sobol((2**n - 1, max_sobol_dimensions()), chunks=(2**n - 1, 2000))
     s = s.map_blocks(np.sort, axis=0)
     s = s.T - s[:, 0]
     assert not s.any()
 
 
-@pytest.mark.parametrize("n", [-1, 0, int(2 ** 33)])
+@pytest.mark.parametrize("n", [-1, 0, int(2**33)])
 def test_bad_samples(n):
     with pytest.raises(ValueError) as e:
         sobol(n)

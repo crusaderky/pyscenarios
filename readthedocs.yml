@@ -1,15 +1,5 @@
-version: 2
-
 conda:
-    environment: ci/requirements-docs.yml
-
+    file: ci/requirements-docs.yml
 python:
    version: 3.8
-   install:
-      - method: pip
-        path: .
-
-sphinx:
-  builder: html
-  configuration: doc/conf.py
-  fail_on_warning: true
+   setup_py_install: true

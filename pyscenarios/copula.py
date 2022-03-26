@@ -1,6 +1,8 @@
 """High performance copula generators
 """
-from typing import List, Union, cast
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, cast
 
 import dask.array as da
 import numpy as np
@@ -8,18 +10,20 @@ import numpy.linalg
 import numpy.random
 from dask.array.core import normalize_chunks
 
-from . import duck
-from .sobol import sobol
-from .typing import Chunks2D, NormalizedChunks2D
+from pyscenarios import duck
+from pyscenarios.sobol import sobol
+
+if TYPE_CHECKING:
+    from pyscenarios.typing import Chunks2D, NormalizedChunks2D
 
 
 def gaussian_copula(
-    cov: Union[List[List[float]], np.ndarray],
+    cov: list[list[float]] | np.ndarray,
     samples: int,
     seed: int = 0,
     chunks: Chunks2D = None,
     rng: str = "Mersenne Twister",
-) -> Union[np.ndarray, da.Array]:
+) -> np.ndarray | da.Array:
     """Gaussian Copula scenario generator.
 
     Simplified algorithm::
@@ -81,13 +85,13 @@ def gaussian_copula(
 
 
 def t_copula(
-    cov: Union[List[List[float]], np.ndarray],
-    df: Union[int, List[int], np.ndarray],
+    cov: list[list[float]] | np.ndarray,
+    df: int | list[int] | np.ndarray,
     samples: int,
     seed: int = 0,
     chunks: Chunks2D = None,
     rng: str = "Mersenne Twister",
-) -> Union[np.ndarray, da.Array]:
+) -> np.ndarray | da.Array:
     """Student T Copula / IT Copula scenario generator.
 
     Simplified algorithm::
@@ -159,13 +163,13 @@ def t_copula(
 
 
 def _copula_impl(
-    cov: Union[List[List[float]], np.ndarray],
-    df: Union[None, int, List[int], np.ndarray],
+    cov: list[list[float]] | np.ndarray,
+    df: int | list[int] | np.ndarray | None,
     samples: int,
     seed: int,
     chunks: Chunks2D,
     rng: str,
-) -> Union[np.ndarray, da.Array]:
+) -> np.ndarray | da.Array:
     """Implementation of gaussian_copula and t_copula"""
     samples = int(samples)
     if samples <= 0:
@@ -178,7 +182,7 @@ def _copula_impl(
     L = numpy.linalg.cholesky(cov)
     if chunks is not None:
         chunks = cast(
-            NormalizedChunks2D, normalize_chunks(chunks, shape=(samples, dimensions))
+            "NormalizedChunks2D", normalize_chunks(chunks, shape=(samples, dimensions))
         )
         L = da.from_array(L, chunks=(chunks[1], chunks[1]))
 
@@ -222,7 +226,7 @@ def _copula_impl(
         # samples must remain the same.
         # Don't just do seed + 1 as that would have unwanted repercussions
         # when one tries to extract different series from different seeds.
-        seed_r = (seed + 190823761298456) % 2 ** 32
+        seed_r = (seed + 190823761298456) % 2**32
         rnd_state_r = duck.RandomState(seed_r)
         r = rnd_state_r.uniform(size=(samples, 1), chunks=chunks_r)
     elif rng == "sobol":
