@@ -20,10 +20,19 @@ v0.4.0 (unreleased)
   pyscenarios.stats.tail_dependence  pyscenarios.tail_dependence
   ================================== ================================
 
-- Dropped support for Python 3.6 and 3.7
+- Added support for Python 3.9 and 3.10
+- Bumped up minimum versions for dependencies:
+
+  ==========  ==== ====
+  Dependency  v0.3 v0.4
+  ==========  ==== ====
+  python      3.6  3.8
+  numba       0.44 0.47
+  numpy       1.15 1.16
+  ==========  ==== ====
+
 - Dropped requirement for pandas
 - Dropped requirement for setuptools at runtime
-- Added support for Python 3.9 and 3.10
 
 
 .. _whats-new.0.3.0:

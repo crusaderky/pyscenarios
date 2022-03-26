@@ -3,6 +3,6 @@
 # https://help.github.com/en/github/visualizing-repository-data-with-graphs/listing-the-packages-that-a-repository-depends-on
 
 dask >= 2.2
-numba >= 0.44
-numpy >= 1.15
+numba >= 0.47
+numpy >= 1.16
 scipy >= 1.3
