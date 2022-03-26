@@ -3,7 +3,7 @@ from __future__ import annotations
 # TODO use builtins (requires Python >=3.9)
 from typing import TYPE_CHECKING, Tuple, Union
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: nocover
     # TODO move to typing (requires Python >=3.10)
     from typing_extensions import TypeAlias
 
