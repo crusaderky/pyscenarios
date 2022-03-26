@@ -4,21 +4,23 @@ This is a reimplementation of a C++ algorithm by
 `Stephen Joe and Frances Y. Kuo <http://web.maths.unsw.edu.au/~fkuo/sobol/>`_.
 Directions are based on :file:`new-joe-kuo-6.21201` from the URL above.
 """
+from __future__ import annotations
+
 import lzma
-from typing import Iterable, Tuple, Union, cast
+import pkgutil
+from typing import cast
 
 import dask.array as da
 import numpy as np
-import pkg_resources
 from dask.array.core import normalize_chunks
 from numba import jit
 
-from .typing import Chunks2D, NormalizedChunks2D
+from pyscenarios.typing import Chunks2D, NormalizedChunks2D
 
 DIRECTIONS = "new-joe-kuo-6.21201.txt.xz"
 
 
-v_cache = None
+_v_cache = None
 
 
 def _load_v() -> np.ndarray:
@@ -29,16 +31,14 @@ def _load_v() -> np.ndarray:
     When using dask distributed, V is loaded locally on the workers instead of
     being transferred over the network.
     """
-    global v_cache
-    if v_cache is None:
-        with pkg_resources.resource_stream("pyscenarios", DIRECTIONS) as fh:
-            with lzma.open(fh, "rt") as zfh:
-                directions = _load_directions(zfh)  # type: ignore
-        v_cache = _calc_v_kernel(directions)
-    return v_cache
+    global _v_cache
+    if _v_cache is None:
+        directions = _load_directions(DIRECTIONS)
+        _v_cache = _calc_v(directions)
+    return _v_cache
 
 
-def _load_directions(fh: Iterable[str]) -> np.ndarray:
+def _load_directions(resource_fname: str) -> np.ndarray:
     """Load input file containing direction numbers.
     The file must one of those available on the website of the
     original author, or formatted like one.
@@ -49,7 +49,13 @@ def _load_directions(fh: Iterable[str]) -> np.ndarray:
         Column 0 contains the a values, while columns 1+ contain the m values.
         The m values are padded on the right with zeros.
     """
-    rows = [row.split() for row in fh]
+    data_bin = pkgutil.get_data("pyscenarios", resource_fname)
+    assert data_bin
+    data_bin = lzma.decompress(data_bin)
+    data_txt = data_bin.decode("ascii")
+    del data_bin
+    rows = [row.split() for row in data_txt.splitlines()]
+    del data_txt
 
     # Add padding at end of rows
     # Drop first 2 columns
@@ -62,8 +68,8 @@ def _load_directions(fh: Iterable[str]) -> np.ndarray:
 
 
 @jit("uint32[:,:](uint32[:,:])", nopython=True, nogil=True, cache=True)
-def _calc_v_kernel(directions: np.ndarray) -> np.ndarray:
-    """Numba kernel for :func:`calc_v`"""
+def _calc_v(directions: np.ndarray) -> np.ndarray:
+    """Calculate V matrix from directions"""
     # Initialise temp array of direction numbers
     v = np.empty((directions.shape[0], 32), dtype=np.uint32)
 
@@ -81,7 +87,7 @@ def _calc_v_kernel(directions: np.ndarray) -> np.ndarray:
             s += 1
 
         for t in range(s, 32):
-            v[j, t] = v[j, t - s] ^ (v[j, t - s] // 2 ** s)
+            v[j, t] = v[j, t - s] ^ (v[j, t - s] // 2**s)
             for k in range(1, s):
                 v[j, t] ^= ((directions[j, 0] // 2 ** (s - 1 - k)) & 1) * v[j, t - k]
 
@@ -130,12 +136,12 @@ def _sobol_kernel_jit(
 
             state ^= V[j + d0, c]
             if i >= s0:
-                output[i - s0, j] = np.double(state) / np.double(2 ** 32)
+                output[i - s0, j] = np.double(state) / np.double(2**32)
 
 
 def sobol(
-    size: Union[int, Tuple[int, int]], d0: int = 0, chunks: Chunks2D = None
-) -> Union[np.ndarray, da.Array]:
+    size: int | tuple[int, int], d0: int = 0, chunks: Chunks2D = None
+) -> np.ndarray | da.Array:
     """Sobol points generator based on Gray code order
 
     :param size:
@@ -177,7 +183,7 @@ def sobol(
     else:
         samples, dimensions = size
 
-    if not 0 < samples < 2 ** 32:
+    if not 0 < samples < 2**32:
         raise ValueError("samples must be between 1 and 2^32")
     if not 0 < dimensions + d0 <= max_sobol_dimensions():
         raise ValueError(

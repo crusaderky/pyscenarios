@@ -1,16 +1,19 @@
 """Duck-typed functions that call numpy or dask depending on the inputs
 """
+from __future__ import annotations
+
+from collections.abc import Callable
 from functools import wraps
-from typing import Any, Callable, Optional, Tuple, Union
+from typing import Any
 
 import dask.array as da
 import numpy as np
 import scipy.stats
 
-from .typing import Chunks2D
+from pyscenarios.typing import Chunks2D
 
 
-def array(x: Any) -> Union[np.ndarray, da.Array]:
+def array(x: Any) -> np.ndarray | da.Array:
     """Convert x to numpy array, unless it's a da.array"""
     if isinstance(x, (np.ndarray, da.Array)):
         return x
@@ -57,7 +60,7 @@ def _apply_binary(func: Callable[[Any, Any], Any]) -> Callable[[Any, Any], Any]:
     return wrapper
 
 
-def _toplevel(func_name: str) -> Callable[..., Union[np.ndarray, da.Array]]:
+def _toplevel(func_name: str) -> Callable[..., np.ndarray | da.Array]:
     """If any of the args is a Dask Array, invoke da.func_name; else invoke
     np.func_name
     """
@@ -87,7 +90,7 @@ class RandomState:
     the dask version.
     """
 
-    def __init__(self, seed: Optional[int] = None):
+    def __init__(self, seed: int | None = None):
         self._dask_state = da.random.RandomState(seed)
 
     @property
@@ -97,7 +100,7 @@ class RandomState:
     def _apply(
         self,
         func_name: str,
-        size: Optional[Tuple[int, int]] = None,
+        size: tuple[int, int] | None = None,
         chunks: Chunks2D = None,
     ):
         if chunks is not None:
@@ -107,10 +110,10 @@ class RandomState:
             func = getattr(self._numpy_state, func_name)
             return func(size=size)
 
-    def uniform(self, size: Optional[Tuple[int, int]] = None, chunks: Chunks2D = None):
+    def uniform(self, size: tuple[int, int] | None = None, chunks: Chunks2D = None):
         return self._apply("uniform", size=size, chunks=chunks)
 
     def standard_normal(
-        self, size: Optional[Tuple[int, int]] = None, chunks: Chunks2D = None
+        self, size: tuple[int, int] | None = None, chunks: Chunks2D = None
     ):
         return self._apply("standard_normal", size=size, chunks=chunks)
