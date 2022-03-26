@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
+    # TODO use builtins (requires Python >=3.9)
     from typing import Tuple, Union
 
     # TODO move to typing (requires Python >=3.10)

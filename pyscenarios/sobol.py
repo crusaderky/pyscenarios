@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 DIRECTIONS = "new-joe-kuo-6.21201.txt.xz"
 
 
-v_cache = None
+_v_cache = None
 
 
 def _load_v() -> np.ndarray:
@@ -32,22 +32,14 @@ def _load_v() -> np.ndarray:
     When using dask distributed, V is loaded locally on the workers instead of
     being transferred over the network.
     """
-    global v_cache
-    if v_cache is None:
-        data_bin = pkgutil.get_data("pyscenarios", DIRECTIONS)
-        assert data_bin
-        data_bin = lzma.decompress(data_bin)
-        data_txt = data_bin.decode("ascii")
-        del data_bin
-        rows = [row.split() for row in data_txt.splitlines()]
-        del data_txt
-        directions = _load_directions(rows)
-        del rows
-        v_cache = _calc_v_kernel(directions)
-    return v_cache
+    global _v_cache
+    if _v_cache is None:
+        directions = _load_directions(DIRECTIONS)
+        _v_cache = _calc_v(directions)
+    return _v_cache
 
 
-def _load_directions(rows: list[list[str]]) -> np.ndarray:
+def _load_directions(resource_fname: str) -> np.ndarray:
     """Load input file containing direction numbers.
     The file must one of those available on the website of the
     original author, or formatted like one.
@@ -58,6 +50,14 @@ def _load_directions(rows: list[list[str]]) -> np.ndarray:
         Column 0 contains the a values, while columns 1+ contain the m values.
         The m values are padded on the right with zeros.
     """
+    data_bin = pkgutil.get_data("pyscenarios", resource_fname)
+    assert data_bin
+    data_bin = lzma.decompress(data_bin)
+    data_txt = data_bin.decode("ascii")
+    del data_bin
+    rows = [row.split() for row in data_txt.splitlines()]
+    del data_txt
+
     # Add padding at end of rows
     # Drop first 2 columns
     # Replace header with element for d=1
@@ -69,8 +69,8 @@ def _load_directions(rows: list[list[str]]) -> np.ndarray:
 
 
 @jit("uint32[:,:](uint32[:,:])", nopython=True, nogil=True, cache=True)
-def _calc_v_kernel(directions: np.ndarray) -> np.ndarray:
-    """Numba kernel for :func:`calc_v`"""
+def _calc_v(directions: np.ndarray) -> np.ndarray:
+    """Calculate V matrix from directions"""
     # Initialise temp array of direction numbers
     v = np.empty((directions.shape[0], 32), dtype=np.uint32)
 
