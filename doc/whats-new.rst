@@ -5,7 +5,7 @@ What's New
 
 .. _whats-new.0.4.0:
 
-v0.4.0 (unreleased)
+v0.4.0 (2022-03-26)
 -------------------
 
 - Moved and renamed functions:
