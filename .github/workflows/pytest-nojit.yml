@@ -27,7 +27,7 @@ jobs:
           miniforge-variant: Mambaforge
           miniforge-version: latest
           use-mamba: true
-          python-version: '3.11'
+          python-version: '3.12'
           environment-file: ci/requirements-latest.yml
           activate-environment: pyscenarios
 
