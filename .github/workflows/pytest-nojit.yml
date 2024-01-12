@@ -3,55 +3,50 @@ name: Test without JIT
 
 on:
   push:
-    branches: [master]
+    branches: [main]
   pull_request:
     branches: ['*']
 
+defaults:
+  run:
+    shell: bash -l {0}
+
 jobs:
   build:
-    name: ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu, macos, windows]
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Setup Conda Environment
-        uses: conda-incubator/setup-miniconda@v2
+        uses: conda-incubator/setup-miniconda@v3
         with:
           miniforge-variant: Mambaforge
           miniforge-version: latest
-          condarc-file: ci/condarc
           use-mamba: true
-          python-version: '3.10'
-          environment-file: ci/requirements.yml
+          python-version: '3.11'
+          environment-file: ci/requirements-latest.yml
           activate-environment: pyscenarios
 
+      - name: Show conda options
+        run: conda config --show
+
       - name: conda info
-        shell: bash -l {0}
         run: conda info
 
       - name: conda list
-        shell: bash -l {0}
         run: conda list
 
       - name: Install
-        shell: bash -l {0}
         run: python -m pip install --no-deps -e .
 
       - name: pytest
-        shell: bash -l {0}
         env:
           NUMBA_DISABLE_JIT: 1
-        run: |
-          coverage run -m pytest -v
-          coverage xml
+        run: py.test --verbose --cov=pyscenarios --cov-report=xml
 
       - name: codecov.io
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v3

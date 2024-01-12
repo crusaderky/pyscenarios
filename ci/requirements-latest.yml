@@ -1,12 +1,11 @@
 name: pyscenarios
 channels:
   - conda-forge
-  - defaults
 dependencies:
   - dask
   - numba
   - numpy
   - scipy
 
-  - coverage
   - pytest
+  - pytest-cov

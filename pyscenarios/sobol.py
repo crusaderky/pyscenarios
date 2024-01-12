@@ -191,10 +191,10 @@ def sobol(
         )
 
     if chunks is None:
-        res = _sobol_kernel(samples, dimensions, 0, d0)
+        np_res = _sobol_kernel(samples, dimensions, 0, d0)
         if isinstance(size, int):
-            res = res[:, 0]
-        return res
+            np_res = np_res[:, 0]
+        return np_res
 
     # dask-specific code
     chunks = cast(
@@ -211,10 +211,10 @@ def sobol(
             offset_j += size_j
         offset_i += size_i
 
-    res = da.Array(dsk, name=name, dtype=float, chunks=chunks)
+    da_res = da.Array(dsk, name=name, dtype=float, chunks=chunks)
     if isinstance(size, int):
-        res = res[:, 0]
-    return res
+        da_res = da_res[:, 0]
+    return da_res
 
 
 def max_sobol_dimensions() -> int:

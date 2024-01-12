@@ -2,43 +2,43 @@ How to issue an pyscenarios release in 15 easy steps
 
 Time required: about an hour.
 
- 1. Ensure your master branch is synced to upstream:
-       git pull upstream master
+ 1. Ensure your main branch is synced to origin:
+       git pull origin main
  2. Look over whats-new.rst and the docs. Make sure "What's New" is complete
     (check the date!) and add a brief summary note describing the release at the
     top.
  3. If you have any doubts, run the full test suite one final time!
       py.test
- 4. On the master branch, commit the release in git:
+ 4. On the main branch, commit the release in git:
       git commit -a -m 'Release v0.X.Y'
  5. Tag the release:
       git tag -a v0.X.Y -m 'v0.X.Y'
- 6. Build source package for pypi:
+ 6. Build source for pypi:
       python setup.py sdist
  7. Use twine to register and upload the release on pypi. Be careful, you can't
     take this back!
       twine upload dist/pyscenarios-0.X.Y*
     You will need to be listed as a package owner at
     https://pypi.python.org/pypi/pyscenarios for this to work.
- 8. Push your changes to master:
-      git push upstream master
-      git push upstream --tags
- 9. Update the stable branch (used by ReadTheDocs) and switch back to master:
+ 8. Push your changes to main:
+      git push origin main
+      git push origin --tags
+ 9. Update the stable branch (used by ReadTheDocs) and switch back to main:
       git checkout stable
-      git rebase master
-      git push upstream stable
-      git checkout master
+      git rebase main
+      git push origin stable
+      git checkout main
     It's OK to force push to 'stable' if necessary.
     We also update the stable branch with `git cherrypick` for documentation
     only fixes that apply the current released version.
 10. Add a section for the next release (v.X.(Y+1)) to doc/whats-new.rst.
-11. Commit your changes and push to master again:
+11. Commit your changes and push to main again:
       git commit -a -m 'Revert to dev version'
-      git push upstream master
-    You're done pushing to master!
-12. Issue the release on GitHub. Click on "Draft a new release" at
-    https://github.com/crusaderky/pyscenarios/releases and paste in the latest from
-    whats-new.rst.
+      git push origin main
+    You're done pushing to main!
+12. Issue the release on GitHub. Open https://github.com/crusaderky/pyscenarios/releases;
+    the new release should have automatically appeared. Otherwise, click on
+    "Draft a new release" and paste in the latest from whats-new.rst.
 13. Update the docs. Login to https://readthedocs.org/projects/pyscenarios/versions/
     and switch your new release tag (at the bottom) from "Inactive" to "Active".
     It should now build automatically.
