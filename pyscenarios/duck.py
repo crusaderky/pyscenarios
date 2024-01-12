@@ -26,7 +26,7 @@ def _apply_unary(func: Callable[[Any], Any]) -> Callable[[Any], Any]:
     """
 
     @wraps(func)
-    def wrapper(x):
+    def wrapper(x: Any) -> Any:
         if isinstance(x, da.Array):
             sig = tuple(range(x.ndim))
             return da.blockwise(func, sig, x, sig, dtype=float)
@@ -41,7 +41,7 @@ def _apply_binary(func: Callable[[Any, Any], Any]) -> Callable[[Any, Any], Any]:
     """
 
     @wraps(func)
-    def wrapper(x, y):
+    def wrapper(x: Any, y: Any) -> Any:
         x = array(x)
         y = array(y)
         if isinstance(x, da.Array) or isinstance(y, da.Array):
@@ -65,7 +65,7 @@ def _toplevel(func_name: str) -> Callable[..., np.ndarray | da.Array]:
     np.func_name
     """
 
-    def wrapper(*args, **kwargs):
+    def wrapper(*args: Any, **kwargs: Any) -> np.ndarray | da.Array:
         if any(isinstance(arg, da.Array) for arg in args):
             func = getattr(da, func_name)
         else:
@@ -102,7 +102,7 @@ class RandomState:
         func_name: str,
         size: tuple[int, int] | None = None,
         chunks: Chunks2D = None,
-    ):
+    ) -> Any:
         if chunks is not None:
             func = getattr(self._dask_state, func_name)
             return func(size=size, chunks=chunks)
@@ -110,10 +110,12 @@ class RandomState:
             func = getattr(self._numpy_state, func_name)
             return func(size=size)
 
-    def uniform(self, size: tuple[int, int] | None = None, chunks: Chunks2D = None):
+    def uniform(
+        self, size: tuple[int, int] | None = None, chunks: Chunks2D = None
+    ) -> np.ndarray | da.Array:
         return self._apply("uniform", size=size, chunks=chunks)
 
     def standard_normal(
         self, size: tuple[int, int] | None = None, chunks: Chunks2D = None
-    ):
+    ) -> np.ndarray | da.Array:
         return self._apply("standard_normal", size=size, chunks=chunks)
