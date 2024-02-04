@@ -6,6 +6,7 @@ from numpy.testing import assert_array_equal
 from pyscenarios import tail_dependence
 
 
+@pytest.mark.filterwarnings("ignore:invalid value encountered in (true_)?divide")
 @pytest.mark.parametrize("chunk", [False, True])
 def test_tail_dependence(chunk):
     x = [0.1, 0.3, 0.4, 0.5, 0.6, 0.8, 0.9]
