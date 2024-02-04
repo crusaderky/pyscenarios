@@ -300,6 +300,6 @@ intersphinx_mapping = {
 }
 
 # Hack around intersphinx issue caused by :show-inheritance:
-import dask.array  # isort:skip # noqa: E402
+import dask.array  # isort:skip
 
 dask.array.Array.__module__ = "dask.array"

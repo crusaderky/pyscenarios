@@ -1,0 +1,126 @@
+[project]
+name = "pyscenarios"
+authors = [{name = "Guido Imperiale", email = "guido.imperiale@gmail.com"}]
+license = {text = "Apache"}
+description = "Python Monte Carlo Scenario Generator"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Science/Research",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering",
+]
+requires-python = ">=3.8"
+dependencies = [
+    "dask >= 2.2",
+    "numba >= 0.47",
+    "numpy >= 1.16",
+    "scipy >= 1.3",
+]
+dynamic = ["version"]
+
+[project.urls]
+Homepage = "https://github.com/crusaderky/pyscenarios"
+
+[project.readme]
+text = """
+- SOBOL generator
+- Copulas (Gaussian, Student T, IT)
+- Statistical analysis tools for copulas"""
+content-type = "text/x-rst"
+
+[tool.setuptools]
+packages = ["pyscenarios"]
+zip-safe = false # https://mypy.readthedocs.io/en/latest/installed_packages.html
+include-package-data = true
+
+[tool.setuptools_scm]
+# Use hardcoded version when .git has been removed and this is not a package created
+# by sdist. This is the case e.g. of a remote deployment with PyCharm.
+fallback_version = "9999"
+
+[tool.setuptools.package-data]
+pyscenarios = [
+    "py.typed",
+    "*.txt.xz",
+]
+
+[build-system]
+requires = [
+    "setuptools>=66",
+    "setuptools_scm[toml]",
+]
+build-backend = "setuptools.build_meta"
+
+[tool.pytest.ini_options]
+addopts = "--strict-markers --strict-config -v -r sxfE --color=yes"
+xfail_strict = true
+python_files = ["test_*.py"]
+testpaths = ["pyscenarios/tests"]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+]
+
+[tool.coverage.report]
+show_missing = true
+exclude_lines = [
+    "pragma: nocover",
+    "pragma: no cover",
+    "TYPE_CHECKING",
+    "except ImportError",
+    "@overload",
+    '@(abc\.)?abstractmethod',
+]
+
+[tool.ruff]
+builtins = ["ellipsis"]
+exclude = [".eggs"]
+target-version = "py38"
+
+[tool.ruff.lint]
+ignore = [
+  "E402",  # module level import not at top of file
+  "SIM108",  # use ternary operator instead of if-else block
+  "N803",  # uppercase function parameter
+  "N806",  # uppercase variable name
+]
+select = [
+  "F",    # Pyflakes
+  "B",    # flake8-bugbear
+  "C4",   # flake8-comprehensions
+  "ISC",  # flake8-implicit-str-concat
+  "SIM",  # flake8-simplify
+  "E",    # Pycodestyle
+  "W",    # Pycodestyle
+  "I",    # isort
+  "N",    # pep8-naming
+  "UP",   # Pyupgrade
+  "RUF",  # unused-noqa
+  "EXE001",  #  Shebang is present but file is not executable
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["TEMPLATE"]
+
+[tool.mypy]
+allow_incomplete_defs = false
+# Doesn't work with numba @jit
+allow_untyped_decorators = true
+allow_untyped_defs = false
+ignore_missing_imports = true
+no_implicit_optional = true
+show_error_codes = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_unreachable = true
+
+[[tool.mypy.overrides]]
+module = ["*.tests.*"]
+allow_untyped_defs = true

@@ -231,7 +231,7 @@ def _copula_impl(
         seed_r = seed + dimensions
         r = sobol(size=(samples, 1), d0=seed_r, chunks=chunks_r)
     else:
-        assert False  # pragma: nocover
+        raise AssertionError("unreachable")  # pragma: nocover
 
     s = duck.chi2_ppf(r, df)
     z = duck.sqrt(df / s) * p
