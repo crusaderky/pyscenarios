@@ -231,5 +231,6 @@ def max_dimensions() -> int:
         "pyscenarios.sobol.max_dimensions has been moved to "
         "pyscenarios.max_sobol_dimensions",
         DeprecationWarning,
+        stacklevel=2,
     )
     return max_sobol_dimensions()
