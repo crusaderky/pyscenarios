@@ -67,6 +67,10 @@ testpaths = ["pyscenarios/tests"]
 markers = [
     "slow: marks tests as slow (deselect with '-m \"not slow\"')",
 ]
+filterwarnings = [
+    "error",
+    "ignore:distutils Version classes are deprecated:DeprecationWarning",
+]
 
 [tool.coverage.report]
 show_missing = true
