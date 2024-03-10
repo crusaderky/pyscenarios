@@ -69,8 +69,6 @@ markers = [
 ]
 filterwarnings = [
     "error",
-    "ignore:distutils Version classes are deprecated:DeprecationWarning",
-    "ignore:pkg_resources is deprecated as an API:DeprecationWarning",
 ]
 
 [tool.coverage.report]
