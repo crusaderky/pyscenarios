@@ -2,6 +2,7 @@ name: pyscenarios-minimal
 channels:
   - conda-forge
 dependencies:
+  - python=3.8
   - dask=2.2
   - numba=0.47
   - numpy=1.16
