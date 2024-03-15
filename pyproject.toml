@@ -3,6 +3,7 @@ name = "pyscenarios"
 authors = [{name = "Guido Imperiale", email = "guido.imperiale@gmail.com"}]
 license = {text = "Apache"}
 description = "Python Monte Carlo Scenario Generator"
+readme = "README.md"
 classifiers = [
     "Development Status :: 3 - Alpha",
     "License :: OSI Approved :: Apache Software License",
