@@ -5,7 +5,7 @@ What's New
 
 .. _whats-new.0.5.0:
 
-v0.5.0 (unreleased)
+v0.5.0 (2024-03-15)
 -------------------
 - Added formal support for Python 3.11 and 3.12 (but the previous release works fine too)
 
