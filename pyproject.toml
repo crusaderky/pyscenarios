@@ -3,7 +3,6 @@ name = "pyscenarios"
 authors = [{name = "Guido Imperiale", email = "guido.imperiale@gmail.com"}]
 license = {text = "Apache"}
 description = "Python Monte Carlo Scenario Generator"
-readme = "README.md"
 classifiers = [
     "Development Status :: 3 - Alpha",
     "License :: OSI Approved :: Apache Software License",
@@ -20,7 +19,7 @@ classifiers = [
 ]
 requires-python = ">=3.8"
 dependencies = [
-    "dask >= 2.2",
+    "dask[array] >= 2.2",
     "numba >= 0.47",
     "numpy >= 1.16",
     "scipy >= 1.3",
