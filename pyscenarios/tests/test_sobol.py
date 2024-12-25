@@ -31,10 +31,10 @@ def test_max_sobol_dimensions():
     assert max_sobol_dimensions() == 21201
     assert sobol((4, 21201)).shape == (4, 21201)
     assert sobol((4, 201), d0=21000).shape == (4, 201)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="must be between"):
         sobol((4, 202), d0=21000)
     assert sobol(4, d0=21200).shape == (4,)
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="must be between"):
         sobol(4, d0=21201)
 
 
@@ -79,6 +79,5 @@ def test_samepoints(n):
 
 @pytest.mark.parametrize("n", [-1, 0, int(2**33)])
 def test_bad_samples(n):
-    with pytest.raises(ValueError) as e:
+    with pytest.raises(ValueError, match="must be between"):
         sobol(n)
-    assert str(e.value) == "samples must be between 1 and 2^32"

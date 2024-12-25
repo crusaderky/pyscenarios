@@ -5,7 +5,7 @@ on:
   push:
     branches: [main]
   pull_request:
-    branches: ['*']
+    branches: ["*"]
 
 defaults:
   run:
@@ -24,10 +24,9 @@ jobs:
       - name: Setup Conda Environment
         uses: conda-incubator/setup-miniconda@v3
         with:
-          miniforge-variant: Mambaforge
           miniforge-version: latest
           use-mamba: true
-          python-version: '3.12'
+          python-version: "3.12"
           environment-file: ci/requirements-latest.yml
           activate-environment: pyscenarios
 

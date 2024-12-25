@@ -231,35 +231,30 @@ def test_tail_dependence(df, expect_td, rng, chunks):
 
 @pytest.mark.parametrize("copula", [gaussian_copula, partial(t_copula, df=1)])
 def test_bad_params_common(copula):
-    with pytest.raises(ValueError) as e:
+    with pytest.raises(ValueError, match="cov must be a square matrix"):
         copula([[1, 1]], samples=4, seed=123, chunks=None, rng="Mersenne Twister")
-    assert str(e.value) == "cov must be a square matrix"
 
-    with pytest.raises(ValueError) as e:
+    with pytest.raises(ValueError, match="Number of samples must be positive"):
         copula(cov, samples=0, seed=123, chunks=None, rng="Mersenne Twister")
-    assert str(e.value) == "Number of samples must be positive"
 
-    with pytest.raises(ValueError) as e:
+    with pytest.raises(ValueError, match="Unknown rng: unknown"):
         copula(cov, samples=4, seed=123, chunks=None, rng="unknown")
-    assert str(e.value) == "Unknown rng: unknown"
 
 
 def test_bad_params_t():
-    with pytest.raises(ValueError) as e:
+    with pytest.raises(ValueError, match="df must always be greater than zero"):
         t_copula(cov, df=0, samples=4, seed=123, chunks=None, rng="Mersenne Twister")
-    assert str(e.value) == "df must always be greater than zero"
 
-    with pytest.raises(ValueError) as e:
+    with pytest.raises(ValueError, match="df must always be greater than zero"):
         t_copula(
             cov, df=[1, 0, 1], samples=4, seed=123, chunks=None, rng="Mersenne Twister"
         )
-    assert str(e.value) == "df must always be greater than zero"
 
-    with pytest.raises(ValueError) as e:
+    with pytest.raises(
+        ValueError,
+        match="df must be either a scalar or a 1D vector with as many points as the "
+        "width of the correlation matrix",
+    ):
         t_copula(
             cov, df=[1, 1], samples=4, seed=123, chunks=None, rng="Mersenne Twister"
         )
-    assert str(e.value) == (
-        "df must be either a scalar or a 1D vector with as many points as the width "
-        "of the correlation matrix"
-    )
