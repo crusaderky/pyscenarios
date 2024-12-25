@@ -59,7 +59,7 @@ master_doc = "index"
 
 # General information about the project.
 project = "pyscenarios"
-copyright = "2018-%s, pyscenarios Developers" % datetime.datetime.now().year
+copyright = f"2018-{datetime.datetime.now().year}, pyscenarios Developers"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -300,6 +300,6 @@ intersphinx_mapping = {
 }
 
 # Hack around intersphinx issue caused by :show-inheritance:
-import dask.array  # isort:skip
+import dask.array  # isort:skip  # noqa: E402
 
 dask.array.Array.__module__ = "dask.array"

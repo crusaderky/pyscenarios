@@ -1,5 +1,5 @@
-"""Duck-typed functions that call numpy or dask depending on the inputs
-"""
+"""Duck-typed functions that call numpy or dask depending on the inputs"""
+
 from __future__ import annotations
 
 from collections.abc import Callable
@@ -106,9 +106,8 @@ class RandomState:
         if chunks is not None:
             func = getattr(self._dask_state, func_name)
             return func(size=size, chunks=chunks)
-        else:
-            func = getattr(self._numpy_state, func_name)
-            return func(size=size)
+        func = getattr(self._numpy_state, func_name)
+        return func(size=size)
 
     def uniform(
         self, size: tuple[int, int] | None = None, chunks: Chunks2D = None

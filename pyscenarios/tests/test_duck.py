@@ -6,6 +6,8 @@ from numpy.testing import assert_array_equal, assert_equal
 
 from pyscenarios import duck
 
+rng = np.random.default_rng(0)
+
 
 def test_array():
     for x in (1, [1, 2], np.array(1), np.array([1, 2])):
@@ -23,7 +25,7 @@ def test_array():
     "func,wrapped", [(duck.norm_ppf, scipy.stats.norm.ppf), (duck.sqrt, np.sqrt)]
 )
 def test_map_blocks(func, wrapped, chunk):
-    x = np.random.rand(10)
+    x = rng.random(10)
     y = wrapped(x)
 
     if chunk:
@@ -46,8 +48,8 @@ def test_map_blocks(func, wrapped, chunk):
     "x",
     [
         0.2,
-        np.random.rand(4).reshape(4, 1),
-        np.random.rand(30).reshape(10, 3),
+        rng.random(4).reshape(4, 1),
+        rng.random(30).reshape(10, 3),
         [[0.1, 0.2, 0.3], [0.4, 0.5, 0.6]],
     ],
 )

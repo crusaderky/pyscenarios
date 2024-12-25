@@ -1,5 +1,5 @@
-"""High performance copula generators
-"""
+"""High performance copula generators"""
+
 from __future__ import annotations
 
 from typing import cast
@@ -237,5 +237,4 @@ def _copula_impl(
     z = duck.sqrt(df / s) * p
     # Convert t distribution to normal (0, 1)
     u = duck.t_cdf(z, df)
-    t = duck.norm_ppf(u)
-    return t
+    return duck.norm_ppf(u)

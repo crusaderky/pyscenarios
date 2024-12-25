@@ -4,6 +4,7 @@ This is a reimplementation of a C++ algorithm by
 `Stephen Joe and Frances Y. Kuo <http://web.maths.unsw.edu.au/~fkuo/sobol/>`_.
 Directions are based on :file:`new-joe-kuo-6.21201` from the URL above.
 """
+
 from __future__ import annotations
 
 import lzma
@@ -167,7 +168,7 @@ def sobol(
            The algorithm is not efficient if there are multiple chunks on axis
            0. However, if you do need them, it is typically better to require
            them here than re-chunking afterwards, particularly if (most of) the
-           subsequent algorithm is embarassingly parallel.
+           subsequent algorithm is embarrassingly parallel.
     :returns:
         If size is an int, a 1-dimensional array of samples.
         If size is a tuple, a 2-dimensional array POINTS, where
@@ -184,10 +185,10 @@ def sobol(
         samples, dimensions = size
 
     if not 0 < samples < 2**32:
-        raise ValueError("samples must be between 1 and 2^32")
+        raise ValueError("samples must be between 1 and 2**32")
     if not 0 < dimensions + d0 <= max_sobol_dimensions():
         raise ValueError(
-            "(dimensions + d0) must be between 1 and %d" % max_sobol_dimensions()
+            f"(dimensions + d0) must be between 1 and {max_sobol_dimensions()}"
         )
 
     if chunks is None:
@@ -200,7 +201,7 @@ def sobol(
     chunks = cast(
         NormalizedChunks2D, normalize_chunks(chunks, shape=(samples, dimensions))
     )
-    name = "sobol-%d-%d-%d" % (samples, dimensions, d0)
+    name = f"sobol-{samples}-{dimensions}-{d0}"
     dsk = {}
 
     offset_i = 0

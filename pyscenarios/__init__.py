@@ -18,8 +18,8 @@ del obj
 __all__ = (
     "__version__",
     "gaussian_copula",
-    "t_copula",
-    "sobol",
     "max_sobol_dimensions",
+    "sobol",
+    "t_copula",
     "tail_dependence",
 )

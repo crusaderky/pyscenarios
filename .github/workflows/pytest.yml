@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
-    branches: ['*']
+    branches: ["*"]
   workflow_dispatch: # allows you to trigger manually
 
 # When this workflow is queued, automatically cancel any previous running
@@ -19,38 +19,39 @@ defaults:
 
 jobs:
   build:
-    name: ${{ matrix.os }} ${{ matrix.python-version }} ${{ matrix.requirements }}
+    name:
+      ${{ matrix.os }} ${{ matrix.python-version }} ${{ matrix.requirements }}
     runs-on: ${{ matrix.os }}-latest
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu]
-        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
         requirements: [latest]
         include:
           # Test on macos and windows (first and last version of python only)
           - os: macos
-            python-version: '3.8'
+            python-version: "3.8"
             requirements: latest
           - os: macos
-            python-version: '3.12'
+            python-version: "3.12"
             requirements: latest
           - os: windows
-            python-version: '3.8'
+            python-version: "3.8"
             requirements: latest
           - os: windows
-            python-version: '3.12'
+            python-version: "3.12"
             requirements: latest
           # Test on minimal requirements
           - os: ubuntu
-            python-version: '3.8'
+            python-version: "3.8"
             requirements: minimal
           # Old packages are not available on macos-arm64
           #   - os: macos
           #     python-version: '3.8'
           #     requirements: minimal
           - os: windows
-            python-version: '3.8'
+            python-version: "3.8"
             requirements: minimal
 
     steps:
@@ -62,7 +63,6 @@ jobs:
       - name: Setup Conda Environment
         uses: conda-incubator/setup-miniconda@v3
         with:
-          miniforge-variant: Mambaforge
           miniforge-version: latest
           use-mamba: true
           python-version: ${{ matrix.python-version }}
