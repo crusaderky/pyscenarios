@@ -60,5 +60,6 @@ Time required: about an hour.
 14g.  The next day, test the conda-forge release
         conda search pyscenarios
         conda create -n pyscenarios-test pyscenarios
+        conda activate pyscenarios-test
         conda list
-        python -m 'import pyscenarios'
+        python -c 'import pyscenarios'
