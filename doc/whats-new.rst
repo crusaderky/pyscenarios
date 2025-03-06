@@ -8,6 +8,7 @@ What's New
 v0.6.0 (unreleased)
 -------------------
 - Bumped up minimum version of numpy to 1.17
+- Added formal support for Python 3.13 (but the previous release works fine too)
 
 
 .. _whats-new.0.5.0:
