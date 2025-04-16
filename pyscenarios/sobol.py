@@ -9,7 +9,6 @@ from __future__ import annotations
 
 import lzma
 import pkgutil
-from functools import cache
 from typing import cast
 
 import dask.array as da
@@ -21,8 +20,10 @@ from pyscenarios.typing import Chunks2D, NormalizedChunks2D
 
 DIRECTIONS = "new-joe-kuo-6.21201.txt.xz"
 
+# TODO use functools.cache (requires Python >=3.9)
+_v_cache = None
 
-@cache
+
 def _load_v() -> np.ndarray:
     """Load V from the original author's file. This function is executed
     automatically the first time you call the :func:`sobol` function.
@@ -31,8 +32,11 @@ def _load_v() -> np.ndarray:
     When using dask distributed, V is loaded locally on the workers instead of
     being transferred over the network.
     """
-    directions = _load_directions(DIRECTIONS)
-    return _calc_v(directions)
+    global _v_cache
+    if _v_cache is None:
+        directions = _load_directions(DIRECTIONS)
+        _v_cache = _calc_v(directions)
+    return _v_cache
 
 
 def _load_directions(resource_fname: str) -> np.ndarray:
