@@ -104,7 +104,7 @@ def _sobol_kernel(samples: int, dimensions: int, s0: int, d0: int) -> np.ndarray
         points[i, j] = the jth component of the ith point
         with i indexed from 0 to N-1 and j indexed from 0 to D-1
     """
-    output = np.empty((samples, dimensions), order="F")
+    output = np.empty((samples, dimensions), dtype=np.float64, order="F")
     _sobol_kernel_jit(samples, dimensions, s0, d0, _load_v(), output)
     return output
 
@@ -125,19 +125,21 @@ def _sobol_kernel_jit(
     This is inefficient but preferable to transferring a state
     vector across the graph, which would introduce cross-chunks dependencies.
     """
+    c = np.empty(s0 + samples, dtype=np.uint8)
+    for i in range(s0 + samples):
+        # ci = index from the right of the first zero bit of i
+        ci = 0
+        while i & (1 << ci):
+            ci += 1
+        c[i] = ci
+
     for j in range(dimensions):
         state = 0
-        for i in range(s0 + samples):
-            # c = index from the right of the first zero bit of i
-            c = 0
-            mask = 1
-            while i & mask:
-                mask *= 2
-                c += 1
-
-            state ^= V[j + d0, c]
-            if i >= s0:
-                output[i - s0, j] = np.double(state) / np.double(2**32)
+        for i in range(s0):
+            state ^= V[j + d0, c[i]]
+        for i in range(s0, s0 + samples):
+            state ^= V[j + d0, c[i]]
+            output[i - s0, j] = np.double(state) / np.double(2**32)
 
 
 def sobol(

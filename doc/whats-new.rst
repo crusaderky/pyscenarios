@@ -7,6 +7,7 @@ What's New
 
 v0.6.0 (unreleased)
 -------------------
+- Sped up ``pyscenarios.sobol`` by ~33%
 - Bumped up minimum version of numpy to 1.17
 - Added formal support for Python 3.13 (but the previous release works fine too)
 
