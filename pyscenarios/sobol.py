@@ -20,7 +20,7 @@ from pyscenarios.typing import Chunks2D, NormalizedChunks2D
 
 DIRECTIONS = "new-joe-kuo-6.21201.txt.xz"
 
-
+# TODO use functools.cache (requires Python >=3.9)
 _v_cache = None
 
 
@@ -65,22 +65,20 @@ def _load_directions(resource_fname: str) -> np.ndarray:
     for row in rows:
         row[:] = row[2:] + ["0"] * (rowlen - len(row))
     rows[0] = ["0"] + ["1"] * (rowlen - 3)
-    return np.array(rows, dtype="uint32")
+    return np.array(rows, dtype=np.uint32)
 
 
 @jit("uint32[:,:](uint32[:,:])", nopython=True, nogil=True, cache=True)
 def _calc_v(directions: np.ndarray) -> np.ndarray:
     """Calculate V matrix from directions"""
-    # Initialise temp array of direction numbers
-    v = np.empty((directions.shape[0], 32), dtype=np.uint32)
+    V = np.empty((directions.shape[0], 32), dtype=np.uint32)
 
     for j in range(directions.shape[0]):
-        s = 0
         # Compute direction numbers
         for s in range(directions.shape[1] - 1):
             if directions[j, s + 1] == 0:
                 break
-            v[j, s] = directions[j, s + 1] * 2 ** (31 - s)
+            V[j, s] = directions[j, s + 1] * 2 ** (31 - s)
         else:
             # need a C-style for loop
             # for(s=0; s<m.size; s++)
@@ -88,11 +86,13 @@ def _calc_v(directions: np.ndarray) -> np.ndarray:
             s += 1
 
         for t in range(s, 32):
-            v[j, t] = v[j, t - s] ^ (v[j, t - s] // 2**s)
+            vjts = V[j, t - s]
+            vjt = vjts ^ (vjts // 2**s)
             for k in range(1, s):
-                v[j, t] ^= ((directions[j, 0] // 2 ** (s - 1 - k)) & 1) * v[j, t - k]
+                vjt ^= ((directions[j, 0] // 2 ** (s - 1 - k)) & 1) * V[j, t - k]
+            V[j, t] = vjt
 
-    return v
+    return V
 
 
 def _sobol_kernel(samples: int, dimensions: int, s0: int, d0: int) -> np.ndarray:
@@ -104,7 +104,7 @@ def _sobol_kernel(samples: int, dimensions: int, s0: int, d0: int) -> np.ndarray
         points[i, j] = the jth component of the ith point
         with i indexed from 0 to N-1 and j indexed from 0 to D-1
     """
-    output = np.empty((samples, dimensions), order="F")
+    output = np.empty((samples, dimensions), dtype=np.float64, order="F")
     _sobol_kernel_jit(samples, dimensions, s0, d0, _load_v(), output)
     return output
 
@@ -125,19 +125,21 @@ def _sobol_kernel_jit(
     This is inefficient but preferable to transferring a state
     vector across the graph, which would introduce cross-chunks dependencies.
     """
+    c = np.empty(s0 + samples, dtype=np.uint8)
+    for i in range(s0 + samples):
+        # ci = index from the right of the first zero bit of i
+        ci = 0
+        while i & (1 << ci):
+            ci += 1
+        c[i] = ci
+
     for j in range(dimensions):
         state = 0
-        for i in range(s0 + samples):
-            # c = index from the right of the first zero bit of i
-            c = 0
-            mask = 1
-            while i & mask:
-                mask *= 2
-                c += 1
-
-            state ^= V[j + d0, c]
-            if i >= s0:
-                output[i - s0, j] = np.double(state) / np.double(2**32)
+        for i in range(s0):
+            state ^= V[j + d0, c[i]]
+        for i in range(s0, s0 + samples):
+            state ^= V[j + d0, c[i]]
+            output[i - s0, j] = np.double(state) / np.double(2**32)
 
 
 def sobol(
