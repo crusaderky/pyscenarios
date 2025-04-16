@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import lzma
 import pkgutil
+from functools import cache
 from typing import cast
 
 import dask.array as da
@@ -21,9 +22,7 @@ from pyscenarios.typing import Chunks2D, NormalizedChunks2D
 DIRECTIONS = "new-joe-kuo-6.21201.txt.xz"
 
 
-_v_cache = None
-
-
+@cache
 def _load_v() -> np.ndarray:
     """Load V from the original author's file. This function is executed
     automatically the first time you call the :func:`sobol` function.
@@ -32,11 +31,8 @@ def _load_v() -> np.ndarray:
     When using dask distributed, V is loaded locally on the workers instead of
     being transferred over the network.
     """
-    global _v_cache
-    if _v_cache is None:
-        directions = _load_directions(DIRECTIONS)
-        _v_cache = _calc_v(directions)
-    return _v_cache
+    directions = _load_directions(DIRECTIONS)
+    return _calc_v(directions)
 
 
 def _load_directions(resource_fname: str) -> np.ndarray:
@@ -65,22 +61,20 @@ def _load_directions(resource_fname: str) -> np.ndarray:
     for row in rows:
         row[:] = row[2:] + ["0"] * (rowlen - len(row))
     rows[0] = ["0"] + ["1"] * (rowlen - 3)
-    return np.array(rows, dtype="uint32")
+    return np.array(rows, dtype=np.uint32)
 
 
 @jit("uint32[:,:](uint32[:,:])", nopython=True, nogil=True, cache=True)
 def _calc_v(directions: np.ndarray) -> np.ndarray:
     """Calculate V matrix from directions"""
-    # Initialise temp array of direction numbers
-    v = np.empty((directions.shape[0], 32), dtype=np.uint32)
+    V = np.empty((directions.shape[0], 32), dtype=np.uint32)
 
     for j in range(directions.shape[0]):
-        s = 0
         # Compute direction numbers
         for s in range(directions.shape[1] - 1):
             if directions[j, s + 1] == 0:
                 break
-            v[j, s] = directions[j, s + 1] * 2 ** (31 - s)
+            V[j, s] = directions[j, s + 1] * 2 ** (31 - s)
         else:
             # need a C-style for loop
             # for(s=0; s<m.size; s++)
@@ -88,11 +82,13 @@ def _calc_v(directions: np.ndarray) -> np.ndarray:
             s += 1
 
         for t in range(s, 32):
-            v[j, t] = v[j, t - s] ^ (v[j, t - s] // 2**s)
+            vjts = V[j, t - s]
+            vjt = vjts ^ (vjts // 2**s)
             for k in range(1, s):
-                v[j, t] ^= ((directions[j, 0] // 2 ** (s - 1 - k)) & 1) * v[j, t - k]
+                vjt ^= ((directions[j, 0] // 2 ** (s - 1 - k)) & 1) * V[j, t - k]
+            V[j, t] = vjt
 
-    return v
+    return V
 
 
 def _sobol_kernel(samples: int, dimensions: int, s0: int, d0: int) -> np.ndarray:
