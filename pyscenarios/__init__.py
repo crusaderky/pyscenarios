@@ -11,7 +11,7 @@ except importlib.metadata.PackageNotFoundError:  # pragma: nocover
     __version__ = "999"
 
 # Prevent Intersphinx from pointing to the implementation modules
-for obj in gaussian_copula, t_copula, sobol, max_sobol_dimensions, tail_dependence:
+for obj in gaussian_copula, t_copula, max_sobol_dimensions, sobol, tail_dependence:
     obj.__module__ = "pyscenarios"
 del obj
 

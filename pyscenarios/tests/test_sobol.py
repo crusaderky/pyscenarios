@@ -3,7 +3,6 @@ import pytest
 from numpy.testing import assert_array_equal
 
 from pyscenarios import max_sobol_dimensions, sobol
-from pyscenarios.sobol import max_dimensions
 from pyscenarios.tests import requires_jit
 
 EXPECT = np.array(
@@ -36,11 +35,6 @@ def test_max_sobol_dimensions():
     assert sobol(4, d0=21200).shape == (4,)
     with pytest.raises(ValueError, match="must be between"):
         sobol(4, d0=21201)
-
-
-def test_max_dimensions():
-    with pytest.warns(DeprecationWarning):
-        assert max_dimensions() == 21201
 
 
 def test_numpy_1d():

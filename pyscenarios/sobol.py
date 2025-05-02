@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import lzma
 import pkgutil
-from typing import cast
+from functools import cache
 
 import dask.array as da
 import numpy as np
@@ -20,10 +20,8 @@ from pyscenarios.typing import Chunks2D, NormalizedChunks2D
 
 DIRECTIONS = "new-joe-kuo-6.21201.txt.xz"
 
-# TODO use functools.cache (requires Python >=3.9)
-_v_cache = None
 
-
+@cache
 def _load_v() -> np.ndarray:
     """Load V from the original author's file. This function is executed
     automatically the first time you call the :func:`sobol` function.
@@ -32,11 +30,8 @@ def _load_v() -> np.ndarray:
     When using dask distributed, V is loaded locally on the workers instead of
     being transferred over the network.
     """
-    global _v_cache
-    if _v_cache is None:
-        directions = _load_directions(DIRECTIONS)
-        _v_cache = _calc_v(directions)
-    return _v_cache
+    directions = _load_directions(DIRECTIONS)
+    return _calc_v(directions)
 
 
 def _load_directions(resource_fname: str) -> np.ndarray:
@@ -200,21 +195,21 @@ def sobol(
         return np_res
 
     # dask-specific code
-    chunks = cast(
-        NormalizedChunks2D, normalize_chunks(chunks, shape=(samples, dimensions))
+    norm_chunks: NormalizedChunks2D = normalize_chunks(
+        chunks, shape=(samples, dimensions)
     )
     name = f"sobol-{samples}-{dimensions}-{d0}"
     dsk = {}
 
     offset_i = 0
-    for i, size_i in enumerate(chunks[0]):
+    for i, size_i in enumerate(norm_chunks[0]):
         offset_j = 0
-        for j, size_j in enumerate(chunks[1]):
+        for j, size_j in enumerate(norm_chunks[1]):
             dsk[name, i, j] = (_sobol_kernel, size_i, size_j, offset_i, d0 + offset_j)
             offset_j += size_j
         offset_i += size_i
 
-    da_res = da.Array(dsk, name=name, dtype=float, chunks=chunks)
+    da_res = da.Array(dsk, name=name, dtype=float, chunks=norm_chunks)
     if isinstance(size, int):
         da_res = da_res[:, 0]
     return da_res
@@ -225,15 +220,3 @@ def max_sobol_dimensions() -> int:
     ``size[1] + d0`` must be smaller than this.
     """
     return _load_v().shape[0]
-
-
-def max_dimensions() -> int:
-    import warnings
-
-    warnings.warn(
-        "pyscenarios.sobol.max_dimensions has been moved to "
-        "pyscenarios.max_sobol_dimensions",
-        DeprecationWarning,
-        stacklevel=2,
-    )
-    return max_sobol_dimensions()

@@ -2,12 +2,9 @@
 
 from __future__ import annotations
 
-from typing import cast
-
 import dask.array as da
 import numpy as np
 import numpy.linalg
-import numpy.random
 from dask.array.core import normalize_chunks
 
 from pyscenarios import duck
@@ -178,11 +175,12 @@ def _copula_impl(
     dimensions = cov.shape[0]
 
     L = numpy.linalg.cholesky(cov)
+    norm_chunks: NormalizedChunks2D | None = None
     if chunks is not None:
-        chunks = cast(
-            NormalizedChunks2D, normalize_chunks(chunks, shape=(samples, dimensions))
-        )
-        L = da.from_array(L, chunks=(chunks[1], chunks[1]))
+        norm_chunks = normalize_chunks(chunks, shape=(samples, dimensions))
+        assert norm_chunks is not None
+        L = da.from_array(L, chunks=(norm_chunks[1], norm_chunks[1]))
+    del chunks
 
     rng = rng.lower()
     if rng == "mersenne twister":
@@ -190,9 +188,9 @@ def _copula_impl(
         # the samples on the rows. This guarantees that if we draw more
         # samples, the original samples won't change.
         rnd_state_y = duck.RandomState(seed)
-        y = rnd_state_y.standard_normal(size=(samples, dimensions), chunks=chunks)
+        y = rnd_state_y.standard_normal(size=(samples, dimensions), chunks=norm_chunks)
     elif rng == "sobol":
-        y = sobol(size=(samples, dimensions), d0=seed, chunks=chunks)
+        y = sobol(size=(samples, dimensions), d0=seed, chunks=norm_chunks)
         y = duck.norm_ppf(y)
     else:
         raise ValueError(f"Unknown rng: {rng}")
@@ -210,11 +208,11 @@ def _copula_impl(
             "df must be either a scalar or a 1D vector with as "
             "many points as the width of the correlation matrix"
         )
-    if df.ndim == 1 and chunks is not None:
-        df = da.from_array(df, chunks=(chunks[1],))
+    if df.ndim == 1 and norm_chunks is not None:
+        df = da.from_array(df, chunks=(norm_chunks[1],))
 
     # Define chunks for the S chi-square matrix
-    chunks_r = (chunks[0], (1,)) if chunks else None
+    chunks_r = (norm_chunks[0], (1,)) if norm_chunks is not None else None
 
     if rng == "mersenne twister":
         # Use two separate random states for the normal and the chi2
