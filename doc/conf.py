@@ -297,6 +297,9 @@ intersphinx_mapping = {
     "scipy": ("https://docs.scipy.org/doc/scipy/reference/", None),
 }
 
+# Configuration for sphinx-autodoc
+autodoc_typehints = "none"
+
 # Hack around intersphinx issue caused by :show-inheritance:
 import dask.array  # isort:skip  # noqa: E402
 

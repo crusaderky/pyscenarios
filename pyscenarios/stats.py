@@ -19,12 +19,12 @@ def tail_dependence(
         1D array-like or Dask array containing samples from a
         uniform (0, 1) distribution.
     :param y:
-        other array to compare against
+        other 1D array-like or Dask array to compare against
     :param q:
-        quantile(s) (0 < q < 1).
+        quantile(s) (`0 < q < 1`).
         Either a scalar or a ND array-like or Dask array.
     :returns:
-        Array of the same shape and type as q, containing:
+        Array of the same shape and type as `q`, containing:
 
         .. math::
 

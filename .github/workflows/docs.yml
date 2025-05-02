@@ -38,7 +38,7 @@ jobs:
         run: python -m pip install --no-deps -e .
 
       - name: Build docs
-        run: sphinx-build -n -j auto -b html -d build/doctrees doc build/html
+        run: sphinx-build -W -n -j auto -b html -d build/doctrees doc build/html
 
       - uses: actions/upload-artifact@v4
         with:
