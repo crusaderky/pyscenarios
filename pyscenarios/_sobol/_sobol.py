@@ -79,10 +79,10 @@ def sobol(
         a random seed. dimensions + d0 can't be greater than
         :func:`max_sobol_dimensions()` - 1.
     :param chunks:
-        If None, return a numpy array.
+        If omitted or None, return a NumPy array.
 
-        If set, return a dask array with the given chunk size.
-        It can be anything accepted by dask (a positive integer, a
+        If not None, return a Dask array with the given chunk size.
+        It can be anything accepted by Dask (a positive integer, a
         tuple of two ints, or a tuple of two tuples of ints) for the output
         shape (see result below). e.g. either ``(16384, 50)`` or
         ``((16384, 16383),  (50, 50, 50))`` could be used together with
@@ -120,7 +120,7 @@ def sobol(
             np_res = np_res[:, 0]
         return np_res
 
-    # dask-specific code
+    # Dask-specific code
     norm_chunks: NormalizedChunks2D = normalize_chunks(
         chunks, shape=(samples, dimensions)
     )

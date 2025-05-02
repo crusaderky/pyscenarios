@@ -7,12 +7,12 @@ Required dependencies
 ---------------------
 
 - Python 3.10 or later
-- `dask <https://dask.org>`_
-- `numpy <http://www.numpy.org>`_
-- `scipy <https://www.scipy.org>`_
+- `Dask <https://dask.org>`_
+- `NumPy <http://www.numpy.org>`_
+- `Scipy <https://www.scipy.org>`_
 
 Additionally, if you plan to use :func:`pyscenarios.sobol`, installing
-`numba <http://numba.pydata.org>`_ will greatly speed up the calculation.
+`Numba <http://numba.pydata.org>`_ will greatly speed up the calculation.
 
 You can install the required dependencies using pip:
 .. code-block:: shell
@@ -26,6 +26,7 @@ or conda:
 
    conda install -c conda-forge pyscenarios
    conda install -c conda-forge pyscenarios numba
+
 
 .. _mindeps_policy:
 
@@ -44,6 +45,6 @@ Testing
 
 To run the test suite after installing pyscenarios, first install (via pypi or conda)
 
-- `py.test <https://pytest.org>`_: Simple unit testing library
+- `pytest <https://pytest.org>`_: Simple unit testing library
 
-and run ``py.test``.
+and run ``pytest``.

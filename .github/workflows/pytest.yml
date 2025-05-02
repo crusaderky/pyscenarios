@@ -42,7 +42,7 @@ jobs:
           - os: windows
             python-version: "3.13"
             requirements: latest
-          # Test on minimal requirements, with numba
+          # Test on minimal requirements, with Numba
           - os: ubuntu
             python-version: "3.10"
             requirements: minimal
@@ -52,7 +52,7 @@ jobs:
           - os: windows
             python-version: "3.10"
             requirements: minimal
-          # Test on minimal requirements, without numba
+          # Test on minimal requirements, without Numba
           - os: ubuntu
             python-version: "3.10"
             requirements: minimal-no-numba

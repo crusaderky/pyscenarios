@@ -7,8 +7,8 @@ This package offers several modules used in Monte Carlo simulations:
 - Sobol series generator
 - Tail dependence measures
 
-All modules fully support and are optimized for `dask <https://dask.org>`_
-and are compatible with `dask distributed <http://distributed.dask.org>`_.
+All modules fully support and are optimized for `Dask <https://dask.org>`_
+and are compatible with `Dask distributed <http://distributed.dask.org>`_.
 
 
 Index

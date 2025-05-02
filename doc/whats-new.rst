@@ -13,7 +13,7 @@ v0.6.0 (unreleased)
   .. warning::
 
     If you are using :func:`sobol`, or :func:`gaussian_copula` /
-    :func:`t_copula` with ``rng="Sobol"``, you may experience a performance
+    :func:`t_copula` with ``rng="Sobol"``, you may experience performance
     degradation. To avoid it, you need to explicitly install Numba.
 
     - If you use pip, make sure you ``pip install pyscenarios[numba]``
@@ -107,7 +107,7 @@ v0.3.0 (2020-07-02)
   ==========  ====== ====
 
 - Now using setuptools-scm for versioning
-- Functions decorated by numba are now covered by coveralls
+- Functions decorated by Numba are now covered by coveralls
 - Migrated CI from travis + appveyor + coveralls to GitHub actions + codecov.io
 - Added black and isort to CI
 
