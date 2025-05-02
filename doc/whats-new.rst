@@ -7,6 +7,19 @@ What's New
 
 v0.6.0 (unreleased)
 -------------------
+- Numba is now an optional dependency; if not installed, :func:`sobol`
+  will fall back to a slower pure-Numpy implementation.
+
+  .. warning::
+
+    If you are using :func:`sobol` or :func:`gaussian_copula``
+    or :func:`t_copula` with ``rng="Sobol"``,
+
+    - if you use ``pip`` make sure you ``pip install pyscenarios[numba]`` where
+      before you were doing ``pip install pyscenarios``
+    - if you use ``conda``, make sure you explicitly install ``numba`` too
+       you need to explicitly add
+
 - Sped up ``pyscenarios.sobol`` by ~33% (on Numba)
 - Added formal support for Python 3.13 (but the previous release works fine too)
 - Changed dependency support policy from NEP 29 to SPEC 0
@@ -23,11 +36,11 @@ v0.6.0 (unreleased)
   ==========  ====== =========
 
 - Removed function names deprecated in v0.4:
-  - pyscenarios.copula.gaussian_copula
-  - pyscenarios.copula.t_copula
-  - pyscenarios.sobol.sobol
-  - pyscenarios.sobol.max_dimensions
-  - pyscenarios.stats.tail_dependence
+  - ``pyscenarios.copula.gaussian_copula``
+  - ``pyscenarios.copula.t_copula``
+  - ``pyscenarios.sobol.sobol``
+  - ``pyscenarios.sobol.max_dimensions``
+  - ``pyscenarios.stats.tail_dependence``
 
 
 .. _whats-new.0.5.0:

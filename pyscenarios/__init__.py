@@ -1,7 +1,7 @@
 import importlib.metadata
 
+from pyscenarios._sobol import max_sobol_dimensions, sobol
 from pyscenarios.copula import gaussian_copula, t_copula
-from pyscenarios.sobol import max_sobol_dimensions, sobol
 from pyscenarios.stats import tail_dependence
 
 try:

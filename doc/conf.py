@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 # documentation build configuration file, created by
 # sphinx-quickstart on Thu Feb  6 18:57:54 2014.
 #

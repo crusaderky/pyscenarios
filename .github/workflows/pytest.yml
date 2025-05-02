@@ -42,7 +42,7 @@ jobs:
           - os: windows
             python-version: "3.13"
             requirements: latest
-          # Test on minimal requirements
+          # Test on minimal requirements, with numba
           - os: ubuntu
             python-version: "3.10"
             requirements: minimal
@@ -52,6 +52,16 @@ jobs:
           - os: windows
             python-version: "3.10"
             requirements: minimal
+          # Test on minimal requirements, without numba
+          - os: ubuntu
+            python-version: "3.10"
+            requirements: minimal-no-numba
+          - os: macos
+            python-version: "3.10"
+            requirements: minimal-no-numba
+          - os: windows
+            python-version: "3.10"
+            requirements: minimal-no-numba
 
     steps:
       - name: Checkout

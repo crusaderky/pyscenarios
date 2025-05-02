@@ -8,10 +8,24 @@ Required dependencies
 
 - Python 3.10 or later
 - `dask <https://dask.org>`_
-- `numba <http://numba.pydata.org>`_
 - `numpy <http://www.numpy.org>`_
 - `scipy <https://www.scipy.org>`_
 
+Additionally, if you plan to use :func:`pyscenarios.sobol`, installing
+`numba <http://numba.pydata.org>`_ will greatly speed up the calculation.
+
+You can install the required dependencies using pip:
+.. code-block:: shell
+
+   pip install pyscenarios
+   pip install pyscenarios[numba]
+   pip install pyscenarios[all]
+
+or conda:
+.. code-block:: shell
+
+   conda install -c conda-forge pyscenarios
+   conda install -c conda-forge pyscenarios numba
 
 .. _mindeps_policy:
 
