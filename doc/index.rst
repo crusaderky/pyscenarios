@@ -23,6 +23,8 @@ Index
 License
 -------
 
-pyscenarios is available under the open source `Apache License`__.
+pyscenarios is available under the open source
+`Apache License <http://www.apache.org/licenses/LICENSE-2.0.html>`_.
 
-__ http://www.apache.org/licenses/LICENSE-2.0.html
+Joe/Kuo direction numbers for Sobol are available under a bespoke
+`BSD-style license <https://web.maths.unsw.edu.au/~fkuo/sobol/licence>`_.

@@ -14,15 +14,13 @@ Required dependencies
 Additionally, if you plan to use :func:`pyscenarios.sobol`, installing
 `Numba <http://numba.pydata.org>`_ will greatly speed up the calculation.
 
-You can install the required dependencies using pip:
-.. code-block:: shell
+You can install the required dependencies using pip::
 
    pip install pyscenarios
    pip install pyscenarios[numba]
    pip install pyscenarios[all]
 
-or conda:
-.. code-block:: shell
+or conda::
 
    conda install -c conda-forge pyscenarios
    conda install -c conda-forge pyscenarios numba
@@ -43,8 +41,7 @@ You can see the actual minimum tested versions in the `anaconda requirements fil
 Testing
 -------
 
-To run the test suite after installing pyscenarios, first install (via pypi or conda)
+To run the test suite after installing pyscenarios, first install
+`pytest <https://pytest.org>`_ via pypi or conda and then run::
 
-- `pytest <https://pytest.org>`_: Simple unit testing library
-
-and run ``pytest``.
+   pytest
