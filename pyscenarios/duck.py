@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from functools import wraps
+from functools import cached_property, wraps
 from typing import Any
 
 import dask.array as da
@@ -90,12 +90,18 @@ class RandomState:
     the dask version.
     """
 
-    def __init__(self, seed: int | None = None):
-        self._dask_state = da.random.RandomState(seed)
+    _seed: int | None
 
-    @property
+    def __init__(self, seed: int | None = None):
+        self._seed = seed
+
+    @cached_property
+    def _dask_state(self) -> da.random.RandomState:
+        return da.random.RandomState(self._seed)
+
+    @cached_property
     def _numpy_state(self) -> np.random.RandomState:
-        return self._dask_state._numpy_state
+        return np.random.RandomState(self._seed)
 
     def _apply(
         self,

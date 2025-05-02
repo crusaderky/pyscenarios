@@ -7,9 +7,27 @@ What's New
 
 v0.6.0 (unreleased)
 -------------------
-- Sped up ``pyscenarios.sobol`` by ~33%
-- Bumped up minimum version of numpy to 1.17
+- Sped up ``pyscenarios.sobol`` by ~33% (on Numba)
 - Added formal support for Python 3.13 (but the previous release works fine too)
+- Changed dependency support policy from NEP 29 to SPEC 0
+- Bumped up all minimum dependency versions:
+
+  ==========  ====== =========
+  Dependency  v0.5   v0.6
+  ==========  ====== =========
+  python      3.8    3.10
+  dask        2.2    2022.12.0
+  numba       0.47   0.57
+  numpy       1.16   1.24
+  scipy       1.3    1.9
+  ==========  ====== =========
+
+- Removed function names deprecated in v0.4:
+  - pyscenarios.copula.gaussian_copula
+  - pyscenarios.copula.t_copula
+  - pyscenarios.sobol.sobol
+  - pyscenarios.sobol.max_dimensions
+  - pyscenarios.stats.tail_dependence
 
 
 .. _whats-new.0.5.0:
