@@ -85,9 +85,9 @@ def gaussian_copula(
         multiple copulas with different seeds, one should never use seeds that
         are less than ``cov.shape[0]`` apart from each other.
 
-        The maximum seed when using sobol is::
+        The maximum seed when using Sobol is::
 
-            pyscenarios.sobol.max_sobol_dimensions() - cov.shape[0] - 1
+            pyscenarios.max_sobol_dimensions() - cov.shape[0] - 1
 
     :param str rng:
         Either ``Mersenne Twister`` or ``Sobol``
@@ -188,9 +188,9 @@ def t_copula(
         multiple copulas with different seeds, one should never use seeds that
         are less than ``cov.shape[0] + 1`` apart from each other.
 
-        The maximum seed when using sobol is::
+        The maximum seed when using Sobol is::
 
-            pyscenarios.sobol.max_sobol_dimensions() - cov.shape[0] - 2
+            pyscenarios.max_sobol_dimensions() - cov.shape[0] - 2
 
     :param str rng:
         Either ``Mersenne Twister`` or ``Sobol``
