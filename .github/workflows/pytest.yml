@@ -81,7 +81,7 @@ jobs:
         run: python -m pip install --no-deps -e .
 
       - name: pytest
-        run: py.test --verbose --cov=pyscenarios --cov-report=xml
+        run: pytest --verbose --cov=pyscenarios --cov-report=xml
 
       - name: codecov.io
         uses: codecov/codecov-action@v5
