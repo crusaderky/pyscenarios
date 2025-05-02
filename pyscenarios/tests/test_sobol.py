@@ -13,7 +13,7 @@ def kernel(request, monkeypatch):
     if request.param == "numba":
         pytest.importorskip("numba")
     else:
-        monkeypatch.setattr("pyscenarios._sobol._sobol._has_numba", lambda: False)
+        monkeypatch.setattr("pyscenarios._sobol._sobol._use_numba", lambda: False)
 
 
 pytestmark = pytest.mark.usefixtures("kernel")
@@ -53,23 +53,48 @@ def test_max_sobol_dimensions():
 
 def test_numpy_1d():
     output = sobol(15, d0=123)
+    assert isinstance(output, np.ndarray)
     assert_array_equal(EXPECT[:, 0], output)
-
-
-def test_dask_1d():
-    output = sobol(15, d0=123, chunks=(6, 3))
-    assert output.chunks == ((6, 6, 3),)
-    assert_array_equal(EXPECT[:, 0], output.compute())
 
 
 def test_numpy_2d():
     output = sobol((15, 4), d0=123)
+    assert isinstance(output, np.ndarray)
     assert_array_equal(EXPECT, output)
 
 
-def test_dask_2d():
-    output = sobol((15, 4), d0=123, chunks=(6, 3))
-    assert output.chunks == ((6, 6, 3), (3, 1))
+@pytest.mark.parametrize(
+    "chunks,expect_chunks", 
+    [
+        (-1, ((15, ), )),
+        (((-1, -1)), ((15, ), )),
+        ((6, -1), ((6, 6, 3, ), )),
+        ((6, 100), ((6, 6, 3, ), )),
+        (((5, 6, 4), -1), ((5, 6, 4), )),
+    ]
+)
+def test_dask_1d(chunks, expect_chunks):
+    output = sobol(15, d0=123, chunks=chunks)
+    assert output.chunks == expect_chunks
+    assert_array_equal(EXPECT[:, 0], output.compute())
+
+
+@pytest.mark.parametrize(
+    "chunks,expect_chunks", 
+    [
+        (-1, ((15, ), (4, ))),
+        (100, ((15, ), (4, ))),
+        ((-1, -1), ((15, ), (4, ))),
+        ((100, 100), ((15, ), (4, ))),
+        ((6, -1), ((6, 6, 3, ), (4, ))),
+        ((-1, 3), ((15, ), (3, 1))),
+        ((6, 3), ((6, 6, 3, ), (3, 1))),
+        (((5, 6, 4), (1, 1, 2)), ((5, 6, 4), (1, 1, 2))),
+    ]
+)
+def test_dask_2d(chunks, expect_chunks):
+    output = sobol((15, 4), d0=123, chunks=chunks)
+    assert output.chunks == expect_chunks
     assert_array_equal(EXPECT, output.compute())
 
 

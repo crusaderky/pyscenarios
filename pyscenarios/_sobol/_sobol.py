@@ -1,10 +1,3 @@
-"""Sobol sequence generator
-
-This is a reimplementation of a C++ algorithm by
-`Stephen Joe and Frances Y. Kuo <http://web.maths.unsw.edu.au/~fkuo/sobol/>`_.
-Directions are based on :file:`new-joe-kuo-6.21201` from the URL above.
-"""
-
 from functools import cache
 
 import dask.array as da
@@ -16,7 +9,7 @@ from pyscenarios.typing import Chunks2D, NormalizedChunks2D
 
 
 @cache
-def _has_numba() -> bool:
+def _use_numba() -> bool:
     """Check if Numba is available"""
     try:
         import numba  # noqa: F401
@@ -46,7 +39,7 @@ def sobol_kernel(
         pyscenarios.copula with rng="Mersenne Twister"
         - Unit testing both implementations while Numba is installed
     """
-    if _has_numba():
+    if _use_numba():
         import pyscenarios._sobol._kernel_numba as kernel
     else:
         import pyscenarios._sobol._kernel_numpy as kernel  # type: ignore[no-redef]
@@ -58,6 +51,10 @@ def sobol(
     size: int | tuple[int, int], d0: int = 0, chunks: Chunks2D = None
 ) -> npt.NDArray[np.float64] | da.Array:
     """Sobol points generator based on Gray code order
+
+    This is a Python reimplementation of a C++ algorithm by
+    `Stephen Joe and Frances Y. Kuo <https://web.maths.unsw.edu.au/~fkuo/sobol/>`_,
+    using directions from the file ``new-joe-kuo-6.21201`` linked above.
 
     :param size:
         number of samples (cannot be greater than :math:`2^{32}`) to extract

@@ -12,13 +12,14 @@ v0.6.0 (unreleased)
 
   .. warning::
 
-    If you are using :func:`sobol` or :func:`gaussian_copula``
-    or :func:`t_copula` with ``rng="Sobol"``,
+    If you are using :func:`sobol` or :func:`gaussian_copula`
+    or :func:`t_copula` with ``rng="Sobol"``, you may experience a performance
+    degradation. To avoid it, you need to explicitly install Numba.
 
-    - if you use ``pip`` make sure you ``pip install pyscenarios[numba]`` where
-      before you were doing ``pip install pyscenarios``
-    - if you use ``conda``, make sure you explicitly install ``numba`` too
-       you need to explicitly add
+    - if you use ``pip``, make sure you ``pip install pyscenarios[numba]``
+      instead of just ``pip install pyscenarios``;
+    - if you use ``conda``, make sure you explicitly add ``numba`` to
+      your ``environment.yml``.
 
 - Sped up ``pyscenarios.sobol`` by ~33% (on Numba)
 - Added formal support for Python 3.13 (but the previous release works fine too)

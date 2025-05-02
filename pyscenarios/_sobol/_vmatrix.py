@@ -14,7 +14,7 @@ import pkgutil
 import numpy as np
 import numpy.typing as npt
 
-DIRECTIONS = "new-joe-kuo-6.21201.txt.xz"
+DIRECTIONS = "_sobol/new-joe-kuo-6.21201.txt.xz"
 
 
 def _load_directions(resource_fname: str) -> npt.NDArray[np.uint32]:
@@ -38,10 +38,10 @@ def _load_directions(resource_fname: str) -> npt.NDArray[np.uint32]:
 
     # Add padding at end of rows
     # Drop first 2 columns
-    # Replace header with element for d=1
     rowlen = len(rows[-1])
     for row in rows:
         row[:] = row[2:] + ["0"] * (rowlen - len(row))
+    # Replace header with element for d=1
     rows[0] = ["0"] + ["1"] * (rowlen - 3)
     return np.array(rows, dtype=np.uint32)
 
@@ -55,18 +55,14 @@ def _calc_v(directions: npt.NDArray[np.uint32]) -> npt.NDArray[np.uint32]:
     ndim, ndir = directions.shape
     V = np.empty((ndim, 32), dtype=np.uint32)
 
-    V[:, : ndir - 1] = np.roll(directions, -1, axis=1)[:, :-1] * 2 ** np.arange(
-        31, 32 - ndir, -1
-    )
+    next_directions = np.roll(directions, -1, axis=1)[:, :-1]
+    V[:, : ndir - 1] = next_directions * 2 ** np.arange(31, 32 - ndir, -1)
 
     # Index of the first column where directions == 0, ignoring column 0
-    ss = (
-        np.where(
-            np.all(directions[:, 1:] != 0, axis=1),
-            ndir,
-            np.argmin(directions[:, 1:], axis=1) + 1,
-        )
-        - 1
+    ss = np.where(
+        np.all(directions[:, 1:] != 0, axis=1),
+        ndir - 1,
+        np.argmin(directions[:, 1:], axis=1),
     )
 
     # Overwrite V[:, ss:]

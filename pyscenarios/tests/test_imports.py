@@ -4,7 +4,7 @@ from multiprocessing import get_context
 import pytest
 
 
-def check_lazy_imports():
+def check_lazy_imports():  # pragma: nocover
     # This function will run in a subprocess
     from pyscenarios import gaussian_copula
 

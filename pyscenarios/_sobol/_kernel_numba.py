@@ -34,7 +34,7 @@ def _sobol_kernel_jit(
     d0: int,
     V: npt.NDArray[np.uint32],
     output: npt.NDArray[np.float64],
-) -> None:  # coverage: ignore
+) -> None:  # pragma: nocover
     """Jit-compiled core of sobol_kernel
 
     When running in Dask, if there are multiple chunks on the

@@ -77,14 +77,7 @@ filterwarnings = ["error"]
 
 [tool.coverage.report]
 show_missing = true
-exclude_lines = [
-    "pragma: nocover",
-    "pragma: no cover",
-    "TYPE_CHECKING",
-    "except ImportError",
-    "@overload",
-    '@(abc\.)?abstractmethod',
-]
+
 
 [tool.ruff]
 exclude = [".eggs"]

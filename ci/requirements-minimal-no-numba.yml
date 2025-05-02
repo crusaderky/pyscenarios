@@ -1,4 +1,4 @@
-name: pyscenarios-minimal
+name: pyscenarios-minimal-no-numba
 channels:
   - conda-forge
 dependencies:

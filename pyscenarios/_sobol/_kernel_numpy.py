@@ -31,17 +31,24 @@ def sobol_kernel(
     # over the network, as in most cases it would cause nodes to sit idle
     # until the state arrives from the node left of them.
     prev_state = None
+    scratch = np.empty((samples, VT.shape[1]), dtype=np.uint32)
+
     for i in range(0, s0, samples):
-        states = np.take(VT, c[i : min(i + samples, s0)], axis=0)
+        if i + samples <= s0:
+            states = np.take(VT, c[i : i + samples], axis=0, out=scratch)
+        else:
+            # Edge case of explicitly requested odd-sized chunks, e.g. (5, 6, 4)
+            states = np.take(VT, c[i:s0], axis=0, out=scratch[: s0 - i])  # type: ignore[arg-type]
+
         if prev_state is not None:
             states[0, :] ^= prev_state
-        prev_state = np.bitwise_xor.reduce(states, axis=0)
+        prev_state = np.bitwise_xor.reduce(states, axis=0, out=prev_state)
 
-    states = np.take(VT, c[s0:], axis=0)
+    states = np.take(VT, c[s0:], axis=0, out=scratch)
     if prev_state is not None:
         states[0, :] ^= prev_state
 
-    states = np.bitwise_xor.accumulate(states, axis=0, out=states)
+    states = np.bitwise_xor.accumulate(states, axis=0, out=scratch)  # type: ignore[assignment]
     return np.astype(states, np.float64) / 2**32
 
 
