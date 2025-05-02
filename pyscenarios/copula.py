@@ -1,5 +1,7 @@
 """High performance copula generators"""
 
+from typing import Literal, TypeAlias
+
 import dask.array as da
 import numpy as np
 import numpy.linalg
@@ -9,13 +11,15 @@ from pyscenarios import duck
 from pyscenarios._sobol import sobol
 from pyscenarios.typing import Chunks2D, NormalizedChunks2D
 
+RNG: TypeAlias = Literal["Mersenne Twister", "Sobol"]
+
 
 def gaussian_copula(
     cov: list[list[float]] | np.ndarray,
     samples: int,
     seed: int = 0,
     chunks: Chunks2D = None,
-    rng: str = "Mersenne Twister",
+    rng: RNG = "Mersenne Twister",
 ) -> np.ndarray | da.Array:
     """Gaussian Copula scenario generator.
 
@@ -83,7 +87,7 @@ def t_copula(
     samples: int,
     seed: int = 0,
     chunks: Chunks2D = None,
-    rng: str = "Mersenne Twister",
+    rng: RNG = "Mersenne Twister",
 ) -> np.ndarray | da.Array:
     """Student T Copula / IT Copula scenario generator.
 
@@ -161,7 +165,7 @@ def _copula_impl(
     samples: int,
     seed: int,
     chunks: Chunks2D,
-    rng: str,
+    rng: RNG,
 ) -> np.ndarray | da.Array:
     """Implementation of gaussian_copula and t_copula"""
     samples = int(samples)
@@ -180,18 +184,21 @@ def _copula_impl(
         L = da.from_array(L, chunks=(norm_chunks[1], norm_chunks[1]))
     del chunks
 
-    rng = rng.lower()
-    if rng == "mersenne twister":
+    rng_low = rng.lower()
+    if rng_low == "mersenne twister":
         # When pulling samples from the Mersenne Twister generator, we have
         # the samples on the rows. This guarantees that if we draw more
         # samples, the original samples won't change.
         rnd_state_y = duck.RandomState(seed)
         y = rnd_state_y.standard_normal(size=(samples, dimensions), chunks=norm_chunks)
-    elif rng == "sobol":
+    elif rng_low == "sobol":
         y = sobol(size=(samples, dimensions), d0=seed, chunks=norm_chunks)
         y = duck.norm_ppf(y)
     else:
-        raise ValueError(f"Unknown rng: {rng}")
+        raise ValueError(
+            f"Invalid rng: required 'Mersenne Twister' or 'Sobol'; got {rng!r}"
+        )
+    del rng
 
     p = (L @ y.T).T  # Gaussian Copula
     if df is None:
@@ -212,7 +219,7 @@ def _copula_impl(
     # Define chunks for the S chi-square matrix
     chunks_r = (norm_chunks[0], (1,)) if norm_chunks is not None else None
 
-    if rng == "mersenne twister":
+    if rng_low == "mersenne twister":
         # Use two separate random states for the normal and the chi2
         # distributions. This is NOT the same as just extracting two series
         # from the same RandomState, as we must guarantee that, if you extract
@@ -223,7 +230,7 @@ def _copula_impl(
         seed_r = (seed + 190823761298456) % 2**32
         rnd_state_r = duck.RandomState(seed_r)
         r = rnd_state_r.uniform(size=(samples, 1), chunks=chunks_r)
-    elif rng == "sobol":
+    elif rng_low == "sobol":
         seed_r = seed + dimensions
         r = sobol(size=(samples, 1), d0=seed_r, chunks=chunks_r)
     else:
