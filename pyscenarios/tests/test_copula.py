@@ -241,7 +241,7 @@ def test_bad_params_common(copula):
     with pytest.raises(ValueError, match="Number of samples must be positive"):
         copula(cov, samples=0, seed=123, chunks=None, rng="Mersenne Twister")
 
-    with pytest.raises(ValueError, match="Unknown rng: unknown"):
+    with pytest.raises(ValueError, match="unknown"):
         copula(cov, samples=4, seed=123, chunks=None, rng="unknown")
 
 
@@ -262,3 +262,14 @@ def test_bad_params_t():
         t_copula(
             cov, df=[1, 1], samples=4, seed=123, chunks=None, rng="Mersenne Twister"
         )
+
+
+@pytest.mark.parametrize("rng", ["Mersenne Twister", "MerSenne twISTer", "soBOl"])
+def test_copula_case_insensitive(rng):
+    a = gaussian_copula(cov, samples=4, rng=rng)
+    b = gaussian_copula(cov, samples=4, rng=rng.lower())
+    np.testing.assert_array_equal(a, b)
+
+    a = t_copula(cov, df=3, samples=4, rng=rng)
+    b = t_copula(cov, df=3, samples=4, rng=rng.lower())
+    np.testing.assert_array_equal(a, b)
