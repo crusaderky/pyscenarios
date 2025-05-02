@@ -53,7 +53,7 @@ def gaussian_copula(
         >>> y = numpy.random.standard_normal(size=(samples, cov.shape[0]))
         >>> p = (l @ y.T).T
 
-    :param ArrayLike cov:
+    :param cov:
         covariance matrix, a.k.a. correlation matrix. It must be a
         Hermitian, positive-definite matrix in any square array-like format.
         The width of cov determines the number of dimensions of the output.
@@ -151,12 +151,12 @@ def t_copula(
         >>> u = scipy.stats.t.cdf(z, df=df)
         >>> t = scipy.stats.norm.ppf(u)
 
-    :param ArrayLike cov:
+    :param cov:
         covariance matrix, a.k.a. correlation matrix. It must be a
         Hermitian, positive-definite matrix in any square array-like format.
         The width of cov determines the number of dimensions of the output.
 
-    :param ArrayLike df:
+    :param df:
         Number of degrees of freedom. Can be either a scalar int for
         Student T Copula, or a one-dimensional NumPy array or array-like with
         one point per dimension for IT Copula.

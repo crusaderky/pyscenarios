@@ -69,7 +69,7 @@ def sobol(
     `Stephen Joe and Frances Y. Kuo <https://web.maths.unsw.edu.au/~fkuo/sobol/>`_,
     using directions from the file ``new-joe-kuo-6.21201`` linked above.
 
-    :param size:
+    :param int | tuple[int, int] size:
         number of samples (cannot be greater than :math:`2^{32}`) to extract
         from a single dimension, or tuple (samples, dimensions).
         To guarantee uniform distribution, the number of samples should
