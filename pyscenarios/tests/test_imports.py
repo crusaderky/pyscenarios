@@ -1,13 +1,14 @@
+import pickle
 import sys
 from multiprocessing import get_context
 
 import pytest
 
+from pyscenarios import gaussian_copula, sobol
+
 
 def check_lazy_imports():  # pragma: nocover
     # This function will run in a subprocess
-    from pyscenarios import gaussian_copula
-
     gaussian_copula(cov=[[1.0, 0.9], [0.9, 1.0]], samples=4)
     gaussian_copula(cov=[[1.0, 0.9], [0.9, 1.0]], samples=4, chunks=2)
     assert "numba" not in sys.modules
@@ -29,3 +30,13 @@ def test_expensive_imports_are_lazy():
     process.start()
     process.join()
     assert process.exitcode == 0
+
+
+def test_dask_workers_without_numba():
+    """Test that Sobol can run when the Dask client has Numba installed,
+    but the workers do not.
+    """
+    output = sobol((15, 4), chunks=(6, 3))
+    pik = pickle.dumps(output)
+    assert b"sobol_kernel" in pik
+    assert b"numba" not in pik

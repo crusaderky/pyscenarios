@@ -12,12 +12,12 @@ v0.6.0 (unreleased)
 
   .. warning::
 
-    If you are using :func:`sobol` or :func:`gaussian_copula`
-    or :func:`t_copula` with ``rng="Sobol"``, you may experience a performance
+    If you are using :func:`sobol`, or :func:`gaussian_copula` /
+    :func:`t_copula` with ``rng="Sobol"``, you may experience a performance
     degradation. To avoid it, you need to explicitly install Numba.
 
     - if you use ``pip``, make sure you ``pip install pyscenarios[numba]``
-      instead of just ``pip install pyscenarios``;
+      instead of just ``pyscenarios``;
     - if you use ``conda``, make sure you explicitly add ``numba`` to
       your ``environment.yml``.
 

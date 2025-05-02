@@ -133,6 +133,6 @@ def max_sobol_dimensions() -> int:
     ``size[1] + d0`` must be smaller than this.
     """
     # Expensive import; don't do it until we need it
-    from ._vmatrix import V
+    from pyscenarios._sobol._vmatrix import V
 
     return V.shape[0]

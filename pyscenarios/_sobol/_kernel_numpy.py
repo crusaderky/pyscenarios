@@ -37,7 +37,8 @@ def sobol_kernel(
         if i + samples <= s0:
             states = np.take(VT, c[i : i + samples], axis=0, out=scratch)
         else:
-            # Edge case of explicitly requested odd-sized chunks, e.g. (5, 6, 4)
+            # Final chunk is shorter than the others, or
+            # explicitly requested odd-sized chunks, e.g. (5, 6, 4).
             states = np.take(VT, c[i:s0], axis=0, out=scratch[: s0 - i])  # type: ignore[arg-type]
 
         if prev_state is not None:

@@ -1,5 +1,3 @@
-import pickle
-
 import numpy as np
 import pytest
 from numpy.testing import assert_array_equal
@@ -114,12 +112,3 @@ def test_samepoints(n):
 def test_bad_samples(n):
     with pytest.raises(ValueError, match="must be between"):
         sobol(n)
-
-
-def test_dask_workers_without_numba():
-    """Test that Sobol can run when the Dask client has Numba installed,
-    but the workers do not.
-    """
-    output = sobol((15, 4), d0=123, chunks=(6, 3))
-    pik = pickle.dumps(output)
-    assert b"numba" not in pik
