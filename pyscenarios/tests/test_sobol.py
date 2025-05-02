@@ -71,7 +71,7 @@ def test_samepoints(n):
     assert not s.any()
 
 
-@pytest.mark.parametrize("n", [-1, 0, int(2**33)])
+@pytest.mark.parametrize("n", [-1, 0, (2**33)])
 def test_bad_samples(n):
     with pytest.raises(ValueError, match="must be between"):
         sobol(n)

@@ -48,4 +48,4 @@ jobs:
         run: py.test --verbose --cov=pyscenarios --cov-report=xml
 
       - name: codecov.io
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v5
