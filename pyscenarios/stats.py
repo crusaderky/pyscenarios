@@ -1,14 +1,16 @@
 """Statistical functions"""
 
-from typing import Any
-
 import dask.array as da
-import numpy as np
+import numpy.typing as npt
 
 from pyscenarios import duck
 
 
-def tail_dependence(x: Any, y: Any, q: Any) -> np.ndarray | da.Array:
+def tail_dependence(
+    x: npt.ArrayLike,
+    y: npt.ArrayLike,
+    q: npt.ArrayLike,
+) -> npt.NDArray | da.Array:
     r"""Calculate `tail dependence
     <https://en.wikipedia.org/wiki/Tail_dependence>`_
     between vectors x and y.
@@ -38,7 +40,7 @@ def tail_dependence(x: Any, y: Any, q: Any) -> np.ndarray | da.Array:
     assert x.size == y.size
     assert x.ndim == y.ndim == 1
 
-    q = q[..., np.newaxis]
+    q = q[..., None]
     x_lt_q = x < q
     x_ge_q = x >= q
     xcount = duck.where(q < 0.5, x_lt_q, x_ge_q)

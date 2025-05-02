@@ -105,7 +105,7 @@ class RandomState:
         self,
         func_name: str,
         size: tuple[int, int] | None = None,
-        chunks: Chunks2D = None,
+        chunks: Chunks2D | None = None,
     ) -> Any:
         if chunks is not None:
             func = getattr(self._dask_state, func_name)
@@ -114,11 +114,11 @@ class RandomState:
         return func(size=size)
 
     def uniform(
-        self, size: tuple[int, int] | None = None, chunks: Chunks2D = None
+        self, size: tuple[int, int] | None = None, chunks: Chunks2D | None = None
     ) -> np.ndarray | da.Array:
         return self._apply("uniform", size=size, chunks=chunks)
 
     def standard_normal(
-        self, size: tuple[int, int] | None = None, chunks: Chunks2D = None
+        self, size: tuple[int, int] | None = None, chunks: Chunks2D | None = None
     ) -> np.ndarray | da.Array:
         return self._apply("standard_normal", size=size, chunks=chunks)
