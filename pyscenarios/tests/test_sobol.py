@@ -64,7 +64,7 @@ def test_numpy_2d():
 
 
 @pytest.mark.parametrize(
-    "chunks,expect_chunks", 
+    "chunks,expect_chunks",
     [
         (-1, ((15, ), )),
         (((-1, -1)), ((15, ), )),
@@ -80,7 +80,7 @@ def test_dask_1d(chunks, expect_chunks):
 
 
 @pytest.mark.parametrize(
-    "chunks,expect_chunks", 
+    "chunks,expect_chunks",
     [
         (-1, ((15, ), (4, ))),
         (100, ((15, ), (4, ))),
