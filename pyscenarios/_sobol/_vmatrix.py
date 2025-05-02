@@ -23,7 +23,7 @@ def _load_directions(resource_fname: str) -> npt.NDArray[np.uint32]:
     original author, or formatted like one.
 
     :returns:
-        contents of the input file as a 2D numpy array.
+        contents of the input file as a 2D NumPy array.
         Every row contains the information for the matching dimension.
         Column 0 contains the a values, while columns 1+ contain the m values.
         The m values are padded on the right with zeros.

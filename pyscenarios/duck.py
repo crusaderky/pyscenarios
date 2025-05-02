@@ -1,4 +1,4 @@
-"""Duck-typed functions that call numpy or dask depending on the inputs"""
+"""Duck-typed functions that call NumPy or Dask depending on the inputs"""
 
 from collections.abc import Callable
 from functools import cached_property, wraps
@@ -12,14 +12,14 @@ from pyscenarios.typing import Chunks2D
 
 
 def array(x: Any) -> np.ndarray | da.Array:
-    """Convert x to numpy array, unless it's a da.array"""
+    """Convert x to NumPy array, unless it's a da.array"""
     if isinstance(x, (np.ndarray, da.Array)):
         return x
     return np.array(x)
 
 
 def _apply_unary(func: Callable[[Any], Any]) -> Callable[[Any], Any]:
-    """Apply a function to an array-like. If the argument is a dask array, wrap
+    """Apply a function to an array-like. If the argument is a Dask array, wrap
     it in :func:`dask.array.blockwise`
     """
 
@@ -34,7 +34,7 @@ def _apply_unary(func: Callable[[Any], Any]) -> Callable[[Any], Any]:
 
 
 def _apply_binary(func: Callable[[Any, Any], Any]) -> Callable[[Any, Any], Any]:
-    """Apply a function to two array-likes. If either argument is a dask array,
+    """Apply a function to two array-likes. If either argument is a Dask array,
     wrap it in :func:`dask.array.blockwise`
     """
 
@@ -84,8 +84,8 @@ class RandomState:
     """Wrapper around :class:`numpy.random.RandomState` and
     :class:`dask.array.random.RandomState`.
 
-    For each method, if chunks=None invoke the numpy version, otherwise invoke
-    the dask version.
+    For each method, if chunks=None invoke the NumPy version;
+    otherwise invoke the Dask version.
     """
 
     _seed: int | None

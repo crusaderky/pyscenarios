@@ -67,16 +67,16 @@ def gaussian_copula(
 
     :param chunks:
         Chunk size for the return array, which has shape (samples, dimensions).
-        It can be anything accepted by dask (a positive integer, a tuple of two
+        It can be anything accepted by Dask (a positive integer, a tuple of two
         ints, or a tuple of two tuples of ints) for the output shape.
 
-        Set to None to return a numpy array.
+        Omit or set to None to return a NumPy array.
 
         .. warning::
            When using the Mersenne Twister random generator, the chunk size
            changes the random sequence. To guarantee repeatability, it must be
            fixed together with the seed. chunks=None also produces different
-           results from using dask.
+           results from using Dask.
 
     :param int seed:
         Random seed.
@@ -170,16 +170,16 @@ def t_copula(
 
     :param chunks:
         Chunk size for the return array, which has shape (samples, dimensions).
-        It can be anything accepted by dask (a positive integer, a tuple of two
+        It can be anything accepted by Dask (a positive integer, a tuple of two
         ints, or a tuple of two tuples of ints) for the output shape.
 
-        Set to None to return a numpy array.
+        Omit or set to None to return a NumPy array.
 
         .. warning::
            When using the Mersenne Twister random generator, the chunk size
            changes the random sequence. To guarantee repeatability, it must be
            fixed together with the seed. chunks=None also produces different
-           results from using dask.
+           results from using Dask.
 
     :param int seed:
         Random seed.
@@ -254,7 +254,7 @@ def _copula_impl(
     if df is None:
         return p
 
-    # Pre-process df into a 1D numpy/dask array
+    # Pre-process df into a 1D NumPy/Dask array
     df = np.asarray(df)
     if (df <= 0).any():
         raise ValueError("df must always be greater than zero")
