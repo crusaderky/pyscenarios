@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 # documentation build configuration file, created by
 # sphinx-quickstart on Thu Feb  6 18:57:54 2014.
 #
@@ -294,7 +292,7 @@ texinfo_documents = [
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3/", None),
     "dask": ("https://docs.dask.org/en/stable/", None),
-    "numba": ("https://numba.pydata.org/numba-doc/latest/", None),
+    "numba": ("https://numba.readthedocs.io/en/stable/", None),
     "numpy": ("https://numpy.org/doc/stable/", None),
     "scipy": ("https://docs.scipy.org/doc/scipy/reference/", None),
 }

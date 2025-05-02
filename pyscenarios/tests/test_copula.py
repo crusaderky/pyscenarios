@@ -6,7 +6,6 @@ import scipy.stats
 from numpy.testing import assert_allclose
 
 from pyscenarios import gaussian_copula, t_copula, tail_dependence
-from pyscenarios.tests import requires_jit
 
 cov = [[1.0, 0.9, 0.7], [0.9, 1.0, 0.4], [0.7, 0.4, 1.0]]
 
@@ -212,9 +211,7 @@ def test_cov_roundtrip(func, kwargs):
         ([3, 3, 999, 999], [0.33, 0.08, 0.13]),
     ],
 )
-@pytest.mark.parametrize(
-    "rng", ["Mersenne Twister", pytest.param("Sobol", marks=requires_jit)]
-)
+@pytest.mark.parametrize("rng", ["Mersenne Twister", "Sobol"])
 @pytest.mark.parametrize("chunks", [None, (65536, 1)])
 def test_tail_dependence(df, expect_td, rng, chunks):
     cov2 = [

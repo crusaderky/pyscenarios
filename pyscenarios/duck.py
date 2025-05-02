@@ -1,7 +1,5 @@
 """Duck-typed functions that call numpy or dask depending on the inputs"""
 
-from __future__ import annotations
-
 from collections.abc import Callable
 from functools import cached_property, wraps
 from typing import Any

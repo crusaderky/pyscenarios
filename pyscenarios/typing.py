@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 from typing import TypeAlias
 
 # Chunk size for a return array, which has shape (samples, dimensions). It can be

@@ -1,7 +1,5 @@
 """High performance copula generators"""
 
-from __future__ import annotations
-
 from typing import Literal, TypeAlias
 
 import dask.array as da
@@ -10,7 +8,7 @@ import numpy.linalg
 from dask.array.core import normalize_chunks
 
 from pyscenarios import duck
-from pyscenarios.sobol import sobol
+from pyscenarios._sobol import sobol
 from pyscenarios.typing import Chunks2D, NormalizedChunks2D
 
 RNG: TypeAlias = Literal["Mersenne Twister", "Sobol"]
