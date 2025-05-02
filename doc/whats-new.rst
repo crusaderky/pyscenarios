@@ -21,7 +21,9 @@ v0.6.0 (unreleased)
     - If you use conda, make sure you explicitly add ``numba`` to
       your ``environment.yml``.
 
-- Sped up :func:`sobol`` by ~33% (on Numba)
+- Sped up :func:`sobol`` by ~33% on Numba.
+- Arguments ``chunks`` and ``rng`` are now keyword-only.
+- Improved type annotations.
 - Added formal support for Python 3.13 (but the previous release works fine too)
 - Changed dependency support policy from NEP 29 to SPEC 0
 - Bumped up all minimum dependency versions:

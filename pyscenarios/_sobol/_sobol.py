@@ -1,4 +1,5 @@
 from functools import cache
+from typing import overload
 
 import dask.array as da
 import numpy as np
@@ -47,8 +48,20 @@ def sobol_kernel(
     return kernel.sobol_kernel(samples, dimensions, s0, d0)
 
 
+@overload
 def sobol(
-    size: int | tuple[int, int], d0: int = 0, chunks: Chunks2D = None
+    size: int | tuple[int, int], d0: int = 0, *, chunks: None = None
+) -> npt.NDArray[np.float64]: ...
+
+
+@overload
+def sobol(
+    size: int | tuple[int, int], d0: int = 0, *, chunks: Chunks2D
+) -> da.Array: ...
+
+
+def sobol(
+    size: int | tuple[int, int], d0: int = 0, *, chunks: Chunks2D | None = None
 ) -> npt.NDArray[np.float64] | da.Array:
     """Sobol points generator based on Gray code order
 

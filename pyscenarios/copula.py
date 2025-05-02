@@ -1,10 +1,11 @@
 """High performance copula generators"""
 
-from typing import Literal, TypeAlias
+from typing import Literal, TypeAlias, overload
 
 import dask.array as da
 import numpy as np
 import numpy.linalg
+import numpy.typing as npt
 from dask.array.core import normalize_chunks
 
 from pyscenarios import duck
@@ -14,13 +15,36 @@ from pyscenarios.typing import Chunks2D, NormalizedChunks2D
 RNG: TypeAlias = Literal["Mersenne Twister", "Sobol"]
 
 
+@overload
 def gaussian_copula(
-    cov: list[list[float]] | np.ndarray,
+    cov: npt.ArrayLike,
     samples: int,
+    *,
     seed: int = 0,
-    chunks: Chunks2D = None,
+    chunks: None = None,
     rng: RNG = "Mersenne Twister",
-) -> np.ndarray | da.Array:
+) -> npt.NDArray[np.float64]: ...
+
+
+@overload
+def gaussian_copula(
+    cov: npt.ArrayLike,
+    samples: int,
+    *,
+    seed: int = 0,
+    chunks: Chunks2D,
+    rng: RNG = "Mersenne Twister",
+) -> da.Array: ...
+
+
+def gaussian_copula(
+    cov: npt.ArrayLike,
+    samples: int,
+    *,
+    seed: int = 0,
+    chunks: Chunks2D | None = None,
+    rng: RNG = "Mersenne Twister",
+) -> npt.NDArray[np.float64] | da.Array:
     """Gaussian Copula scenario generator.
 
     Simplified algorithm::
@@ -29,7 +53,7 @@ def gaussian_copula(
         >>> y = numpy.random.standard_normal(size=(samples, cov.shape[0]))
         >>> p = (l @ y.T).T
 
-    :param numpy.ndarray cov:
+    :param ArrayLike cov:
         covariance matrix, a.k.a. correlation matrix. It must be a
         Hermitian, positive-definite matrix in any square array-like format.
         The width of cov determines the number of dimensions of the output.
@@ -81,14 +105,39 @@ def gaussian_copula(
     )
 
 
+@overload
 def t_copula(
-    cov: list[list[float]] | np.ndarray,
-    df: int | list[int] | np.ndarray,
+    cov: npt.ArrayLike,
+    df: npt.ArrayLike,
     samples: int,
     seed: int = 0,
-    chunks: Chunks2D = None,
+    *,
+    chunks: None = None,
     rng: RNG = "Mersenne Twister",
-) -> np.ndarray | da.Array:
+) -> npt.NDArray[np.float64]: ...
+
+
+@overload
+def t_copula(
+    cov: npt.ArrayLike,
+    df: npt.ArrayLike,
+    samples: int,
+    seed: int = 0,
+    *,
+    chunks: Chunks2D,
+    rng: RNG = "Mersenne Twister",
+) -> da.Array: ...
+
+
+def t_copula(
+    cov: npt.ArrayLike,
+    df: npt.ArrayLike,
+    samples: int,
+    seed: int = 0,
+    *,
+    chunks: Chunks2D | None = None,
+    rng: RNG = "Mersenne Twister",
+) -> npt.NDArray[np.float64] | da.Array:
     """Student T Copula / IT Copula scenario generator.
 
     Simplified algorithm::
@@ -102,15 +151,15 @@ def t_copula(
         >>> u = scipy.stats.t.cdf(z, df=df)
         >>> t = scipy.stats.norm.ppf(u)
 
-    :param numpy.ndarray cov:
+    :param ArrayLike cov:
         covariance matrix, a.k.a. correlation matrix. It must be a
         Hermitian, positive-definite matrix in any square array-like format.
         The width of cov determines the number of dimensions of the output.
 
-    :param df:
+    :param ArrayLike df:
         Number of degrees of freedom. Can be either a scalar int for
-        Student T Copula, or a one-dimensional array-like with one point per
-        dimension for IT Copula.
+        Student T Copula, or a one-dimensional NumPy array or array-like with
+        one point per dimension for IT Copula.
 
     :param int samples:
         Number of random samples to generate
@@ -160,13 +209,14 @@ def t_copula(
 
 
 def _copula_impl(
-    cov: list[list[float]] | np.ndarray,
-    df: int | list[int] | np.ndarray | None,
+    cov: npt.ArrayLike,
+    df: npt.ArrayLike | None,
     samples: int,
     seed: int,
-    chunks: Chunks2D,
+    *,
+    chunks: Chunks2D | None,
     rng: RNG,
-) -> np.ndarray | da.Array:
+) -> npt.NDArray[np.float64] | da.Array:
     """Implementation of gaussian_copula and t_copula"""
     samples = int(samples)
     if samples <= 0:
