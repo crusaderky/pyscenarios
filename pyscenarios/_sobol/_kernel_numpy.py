@@ -50,7 +50,7 @@ def sobol_kernel(
         states[0, :] ^= prev_state
 
     states = np.bitwise_xor.accumulate(states, axis=0, out=scratch)  # type: ignore[assignment]
-    return np.astype(states, np.float64) / 2**32
+    return states.astype(np.float64) / 2**32
 
 
 def _calc_c(samples: int) -> npt.NDArray[np.intp]:
