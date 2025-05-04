@@ -32,10 +32,10 @@ v0.6.0 (unreleased)
   Dependency  v0.5   v0.6
   ==========  ====== =========
   python      3.8    3.10
-  dask        2.2    2022.12.0
-  numba       0.47   0.57
-  numpy       1.16   1.24
-  scipy       1.3    1.9
+  dask        2.2    2022.4.0
+  numba       0.47   0.56
+  numpy       1.16   1.22
+  scipy       1.3    1.7
   ==========  ====== =========
 
 - Removed function names deprecated in v0.4:
