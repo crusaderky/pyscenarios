@@ -19,15 +19,15 @@ classifiers = [
 ]
 requires-python = ">=3.10"
 dependencies = [
-    "dask[array] >= 2022.12.0",
-    "numpy >= 1.24",
-    "scipy >= 1.9",
+    "dask[array] >= 2022.4.0",
+    "numpy >= 1.22",
+    "scipy >= 1.7",
 ]
 dynamic = ["version"]
 
 [project.optional-dependencies]
-numba = ["numba >= 0.57"]
-all = ["numba >= 0.57"]
+numba = ["numba >= 0.56"]
+all = ["numba >= 0.56"]
 
 [project.urls]
 Homepage = "https://github.com/crusaderky/pyscenarios"
