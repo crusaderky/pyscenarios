@@ -5,7 +5,7 @@ What's New
 
 .. _whats-new.0.6.0:
 
-v0.6.0 (unreleased)
+v0.6.0 (2025-05-04)
 -------------------
 - Numba is now an optional dependency; if it is not installed, :func:`sobol`
   will fall back to a slower pure-Numpy implementation.

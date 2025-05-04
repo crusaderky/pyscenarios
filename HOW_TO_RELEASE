@@ -8,7 +8,7 @@ Time required: about an hour.
     (check the date!) and add a brief summary note describing the release at the
     top.
  3. If you have any doubts, run the full test suite one final time!
-      py.test
+      pytest
  4. On the main branch, commit the release in git:
       git commit -a -m 'Release vX.Y.Z'
  5. Tag the release:
