@@ -48,7 +48,7 @@ Test with coverage and open HTML report in your browser:
 Code Formatting
 ---------------
 
-pyscenarios uses several code linters (ruff, black, mypy), which are enforced by CI.
+This project uses several code linters (ruff, black, mypy), which are enforced by CI.
 Developers should run them locally before they submit a PR, through the single command
 
 .. code-block:: bash

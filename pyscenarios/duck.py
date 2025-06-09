@@ -13,7 +13,7 @@ from pyscenarios.typing import Chunks2D
 
 def array(x: Any) -> np.ndarray | da.Array:
     """Convert x to NumPy array, unless it's a da.array"""
-    if isinstance(x, (np.ndarray, da.Array)):
+    if isinstance(x, np.ndarray | da.Array):
         return x
     return np.array(x)
 
