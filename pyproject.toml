@@ -199,6 +199,10 @@ python = "=3.10"
 [tool.pixi.feature.py313.dependencies]
 python = "=3.13"
 
+[tool.pixi.feature.nogil.dependencies]
+python-freethreading = "=3.13"
+pytest-run-parallel = "*"
+
 [tool.pixi.feature.mindeps.dependencies]
 python = "=3.10"
 numpy = "=1.22"
@@ -236,3 +240,4 @@ py310 = { features = ["py310", "tests"], solve-group = "py310" }
 py310-numba = { features = ["py310", "numba", "tests"], solve-group = "py310-numba" }
 py313 = { features = ["py313", "tests"], solve-group = "py313" }
 py313-numba = { features = ["py313", "numba", "tests"], solve-group = "py313-numba" }
+nogil = { features = ["nogil", "tests"] }  # TODO numba binaries missing

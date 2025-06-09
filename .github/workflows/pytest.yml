@@ -37,6 +37,9 @@ jobs:
           - py310-numba
           - py313
           - py313-numba
+        include:
+          - os: ubuntu-latest
+            environment: nogil
 
     steps:
       - name: Checkout
@@ -51,8 +54,14 @@ jobs:
           environments: ${{ matrix.environment }}
 
       - name: pytest with coverage
+        if: matrix.environment != 'nogil'
         run: pixi run -e ${{ matrix.environment }} coverage
 
+      - name: free-threading tets
+        if: matrix.environment == 'nogil'
+        # FIXME scipy 1.16 should not need PYTHON_GIL=0
+        run: PYTHON_GIL=0 pixi run -e nogil tests ---parallel-threads=4
+
       - name: codecov.io
-        if: matrix.os != 'macos-13'
+        if: matrix.os != 'macos-13' && matrix.environment != 'nogil'
         uses: codecov/codecov-action@v5
