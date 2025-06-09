@@ -39,7 +39,7 @@ def sobol_kernel(
         else:
             # Final chunk is shorter than the others, or
             # explicitly requested odd-sized chunks, e.g. (5, 6, 4).
-            states = np.take(VT, c[i:s0], axis=0, out=scratch[: s0 - i])  # type: ignore[arg-type]
+            states = np.take(VT, c[i:s0], axis=0, out=scratch[: s0 - i])
 
         if prev_state is not None:
             states[0, :] ^= prev_state
@@ -49,7 +49,7 @@ def sobol_kernel(
     if prev_state is not None:
         states[0, :] ^= prev_state
 
-    states = np.bitwise_xor.accumulate(states, axis=0, out=scratch)  # type: ignore[assignment]
+    states = np.bitwise_xor.accumulate(states, axis=0, out=scratch)
     return states.astype(np.float64) / 2**32
 
 
@@ -60,5 +60,5 @@ def _calc_c(samples: int) -> npt.NDArray[np.intp]:
     out = np.full(samples, c_max, dtype=np.intp)
     for c in range(c_max + 1, -1, -1):
         mask = samples_range & (1 << c) == 0
-        out = np.where(mask, c, out)  # type: ignore[assignment]
+        out = np.where(mask, c, out)
     return out

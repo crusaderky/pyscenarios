@@ -144,3 +144,95 @@ warn_unreachable = true
 [[tool.mypy.overrides]]
 module = ["*.tests.*"]
 disallow_untyped_defs = false
+
+[tool.pixi.project]
+channels = ["https://prefix.dev/conda-forge"]
+platforms = ["linux-64", "linux-aarch64", "osx-64", "osx-arm64", "win-64"]
+
+[tool.pixi.dependencies]
+python = ">=3.10"
+numpy = ">=1.22"
+scipy = ">=1.7"
+dask-core = ">=2022.4.0"  # No dask.distributed
+
+[tool.pixi.pypi-dependencies]
+pyscenarios = { path = ".", editable = true }
+
+[tool.pixi.feature.lint.dependencies]
+pre-commit = "*"
+
+[tool.pixi.feature.lint.tasks]
+pre-commit-install = { cmd = "pre-commit install", description = "Install pre-commit"}
+pre-commit = { cmd = "pre-commit run --all-files", description = "Run pre-commit"}
+lint = { depends-on = ["pre-commit"] }
+
+[tool.pixi.feature.tests.dependencies]
+pytest = "*"
+pytest-cov = "*"
+
+[tool.pixi.feature.tests.tasks]
+tests = { cmd = "pytest -v", description = "Run tests"}
+tests-cov = { cmd="pytest -v -ra --cov --cov-report=xml --cov-report=term --durations=20", description = "Run tests with coverage"}
+coverage = { cmd = "coverage html", depends-on = ["tests-cov"], description = "Generate test coverage html report"}
+open-coverage = { cmd = "open htmlcov/index.html", depends-on = ["coverage"] , description = "Open test coverage report"}
+
+[tool.pixi.feature.docs.dependencies]
+sphinx = "*"
+sphinx_rtd_theme = "*"
+
+[tool.pixi.feature.docs.tasks]
+docs = { cmd = "sphinx-build -n -j auto -b html -d ../build/doctrees . ../build/html", cwd = "doc", description = "Build docs"}
+open-docs = { cmd = "open build/html/index.html", depends-on = ["docs"], description = "Open the generated docs"}
+
+[tool.pixi.feature.jupyter.dependencies]
+jupyterlab = "*"
+matplotlib = "*"
+pandas = "*"
+
+[tool.pixi.feature.jupyter.tasks]
+ipython = { cmd = "ipython" , description = "Launch IPython"}
+jupyter = { cmd = "jupyter lab" , description = "Launch Jupyter Lab"}
+
+[tool.pixi.feature.py310.dependencies]
+python = "=3.10"
+
+[tool.pixi.feature.py313.dependencies]
+python = "=3.13"
+
+[tool.pixi.feature.mindeps.dependencies]
+python = "=3.10"
+numpy = "=1.22"
+scipy = "=1.7"
+dask-core = "=2022.4.0"  # No dask.distributed
+
+[tool.pixi.feature.numba.dependencies]
+numba = ">=0.56"
+numpy = "<2.3"  # FIXME numba support for numpy 2.3 is not available yet
+
+[tool.pixi.feature.mindeps-numba.dependencies]
+numba = "=0.56"
+
+[tool.pixi.feature.dist.dependencies]
+python-build = "*"
+twine = "*"
+
+[tool.pixi.feature.dist.tasks]
+dist-clear = { cmd = "rm -rf dist build" }
+sdist = { cmd = "python -m build --sdist", description = "Build source distribution"}
+wheel = { cmd = "python -m build --wheel", description = "Build wheel distribution"}
+twine-check = { cmd = "python -m twine check dist/*" }
+dist = { depends-on = ["dist-clear", "sdist", "wheel", "twine-check"] }
+twine-upload = { depends-on = ["dist"], cmd = "python -m twine upload dist/*" }
+
+[tool.pixi.environments]
+# FIXME use same solve-groups with and without numba
+default = { features = ["py313", "numba", "docs", "tests", "jupyter"], solve-group = "py313-numba" }
+dist = { features = ["py313", "dist"], no-default-feature = true }
+lint = { features = ["py313", "lint"], no-default-feature = true }
+docs = { features = ["py313", "docs", "jupyter"], solve-group = "py313" }
+mindeps = { features = ["mindeps", "tests"], solve-group = "mindeps" }
+mindeps-numba = { features = ["mindeps", "mindeps-numba", "tests"], solve-group = "mindeps" }
+py310 = { features = ["py310", "tests"], solve-group = "py310" }
+py310-numba = { features = ["py310", "numba", "tests"], solve-group = "py310-numba" }
+py313 = { features = ["py313", "tests"], solve-group = "py313" }
+py313-numba = { features = ["py313", "numba", "tests"], solve-group = "py313-numba" }

@@ -18,6 +18,7 @@ Index
 
    installing
    api
+   develop
    whats-new
 
 License

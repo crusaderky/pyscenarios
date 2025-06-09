@@ -36,12 +36,3 @@ supported version of its dependencies.
 
 You can see the actual minimum tested versions in the `anaconda requirements file
 <https://github.com/crusaderky/pyscenarios/blob/main/ci/requirements-minimal.yml>`_.
-
-
-Testing
--------
-
-To run the test suite after installing pyscenarios, first install
-`pytest <https://pytest.org>`_ via pypi or conda and then run::
-
-   pytest
