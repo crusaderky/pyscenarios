@@ -60,7 +60,7 @@ jobs:
       - name: free-threading tets
         if: matrix.environment == 'nogil'
         # FIXME scipy 1.16 should not need PYTHON_GIL=0
-        run: PYTHON_GIL=0 pixi run -e nogil tests ---parallel-threads=4
+        run: PYTHON_GIL=0 pixi run -e nogil tests --parallel-threads=4
 
       - name: codecov.io
         if: matrix.os != 'macos-13' && matrix.environment != 'nogil'
