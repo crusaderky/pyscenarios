@@ -51,7 +51,6 @@ jobs:
           environments: ${{ matrix.environment }}
 
       - name: pytest with coverage
-        if: matrix.environment != 'nogil'
         run: pixi run -e ${{ matrix.environment }} coverage
 
       - name: codecov.io
