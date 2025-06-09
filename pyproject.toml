@@ -81,7 +81,7 @@ show_missing = true
 
 [tool.ruff]
 exclude = [".eggs"]
-target-version = "py38"
+target-version = "py310"
 
 [tool.ruff.lint]
 ignore = [

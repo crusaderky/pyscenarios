@@ -12705,8 +12705,8 @@ packages:
   timestamp: 1733710122949
 - pypi: ./
   name: pyscenarios
-  version: 0.6.1.dev3+ga66fc8b.d20250609
-  sha256: ce2d1bc4f3b2603584525d09eaadaff91a30e666fe8485d9c40fae2982ab9896
+  version: 0.6.1.dev2+gdf83700.d20250609
+  sha256: 242b8232cc87f5c95286d1e7389964e5801b58aa3004d930e657009a400960eb
   requires_dist:
   - dask[array]>=2022.4.0
   - numpy>=1.22

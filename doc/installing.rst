@@ -1,5 +1,3 @@
-.. _installing:
-
 Installation
 ============
 
@@ -30,9 +28,9 @@ or conda::
 
 Minimum dependency versions
 ---------------------------
-pyscenarios adopts a rolling policy based on `SPEC 0
+This project adopts a rolling policy based on `SPEC 0
 <https://scientific-python.org/specs/spec-0000/>`_ regarding the minimum
 supported version of its dependencies.
 
-You can see the actual minimum tested versions in the `anaconda requirements file
-<https://github.com/crusaderky/pyscenarios/blob/main/ci/requirements-minimal.yml>`_.
+You can see the actual minimum tested versions in `pyproject.toml
+<https://github.com/crusaderky/pyscenarios/blob/main/pyproject.toml>`_.

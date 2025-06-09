@@ -25,11 +25,11 @@ jobs:
       fail-fast: false
       matrix:
         os:
-          - ubuntu-latest
-          - ubuntu-24.04-arm
-          - macos-13
-          - macos-14
-          - windows-latest
+          - ubuntu-latest # x86-64
+          - ubuntu-24.04-arm # ARM
+          - macos-13 # x86-64
+          - macos-14 # ARM
+          - windows-latest # x86-64
         environment:
           - mindeps
           - mindeps-numba
