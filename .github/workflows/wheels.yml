@@ -1,4 +1,4 @@
-name: Documentation
+name: Wheels
 
 on:
   push:
@@ -23,16 +23,11 @@ jobs:
           cache: true
           environments: docs
 
-      - name: Regenerate readthedocs environment
-        run: bash doc/requirements-export.sh
-
-      - name: Check that readthedocs environment is up to date in git
-        run: git diff --exit-code doc/requirements.yml
-
       - name: Build docs
-        run: pixi run -e docs docs
+        run: pixi run dist
 
       - uses: actions/upload-artifact@v4
         with:
-          name: pyscenarios-docs
-          path: build/html
+          name: dist
+          path: dist/*
+          if-no-files-found: error

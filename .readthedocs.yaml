@@ -6,7 +6,7 @@ build:
     python: mambaforge-22.9
 
 conda:
-  environment: ci/requirements-docs.yml
+  environment: doc/requirements.yml
 
 python:
   install:
