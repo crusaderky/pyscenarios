@@ -156,9 +156,6 @@ numpy = ">=1.22"
 scipy = ">=1.7"
 dask-core = ">=2022.4.0"  # No dask.distributed
 
-[tool.pixi.pypi-dependencies]
-pyscenarios = { path = ".", editable = true }
-
 [tool.pixi.feature.lint.dependencies]
 pre-commit = "*"
 
@@ -178,11 +175,13 @@ coverage = { cmd = "coverage html", depends-on = ["tests-cov"], description = "G
 open-coverage = { cmd = "open htmlcov/index.html", depends-on = ["coverage"] , description = "Open test coverage report"}
 
 [tool.pixi.feature.docs.dependencies]
+pip = "*"
 sphinx = "*"
 sphinx_rtd_theme = "*"
 
 [tool.pixi.feature.docs.tasks]
-docs = { cmd = "sphinx-build -n -j auto -b html -d ../build/doctrees . ../build/html", cwd = "doc", description = "Build docs"}
+install-for-docs = { cmd = "python -m pip install ." }
+docs = { depends-on = ["install-for-docs"], cmd = "sphinx-build -n -j auto -b html -d ../build/doctrees . ../build/html", cwd = "doc", description = "Build docs"}
 open-docs = { cmd = "open build/html/index.html", depends-on = ["docs"], description = "Open the generated docs"}
 
 [tool.pixi.feature.jupyter.dependencies]
