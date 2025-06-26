@@ -13,7 +13,7 @@ from pyscenarios.typing import Chunks2D, NormalizedChunks2D
 def _use_numba() -> bool:
     """Check if Numba is available"""
     try:
-        import numba  # noqa: F401
+        import numba  # noqa: PLC0415,F401
 
         return True
     except ImportError:
@@ -41,9 +41,9 @@ def sobol_kernel(
         - Unit testing both implementations while Numba is installed
     """
     if _use_numba():
-        import pyscenarios._sobol._kernel_numba as kernel
+        import pyscenarios._sobol._kernel_numba as kernel  # noqa: PLC0415
     else:
-        import pyscenarios._sobol._kernel_numpy as kernel  # type: ignore[no-redef]
+        import pyscenarios._sobol._kernel_numpy as kernel  # type: ignore[no-redef]  # noqa: PLC0415
 
     return kernel.sobol_kernel(samples, dimensions, s0, d0)
 
@@ -146,6 +146,6 @@ def max_sobol_dimensions() -> int:
     ``size[1] + d0`` must be smaller than this.
     """
     # Expensive import; don't do it until we need it
-    from pyscenarios._sobol._vmatrix import V
+    from pyscenarios._sobol._vmatrix import V  # noqa: PLC0415
 
     return V.shape[0]

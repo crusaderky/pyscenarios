@@ -228,6 +228,12 @@ twine-check = { cmd = "python -m twine check dist/*" }
 dist = { depends-on = ["dist-clear", "sdist", "wheel", "twine-check"] }
 twine-upload = { depends-on = ["dist"], cmd = "python -m twine upload dist/*" }
 
+[tool.pixi.feature.upstream.pypi-dependencies]
+# TODO python 3.14 prereleases?
+numpy = { index = "https://pypi.anaconda.org/scientific-python-nightly-wheels/simple" }
+scipy = { index = "https://pypi.anaconda.org/scientific-python-nightly-wheels/simple" }
+dask = { git = "https://github.com/dask/dask.git" }
+
 [tool.pixi.environments]
 # FIXME use same solve-groups with and without numba
 default = { features = ["py313", "numba", "docs", "tests", "jupyter"], solve-group = "py313-numba" }
@@ -241,3 +247,4 @@ py310-numba = { features = ["py310", "numba", "tests"], solve-group = "py310-num
 py313 = { features = ["py313", "tests"], solve-group = "py313" }
 py313-numba = { features = ["py313", "numba", "tests"], solve-group = "py313-numba" }
 nogil = { features = ["nogil", "tests"] }  # TODO numba binaries missing
+upstream = { features = ["py313", "upstream", "tests"], no-default-feature = true }

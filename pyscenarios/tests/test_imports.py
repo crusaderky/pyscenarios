@@ -18,7 +18,7 @@ def check_lazy_imports():  # pragma: nocover
     assert "pyscenarios._sobol._vmatrix" in sys.modules
     if "numba" not in sys.modules:
         with pytest.raises(ImportError):
-            import numba  # noqa: F401
+            import numba  # noqa: PLC0415,F401
 
 
 def test_expensive_imports_are_lazy():
