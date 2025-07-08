@@ -8,7 +8,7 @@ try:
     __version__ = importlib.metadata.version("pyscenarios")
 except importlib.metadata.PackageNotFoundError:  # pragma: nocover
     # Local copy, not installed with pip
-    __version__ = "999"
+    __version__ = "9999"
 
 # Prevent Intersphinx from pointing to the implementation modules
 for obj in gaussian_copula, t_copula, max_sobol_dimensions, sobol, tail_dependence:

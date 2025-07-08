@@ -37,9 +37,11 @@ jobs:
       - name: Install wheel
         run: pip install dist/*.whl
 
-      - name: Test import
-        working-directory: /
-        run: python -c "import pyscenarios; print(pyscenarios.__version__)"
+      - name: Smoke test
+        working-directory: /tmp
+        run: |
+          cp ${{ github.workspace }}/smoke_test.py .
+          python smoke_test.py
 
       - uses: actions/upload-artifact@v4
         with:

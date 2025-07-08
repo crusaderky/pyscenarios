@@ -10,7 +10,7 @@ on:
 # When this workflow is queued, automatically cancel any previous running
 # or pending jobs from the same branch
 concurrency:
-  group: tests-${{ github.ref }}
+  group: pytest-${{ github.ref }}
   cancel-in-progress: true
 
 defaults:
@@ -18,7 +18,7 @@ defaults:
     shell: bash -l {0}
 
 jobs:
-  build:
+  test:
     name: ${{ matrix.os }} ${{ matrix.environment }}
     runs-on: ${{ matrix.os }}
     strategy:
@@ -60,6 +60,11 @@ jobs:
           cache: ${{ matrix.environment != 'upstream' }}
           locked: ${{ matrix.environment != 'upstream' }}
 
+      - name: Smoke test
+        # FIXME scipy needs PYTHON_GIL=0; retest on >=1.16.1
+        if: matrix.environment != 'nogil'
+        run: pixi run -e ${{ matrix.environment }} smoke-test
+
       - name: pytest with coverage
         if: matrix.environment != 'nogil'
         run: pixi run -e ${{ matrix.environment }} coverage
@@ -67,9 +72,7 @@ jobs:
       - name: Free-threading stress test
         if: matrix.environment == 'nogil'
         # FIXME scipy needs PYTHON_GIL=0; retest on >=1.16.1
-        env:
-          PYTHON_GIL: 0
-        run: pixi run -e nogil tests --parallel-threads=4
+        run: PYTHON_GIL=0 pixi run -e nogil tests --parallel-threads=4
 
       - name: codecov.io
         if: matrix.os != 'macos-13' && matrix.environment != 'nogil'
