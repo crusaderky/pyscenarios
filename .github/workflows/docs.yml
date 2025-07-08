@@ -24,7 +24,7 @@ jobs:
           environments: docs
 
       - name: Regenerate readthedocs environment
-        run: bash doc/requirements-export.sh
+        run: pixi run doc-requirements
 
       - name: Check that readthedocs environment is up to date in git
         run: git diff --exit-code doc/requirements.yml

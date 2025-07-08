@@ -48,21 +48,20 @@ Test with coverage and open HTML report in your browser:
 Code Formatting
 ---------------
 
-This project uses several code linters (ruff, black, mypy), which are enforced by CI.
-Developers should run them locally before they submit a PR, through the single command
+This project uses several code linters (ruff, mypy, etc.), which are enforced by
+CI. Developers should run them locally before they submit a PR, through the single
+command
 
 .. code-block:: bash
 
     pixi run lint
 
-This makes sure that linter versions and options are aligned for all developers.
-
-Optionally, you may wish to setup the `pre-commit hooks <https://pre-commit.com/>`_ to
-run automatically when you make a git commit. This can be done by running:
+Optionally, you may wish to run the linters automatically every time you make a
+git commit. This can be done by running:
 
 .. code-block:: bash
 
-   pixi run pre-commit-install
+   pixi run install-git-hooks
 
 Now the code linters will be run each time you commit changes.
 You can skip these checks with ``git commit --no-verify`` or with
