@@ -16,6 +16,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch full git history for setuptools_scm
+          fetch-tags: true # Fetch tags for setuptools_scm
 
       - uses: prefix-dev/setup-pixi@v0.8.10
         with:
@@ -25,6 +28,18 @@ jobs:
 
       - name: Build sdist and wheels
         run: pixi run dist
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install wheel
+        run: pip install dist/*.whl
+
+      - name: Test import
+        working-directory: /
+        run: python -c "import pyscenarios; print(pyscenarios.__version__)"
 
       - uses: actions/upload-artifact@v4
         with:

@@ -1,28 +1,27 @@
 [project]
 name = "pyscenarios"
-authors = [{name = "Guido Imperiale", email = "guido.imperiale@gmail.com"}]
-license = {text = "Apache"}
+authors = [{ name = "Guido Imperiale", email = "guido.imperiale@gmail.com" }]
+license = "Apache-2.0"
 description = "Python Monte Carlo Scenario Generator"
 classifiers = [
-    "Development Status :: 3 - Alpha",
-    "License :: OSI Approved :: Apache Software License",
-    "Operating System :: OS Independent",
-    "Intended Audience :: Science/Research",
-    "Programming Language :: Python",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
-    "Programming Language :: Python :: Free Threading :: 2 - Beta",
-    "Topic :: Scientific/Engineering",
+  "Development Status :: 3 - Alpha",
+  "Operating System :: OS Independent",
+  "Intended Audience :: Science/Research",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: Free Threading :: 2 - Beta",
+  "Topic :: Scientific/Engineering",
 ]
 requires-python = ">=3.10"
 dependencies = [
-    "dask[array] >= 2022.4.0",
-    "numpy >= 1.22",
-    "scipy >= 1.7",
+  "dask[array] >= 2022.4.0",
+  "numpy >= 1.22",
+  "scipy >= 1.7",
 ]
 dynamic = ["version"]
 
@@ -35,7 +34,6 @@ Homepage = "https://github.com/crusaderky/pyscenarios"
 "Bug Tracker" = "https://github.com/crusaderky/pyscenarios/issues"
 Changelog = "https://pyscenarios.readthedocs.io/en/latest/whats-new.html"
 
-
 [project.readme]
 text = """
 - SOBOL generator
@@ -44,9 +42,11 @@ text = """
 content-type = "text/x-rst"
 
 [tool.setuptools]
-packages = ["pyscenarios"]
 zip-safe = false # https://mypy.readthedocs.io/en/latest/installed_packages.html
 include-package-data = true
+
+[tool.setuptools.packages]
+find = { namespaces = false }
 
 [tool.setuptools_scm]
 # Use hardcoded version when .git has been removed and this is not a package created
@@ -55,14 +55,14 @@ fallback_version = "9999"
 
 [tool.setuptools.package-data]
 pyscenarios = [
-    "py.typed",
-    "*.txt.xz",
+  "py.typed",
+  "*.txt.xz",
 ]
 
 [build-system]
 requires = [
-    "setuptools>=66",
-    "setuptools_scm[toml]",
+  "setuptools>=66",
+  "setuptools_scm[toml]",
 ]
 build-backend = "setuptools.build_meta"
 
@@ -72,13 +72,15 @@ xfail_strict = true
 python_files = ["test_*.py"]
 testpaths = ["pyscenarios/tests"]
 markers = [
-    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+  "slow: marks tests as slow (deselect with '-m \"not slow\"')",
 ]
 filterwarnings = ["error"]
 
 [tool.coverage.report]
 show_missing = true
 
+[tool.codespell]
+skip = "pixi.lock,build,htmlcov,notebooks"
 
 [tool.ruff]
 exclude = [".eggs"]
@@ -86,52 +88,55 @@ target-version = "py310"
 
 [tool.ruff.lint]
 ignore = [
-  "EM101",    # Exception must not use a string literal, assign to variable first
-  "EM102",    # Exception must not use an f-string literal, assign to variable first
-  "N802",     # Function name should be lowercase
-  "N803",     # Argument name should be lowercase
-  "N806",     # Variable should be lowercase
-  "N816",     # Variable in global scope should not be mixedCase
-  "PT006",    # Wrong type passed to first argument of `pytest.mark.parametrize`; expected `tuple`
-  "PLC0414",  # Import alias does not rename original package
-  "PLR0912",  # Too many branches
-  "PLR0913",  # Too many arguments in function definition
-  "PLR2004",  # Magic value used in comparison, consider replacing `123` with a constant variable
-  "PLW0603",  # Using the global statement
-  "PLW2901",  # for loop variable overwritten by assignment target
-  "SIM108",   # Use ternary operator instead of if-else block
+  "EM101", # Exception must not use a string literal, assign to variable first
+  "EM102", # Exception must not use an f-string literal, assign to variable first
+  "N802", # Function name should be lowercase
+  "N803", # Argument name should be lowercase
+  "N806", # Variable should be lowercase
+  "N816", # Variable in global scope should not be mixedCase
+  "PT006", # Wrong type passed to first argument of `pytest.mark.parametrize`; expected `tuple`
+  "PLC0414", # Import alias does not rename original package
+  "PLR0912", # Too many branches
+  "PLR0913", # Too many arguments in function definition
+  "PLR0915", # Too many statements
+  "PLR2004", # Magic value used in comparison, consider replacing `123` with a constant variable
+  "PLW0603", # Using the global statement
+  "PLW2901", # for loop variable overwritten by assignment target
+  "SIM108", # Use ternary operator instead of if-else block
 ]
 select = [
-  "YTT",  # flake8-2020
-  "B",    # flake8-bugbear
-  "C4",   # flake8-comprehensions
-  "EM",   # flake8-errmsg
-  "EXE",  # flake8-executable
-  "ICN",  # flake8-import-conventions
-  "G",    # flake8-logging-format
-  "PIE",  # flake8-pie
-  "PT",   # flake8-pytest-style
-  "RET",  # flake8-return
-  "SIM",  # flake8-simplify
-  "ARG",  # flake8-unused-arguments
-  "I",    # isort
-  "NPY",  # NumPy specific rules
-  "N",    # pep8-naming
-  "E",    # Pycodestyle
-  "W",    # Pycodestyle
-  "PGH",  # pygrep-hooks
-  "F",    # Pyflakes
-  "PL",   # pylint
-  "UP",   # pyupgrade
-  "RUF",  # unused-noqa
-  "TID",  # tidy-ups
-  "EXE001",  #  Shebang is present but file is not executable
+  "YTT", # flake8-2020
+  "B", # flake8-bugbear
+  "C4", # flake8-comprehensions
+  "EM", # flake8-errmsg
+  "EXE", # flake8-executable
+  "ICN", # flake8-import-conventions
+  "G", # flake8-logging-format
+  "PIE", # flake8-pie
+  "PT", # flake8-pytest-style
+  "RET", # flake8-return
+  "SIM", # flake8-simplify
+  "ARG", # flake8-unused-arguments
+  "I", # isort
+  "NPY", # NumPy specific rules
+  "N", # pep8-naming
+  "E", # Pycodestyle
+  "W", # Pycodestyle
+  "PGH", # pygrep-hooks
+  "F", # Pyflakes
+  "PL", # pylint
+  "UP", # pyupgrade
+  "RUF", # unused-noqa
+  "TID", # tidy-ups
+  "EXE001", #  Shebang is present but file is not executable
 ]
 
 [tool.ruff.lint.isort]
-known-first-party = ["TEMPLATE"]
+known-first-party = ["pyscenarios"]
 
 [tool.mypy]
+files = ["pyscenarios"]
+python_version = "3.10"
 disallow_incomplete_defs = true
 disallow_untyped_decorators = true
 disallow_untyped_defs = true
@@ -141,6 +146,7 @@ show_error_codes = true
 warn_redundant_casts = true
 warn_unused_ignores = true
 warn_unreachable = true
+enable_error_code = ["ignore-without-code", "possibly-undefined", "truthy-bool"]
 
 [[tool.mypy.overrides]]
 module = ["*.tests.*"]
@@ -154,25 +160,36 @@ platforms = ["linux-64", "linux-aarch64", "osx-64", "osx-arm64", "win-64"]
 python = ">=3.10"
 numpy = ">=1.22"
 scipy = ">=1.7"
-dask-core = ">=2022.4.0"  # No dask.distributed
+dask-core = ">=2022.4.0" # No dask.distributed
 
 [tool.pixi.feature.lint.dependencies]
-pre-commit = "*"
+lefthook = "*"
+ruff = "*"
+mypy = "*"
+dprint = "*"
+actionlint = "*"
+codespell = "*"
+blacken-docs = "*"
+validate-pyproject = "*"
+sphinx-lint = "*"
+# mypy check dependencies
+numpy = "*"
+scipy = "*"
+dask-core = "*" # No dask.distributed
 
 [tool.pixi.feature.lint.tasks]
-pre-commit-install = { cmd = "pre-commit install", description = "Install pre-commit"}
-pre-commit = { cmd = "pre-commit run --all-files", description = "Run pre-commit"}
-lint = { depends-on = ["pre-commit"] }
+install-git-hooks = { cmd = "lefthook install", description = "Install pre-commit hooks" }
+lint = { cmd = "lefthook run pre-commit --all-files --force", description = "Run all linters" }
 
 [tool.pixi.feature.tests.dependencies]
 pytest = "*"
 pytest-cov = "*"
 
 [tool.pixi.feature.tests.tasks]
-tests = { cmd = "pytest -v", description = "Run tests"}
-tests-cov = { cmd="pytest -v -ra --cov --cov-report=xml --cov-report=term --durations=20", description = "Run tests with coverage"}
-coverage = { cmd = "coverage html", depends-on = ["tests-cov"], description = "Generate test coverage html report"}
-open-coverage = { cmd = "open htmlcov/index.html", depends-on = ["coverage"] , description = "Open test coverage report"}
+tests = { cmd = "pytest -v", description = "Run tests" }
+tests-cov = { cmd = "pytest -v -ra --cov --cov-report=xml --cov-report=term --durations=20", description = "Run tests with coverage" }
+coverage = { cmd = "coverage html", depends-on = ["tests-cov"], description = "Generate test coverage html report" }
+open-coverage = { cmd = "open htmlcov/index.html", depends-on = ["coverage"], description = "Open test coverage report" }
 
 [tool.pixi.feature.docs.dependencies]
 pip = "*"
@@ -180,8 +197,9 @@ sphinx = "*"
 sphinx_rtd_theme = "*"
 
 [tool.pixi.feature.docs.tasks]
-docs = { cmd = "sphinx-build -n -j auto -b html -d ../build/doctrees . ../build/html", env={ PYTHONPATH = "$PIXI_PROJECT_ROOT" }, cwd = "doc", description = "Build docs"}
-open-docs = { cmd = "open build/html/index.html", depends-on = ["docs"], description = "Open the generated docs"}
+docs = { cmd = "sphinx-build -n -j auto -b html -d ../build/doctrees . ../build/html", env = { PYTHONPATH = "$PIXI_PROJECT_ROOT" }, cwd = "doc", description = "Build docs" }
+open-docs = { cmd = "open build/html/index.html", depends-on = ["docs"], description = "Open the generated docs" }
+doc-requirements = { cmd = "echo '# File generated by `pixi run doc-requirements`' > doc/requirements.yml && pixi workspace export conda-environment -e docs >> doc/requirements.yml", description = "Export doc requirements for readthedocs CI" }
 
 [tool.pixi.feature.jupyter.dependencies]
 jupyterlab = "*"
@@ -189,8 +207,8 @@ matplotlib = "*"
 pandas = "*"
 
 [tool.pixi.feature.jupyter.tasks]
-ipython = { cmd = "ipython" , description = "Launch IPython"}
-jupyter = { cmd = "jupyter lab" , description = "Launch Jupyter Lab"}
+ipython = { cmd = "ipython", description = "Launch IPython" }
+jupyter = { cmd = "jupyter lab", description = "Launch Jupyter Lab" }
 
 [tool.pixi.feature.py310.dependencies]
 python = "=3.10"
@@ -206,26 +224,14 @@ pytest-run-parallel = "*"
 python = "=3.10"
 numpy = "=1.22"
 scipy = "=1.7"
-dask-core = "=2022.4.0"  # No dask.distributed
+dask-core = "=2022.4.0" # No dask.distributed
 
 [tool.pixi.feature.numba.dependencies]
 numba = ">=0.56"
-numpy = "<2.3"  # FIXME numba support for numpy 2.3 is not available yet
+numpy = "<2.3" # FIXME numba support for numpy 2.3 is not available yet
 
 [tool.pixi.feature.mindeps-numba.dependencies]
 numba = "=0.56"
-
-[tool.pixi.feature.dist.dependencies]
-python-build = "*"
-twine = "*"
-
-[tool.pixi.feature.dist.tasks]
-dist-clear = { cmd = "rm -rf dist build" }
-sdist = { cmd = "python -m build --sdist", description = "Build source distribution"}
-wheel = { cmd = "python -m build --wheel", description = "Build wheel distribution"}
-twine-check = { cmd = "python -m twine check dist/*" }
-dist = { depends-on = ["dist-clear", "sdist", "wheel", "twine-check"] }
-twine-upload = { depends-on = ["dist"], cmd = "python -m twine upload dist/*" }
 
 [tool.pixi.feature.upstream.pypi-dependencies]
 # TODO python 3.14 prereleases?
@@ -233,11 +239,22 @@ numpy = { index = "https://pypi.anaconda.org/scientific-python-nightly-wheels/si
 scipy = { index = "https://pypi.anaconda.org/scientific-python-nightly-wheels/simple" }
 dask = { git = "https://github.com/dask/dask.git" }
 
+[tool.pixi.feature.dist.dependencies]
+python-build = "*"
+twine = "*"
+
+[tool.pixi.feature.dist.tasks]
+dist-clear = { cmd = "rm -rf build dist" }
+build = { cmd = "python -m build", description = "Build pypi artifacts" }
+twine-check = { cmd = "python -m twine check dist/*" }
+dist = { depends-on = ["dist-clear", "build", "twine-check"] }
+twine-upload = { depends-on = ["dist"], cmd = "python -m twine upload dist/*" }
+
 [tool.pixi.environments]
 # FIXME use same solve-groups with and without numba
 default = { features = ["py313", "numba", "docs", "tests", "jupyter"], solve-group = "py313-numba" }
-dist = { features = ["py313", "dist"], no-default-feature = true }
-lint = { features = ["py313", "lint"], no-default-feature = true }
+dist = { features = ["dist"], no-default-feature = true }
+lint = { features = ["lint"], no-default-feature = true }
 docs = { features = ["py313", "docs", "jupyter"], solve-group = "py313" }
 mindeps = { features = ["mindeps", "tests"], solve-group = "mindeps" }
 mindeps-numba = { features = ["mindeps", "mindeps-numba", "tests"], solve-group = "mindeps" }
@@ -245,5 +262,5 @@ py310 = { features = ["py310", "tests"], solve-group = "py310" }
 py310-numba = { features = ["py310", "numba", "tests"], solve-group = "py310-numba" }
 py313 = { features = ["py313", "tests"], solve-group = "py313" }
 py313-numba = { features = ["py313", "numba", "tests"], solve-group = "py313-numba" }
-nogil = { features = ["nogil", "tests"] }  # TODO numba binaries missing
+nogil = { features = ["nogil", "tests"] } # TODO numba binaries missing
 upstream = { features = ["py313", "upstream", "tests"], no-default-feature = true }

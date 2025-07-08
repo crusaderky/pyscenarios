@@ -22,7 +22,7 @@ def tail_dependence(
         other 1D array-like or Dask array to compare against
     :param q:
         quantile(s) (`0 < q < 1`).
-        Either a scalar or a ND array-like or Dask array.
+        Either a scalar or an array-like or Dask array.
     :returns:
         Array of the same shape and type as `q`, containing:
 
