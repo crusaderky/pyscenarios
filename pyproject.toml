@@ -181,6 +181,9 @@ dask-core = "*" # No dask.distributed
 install-git-hooks = { cmd = "lefthook install", description = "Install pre-commit hooks" }
 lint = { cmd = "lefthook run pre-commit --all-files --force", description = "Run all linters" }
 
+[tool.pixi.feature.smoke.tasks]
+smoke-test = { cmd = "python smoke_test.py", description = "Test import the library and print essential information" }
+
 [tool.pixi.feature.tests.dependencies]
 pytest = "*"
 pytest-cov = "*"
@@ -233,8 +236,10 @@ numpy = "<2.3" # FIXME numba support for numpy 2.3 is not available yet
 [tool.pixi.feature.mindeps-numba.dependencies]
 numba = "=0.56"
 
+[tool.pixi.feature.upstream.dependencies]
+python = "=3.13" # TODO python 3.14 prereleases?
+
 [tool.pixi.feature.upstream.pypi-dependencies]
-# TODO python 3.14 prereleases?
 numpy = { index = "https://pypi.anaconda.org/scientific-python-nightly-wheels/simple" }
 scipy = { index = "https://pypi.anaconda.org/scientific-python-nightly-wheels/simple" }
 dask = { git = "https://github.com/dask/dask.git" }
@@ -252,15 +257,15 @@ twine-upload = { depends-on = ["dist"], cmd = "python -m twine upload dist/*" }
 
 [tool.pixi.environments]
 # FIXME use same solve-groups with and without numba
-default = { features = ["py313", "numba", "docs", "tests", "jupyter"], solve-group = "py313-numba" }
+default = { features = ["py313", "numba", "docs", "smoke", "tests", "jupyter"], solve-group = "py313-numba" }
 dist = { features = ["dist"], no-default-feature = true }
 lint = { features = ["lint"], no-default-feature = true }
 docs = { features = ["py313", "docs", "jupyter"], solve-group = "py313" }
-mindeps = { features = ["mindeps", "tests"], solve-group = "mindeps" }
-mindeps-numba = { features = ["mindeps", "mindeps-numba", "tests"], solve-group = "mindeps" }
-py310 = { features = ["py310", "tests"], solve-group = "py310" }
-py310-numba = { features = ["py310", "numba", "tests"], solve-group = "py310-numba" }
-py313 = { features = ["py313", "tests"], solve-group = "py313" }
-py313-numba = { features = ["py313", "numba", "tests"], solve-group = "py313-numba" }
-nogil = { features = ["nogil", "tests"] } # TODO numba binaries missing
-upstream = { features = ["py313", "upstream", "tests"], no-default-feature = true }
+mindeps = { features = ["mindeps", "smoke", "tests"], solve-group = "mindeps" }
+mindeps-numba = { features = ["mindeps", "mindeps-numba", "smoke", "tests"], solve-group = "mindeps" }
+py310 = { features = ["py310", "smoke", "tests"], solve-group = "py310" }
+py310-numba = { features = ["py310", "numba", "smoke", "tests"], solve-group = "py310-numba" }
+py313 = { features = ["py313", "smoke", "tests"], solve-group = "py313" }
+py313-numba = { features = ["py313", "numba", "smoke", "tests"], solve-group = "py313-numba" }
+nogil = { features = ["nogil", "smoke", "tests"] } # TODO numba binaries missing
+upstream = { features = ["upstream", "smoke", "tests"], no-default-feature = true }
