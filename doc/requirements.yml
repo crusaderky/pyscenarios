@@ -5,16 +5,16 @@ channels:
 - nodefaults
 dependencies:
 - python 3.13.*
-- python >=3.10
+- python *
 - pip *
 - sphinx *
 - sphinx_rtd_theme *
 - jupyterlab *
 - matplotlib *
 - pandas *
-- numpy >=1.22
-- scipy >=1.7
-- dask-core >=2022.4.0
+- numpy *
+- scipy *
+- dask-core *
 - pip
 - pip:
   - dask[array]>=2022.4.0

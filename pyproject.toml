@@ -157,10 +157,10 @@ channels = ["https://prefix.dev/conda-forge"]
 platforms = ["linux-64", "linux-aarch64", "osx-64", "osx-arm64", "win-64"]
 
 [tool.pixi.dependencies]
-python = ">=3.10"
-numpy = ">=1.22"
-scipy = ">=1.7"
-dask-core = ">=2022.4.0" # No dask.distributed
+python = "*"
+numpy = "*"
+scipy = "*"
+dask-core = "*" # No dask.distributed
 
 [tool.pixi.feature.lint.dependencies]
 lefthook = "*"
@@ -269,3 +269,4 @@ py313 = { features = ["py313", "smoke", "tests"], solve-group = "py313" }
 py313-numba = { features = ["py313", "numba", "smoke", "tests"], solve-group = "py313-numba" }
 nogil = { features = ["nogil", "smoke", "tests"] } # TODO numba binaries missing
 upstream = { features = ["upstream", "smoke", "tests"], no-default-feature = true }
+smoke = { features = ["smoke"] }
