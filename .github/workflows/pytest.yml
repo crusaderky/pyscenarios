@@ -31,6 +31,7 @@ jobs:
           - macos-latest # ARM
           - windows-latest # x86-64
         environment:
+          - smoke
           - mindeps
           - mindeps-numba
           - py310
@@ -66,7 +67,7 @@ jobs:
         run: pixi run -e ${{ matrix.environment }} smoke-test
 
       - name: pytest with coverage
-        if: matrix.environment != 'nogil'
+        if: matrix.environment != 'nogil' && matrix.environment != 'smoke'
         run: pixi run -e ${{ matrix.environment }} coverage
 
       - name: Free-threading stress test
@@ -75,5 +76,5 @@ jobs:
         run: PYTHON_GIL=0 pixi run -e nogil tests --parallel-threads=4
 
       - name: codecov.io
-        if: matrix.os != 'macos-13' && matrix.environment != 'nogil'
+        if: matrix.os != 'macos-13' && matrix.environment != 'nogil' && matrix.environment != 'smoke'
         uses: codecov/codecov-action@v5
