@@ -67,7 +67,7 @@ requires = [
 build-backend = "setuptools.build_meta"
 
 [tool.pytest.ini_options]
-addopts = "--strict-markers --strict-config -v -r sxfE --color=yes"
+addopts = "--strict-markers --strict-config -v -r sxfE --color=yes --durations=10"
 xfail_strict = true
 python_files = ["test_*.py"]
 testpaths = ["pyscenarios/tests"]
@@ -189,8 +189,8 @@ pytest = "*"
 pytest-cov = "*"
 
 [tool.pixi.feature.tests.tasks]
-tests = { cmd = "pytest -v", description = "Run tests" }
-tests-cov = { cmd = "pytest -v -ra --cov --cov-report=xml --cov-report=term --durations=20", description = "Run tests with coverage" }
+tests = { cmd = "pytest", description = "Run tests" }
+tests-cov = { cmd = "pytest --cov --cov-report=xml --cov-report=term", description = "Run tests with coverage" }
 coverage = { cmd = "coverage html", depends-on = ["tests-cov"], description = "Generate test coverage html report" }
 open-coverage = { cmd = "open htmlcov/index.html", depends-on = ["coverage"], description = "Open test coverage report" }
 
