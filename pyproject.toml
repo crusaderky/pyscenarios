@@ -30,9 +30,10 @@ numba = ["numba >= 0.56"]
 all = ["numba >= 0.56"]
 
 [project.urls]
-Homepage = "https://github.com/crusaderky/pyscenarios"
-"Bug Tracker" = "https://github.com/crusaderky/pyscenarios/issues"
-Changelog = "https://pyscenarios.readthedocs.io/en/latest/whats-new.html"
+homepage = "https://github.com/crusaderky/pyscenarios"
+issues = "https://github.com/crusaderky/pyscenarios/issues"
+documentation = "https://pyscenarios.readthedocs.io/"
+changelog = "https://pyscenarios.readthedocs.io/en/latest/whats-new.html"
 
 [project.readme]
 text = """
@@ -251,9 +252,9 @@ twine = "*"
 [tool.pixi.feature.dist.tasks]
 dist-clear = { cmd = "rm -rf build dist" }
 build = { cmd = "python -m build", description = "Build pypi artifacts" }
-twine-check = { cmd = "python -m twine check dist/*" }
 dist = { depends-on = ["dist-clear", "build", "twine-check"] }
-twine-upload = { depends-on = ["dist"], cmd = "python -m twine upload dist/*" }
+twine-check = { cmd = "python -m twine check dist/*" }
+twine-upload = { cmd = "python -m twine upload dist/*" }
 
 [tool.pixi.environments]
 # FIXME use same solve-groups with and without numba
