@@ -3,16 +3,13 @@
 What's New
 ==========
 
-.. _whats-new.0.7.0:
-
 v0.7.0 (unreleased)
 -------------------
 
 
-.. _whats-new.0.6.0:
-
 v0.6.0 (2025-05-04)
 -------------------
+
 - Numba is now an optional dependency; if it is not installed, :func:`sobol`
   will fall back to a slower pure-Numpy implementation.
 
@@ -53,14 +50,11 @@ v0.6.0 (2025-05-04)
   - ``stats.tail_dependence``
 
 
-.. _whats-new.0.5.0:
-
 v0.5.0 (2024-03-15)
 -------------------
+
 - Added formal support for Python 3.11 and 3.12 (but the previous release works fine too)
 
-
-.. _whats-new.0.4.0:
 
 v0.4.0 (2022-03-26)
 -------------------
@@ -92,8 +86,6 @@ v0.4.0 (2022-03-26)
 - Dropped requirement for setuptools at runtime
 
 
-.. _whats-new.0.3.0:
-
 v0.3.0 (2020-07-02)
 -------------------
 
@@ -118,16 +110,12 @@ v0.3.0 (2020-07-02)
 - Added black and isort to CI
 
 
-.. _whats-new.0.2.1:
-
 v0.2.1 (2019-05-01)
 -------------------
 
 - Make package discoverable by mypy
 - A more robust fix for `dask#4739 <https://github.com/dask/dask/issues/4739>`_
 
-
-.. _whats-new.0.2.0:
 
 v0.2.0 (2019-04-29)
 -------------------
@@ -141,8 +129,6 @@ v0.2.0 (2019-04-29)
 - Mandatory flake8 and mypy in CI
 - Changed license to Apache 2.0
 
-
-.. _whats-new.0.1.0:
 
 v0.1.0 (2018-05-27)
 -------------------

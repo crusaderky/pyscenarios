@@ -12,12 +12,14 @@ Required dependencies
 Additionally, if you plan to use :func:`pyscenarios.sobol`, installing
 `Numba <http://numba.pydata.org>`_ will greatly speed up the calculation.
 
+
 Installing with conda
 ---------------------
 .. code-block:: bash
 
    conda install -c conda-forge pyscenarios
    conda install -c conda-forge pyscenarios numba
+
 
 Installing with pip
 -------------------
@@ -26,6 +28,7 @@ Installing with pip
    pip install pyscenarios
    pip install pyscenarios[numba]
    pip install pyscenarios[all]
+
 
 .. _mindeps_policy:
 

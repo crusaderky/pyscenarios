@@ -1,8 +1,26 @@
 Development Guidelines
 ======================
 
-Install
--------
+Reporting issues
+----------------
+
+If you find a bug or want to suggest a new feature, please report it on the
+`GitHub issues page <https://github.com/crusaderky/pyscenarios/issues>`_.
+
+Before you report an issue, please check if it can still be reproduced with the
+latest version of this software.
+
+For bug reports, please include the following information:
+
+- A description of the bug
+- The expected behavior
+- The actual behavior
+- Steps to reproduce the bug (preferably with a minimal example)
+- Any relevant error messages or stack traces
+
+
+Deploying a development environment
+-----------------------------------
 
 1. Clone this repository with git:
 
@@ -23,6 +41,7 @@ Install
    git checkout main
    git pull upstream main
    git push origin main
+
 
 Test
 ----
@@ -45,6 +64,7 @@ Test with coverage and open HTML report in your browser:
 
    pixi run open-coverage
 
+
 Code Formatting
 ---------------
 
@@ -66,6 +86,7 @@ git commit. This can be done by running:
 Now the code linters will be run each time you commit changes.
 You can skip these checks with ``git commit --no-verify`` or with
 the short version ``git commit -n``.
+
 
 Documentation
 -------------
