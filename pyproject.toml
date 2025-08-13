@@ -14,6 +14,7 @@ classifiers = [
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
   "Programming Language :: Python :: Free Threading :: 2 - Beta",
   "Topic :: Scientific/Engineering",
 ]
@@ -154,7 +155,8 @@ module = ["*.tests.*"]
 disallow_untyped_defs = false
 
 [tool.pixi.project]
-channels = ["https://prefix.dev/conda-forge"]
+# TODO remove rc channel after Python 3.14 final release
+channels = ["https://prefix.dev/conda-forge", "conda-forge/label/python_rc"]
 platforms = ["linux-64", "linux-aarch64", "osx-64", "osx-arm64", "win-64"]
 
 [tool.pixi.dependencies]
@@ -238,7 +240,7 @@ numpy = "<2.3" # FIXME numba support for numpy 2.3 is not available yet
 numba = "=0.56"
 
 [tool.pixi.feature.upstream.dependencies]
-python = "=3.13" # TODO python 3.14 prereleases?
+python = "=3.14"
 
 [tool.pixi.feature.upstream.pypi-dependencies]
 numpy = { index = "https://pypi.anaconda.org/scientific-python-nightly-wheels/simple" }
