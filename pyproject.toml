@@ -233,8 +233,7 @@ scipy = "=1.7"
 dask-core = "=2022.4.0" # No dask.distributed
 
 [tool.pixi.feature.numba.dependencies]
-numba = ">=0.56"
-numpy = "<2.3" # FIXME numba support for numpy 2.3 is not available yet
+numba = "*"
 
 [tool.pixi.feature.mindeps-numba.dependencies]
 numba = "=0.56"
@@ -266,10 +265,10 @@ lint = { features = ["lint"], no-default-feature = true }
 docs = { features = ["py313", "docs", "jupyter"], solve-group = "py313" }
 mindeps = { features = ["mindeps", "smoke", "tests"], solve-group = "mindeps" }
 mindeps-numba = { features = ["mindeps", "mindeps-numba", "smoke", "tests"], solve-group = "mindeps" }
-py310 = { features = ["py310", "smoke", "tests"], solve-group = "py310" }
-py310-numba = { features = ["py310", "numba", "smoke", "tests"], solve-group = "py310-numba" }
+py310 = { features = ["py310", "smoke", "tests"] }
+py310-numba = { features = ["py310", "numba", "smoke", "tests"] }
 py313 = { features = ["py313", "smoke", "tests"], solve-group = "py313" }
-py313-numba = { features = ["py313", "numba", "smoke", "tests"], solve-group = "py313-numba" }
+py313-numba = { features = ["py313", "numba", "smoke", "tests"] }
 nogil = { features = ["nogil", "smoke", "tests"] } # TODO numba binaries missing
 upstream = { features = ["upstream", "smoke", "tests"], no-default-feature = true }
 smoke = { features = ["smoke"] }
