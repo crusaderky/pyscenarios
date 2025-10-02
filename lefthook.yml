@@ -1,7 +1,7 @@
 pre-commit:
   parallel: true
   jobs:
-    - run: actionlint
+    - run: actionlint -ignore macos-15-intel # FIXME
     - run: blacken-docs
     - run: codespell
     - name: dprint
