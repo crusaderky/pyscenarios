@@ -22,7 +22,7 @@ jobs:
 
       - uses: prefix-dev/setup-pixi@v0.8.10
         with:
-          pixi-version: v0.55.0
+          pixi-version: v0.56.0
           cache: true
           environments: dist
 
@@ -32,7 +32,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.13"
+          python-version: "3.14"
 
       - name: Install wheel
         run: pip install dist/*.whl
