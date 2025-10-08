@@ -2,10 +2,9 @@
 name: docs
 channels:
 - https://prefix.dev/conda-forge
-- conda-forge/label/python_rc
 - nodefaults
 dependencies:
-- python 3.13.*
+- python 3.14.*
 - python *
 - pip *
 - sphinx *

@@ -202,7 +202,7 @@ jupyter = { cmd = "jupyter lab", description = "Launch Jupyter Lab" }
 python = "=3.10"
 
 [tool.pixi.feature.py313.dependencies]
-python = "=3.13"  # Needed for Numba
+python = "=3.13" # Needed for Numba
 
 [tool.pixi.feature.py314.dependencies]
 python = "=3.14"
