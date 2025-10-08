@@ -17,8 +17,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Fetch full git history for setuptools_scm
-          fetch-tags: true # Fetch tags for setuptools_scm
+          fetch-depth: 0 # Fetch full git history for hatch-vcs
+          fetch-tags: true # Fetch tags for hatch-vcs
 
       - uses: prefix-dev/setup-pixi@v0.8.10
         with:

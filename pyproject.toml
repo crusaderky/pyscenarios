@@ -43,30 +43,12 @@ text = """
 - Statistical analysis tools for copulas"""
 content-type = "text/x-rst"
 
-[tool.setuptools]
-zip-safe = false # https://mypy.readthedocs.io/en/latest/installed_packages.html
-include-package-data = true
-
-[tool.setuptools.packages]
-find = { namespaces = false }
-
-[tool.setuptools_scm]
-# Use hardcoded version when .git has been removed and this is not a package created
-# by sdist. This is the case e.g. of a remote deployment with PyCharm.
-fallback_version = "9999"
-
-[tool.setuptools.package-data]
-pyscenarios = [
-  "py.typed",
-  "*.txt.xz",
-]
-
 [build-system]
-requires = [
-  "setuptools>=66",
-  "setuptools_scm[toml]",
-]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling", "hatch-vcs"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+source = "vcs"
 
 [tool.pytest.ini_options]
 addopts = "--strict-markers --strict-config -v -r sxfE --color=yes --durations=10"
