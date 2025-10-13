@@ -37,8 +37,8 @@ extensions = [
 ]
 
 extlinks = {
-    "issue": ("https://github.com/crusaderky/pyscenarios/issues/%s", "GH"),
-    "pull": ("https://github.com/crusaderky/pyscenarios/pull/%s", "PR"),
+    "issue": ("https://github.com/crusaderky/pyscenarios/issues/%s", "#%s"),
+    "pull": ("https://github.com/crusaderky/pyscenarios/pull/%s", "#%s"),
 }
 
 autosummary_generate = True
