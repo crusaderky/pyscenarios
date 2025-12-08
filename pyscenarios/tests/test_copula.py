@@ -193,7 +193,7 @@ def test_extra_samples(func, kwargs):
 
 # Suppress warning on Windows-mindeps
 @pytest.mark.filterwarnings(
-    "ignore::RuntimeWarning:invalid value encountered in reduce"
+    "ignore:invalid value encountered in reduce:RuntimeWarning"
 )
 @all_copulas
 def test_cov_roundtrip(func, kwargs):
