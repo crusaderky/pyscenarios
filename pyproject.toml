@@ -136,7 +136,7 @@ enable_error_code = ["ignore-without-code", "possibly-undefined", "truthy-bool"]
 module = ["*.tests.*"]
 disallow_untyped_defs = false
 
-[tool.pixi.project]
+[tool.pixi.workspace]
 # TODO remove rc channel after Python 3.14 final release
 channels = ["https://prefix.dev/conda-forge"]
 platforms = ["linux-64", "linux-aarch64", "osx-64", "osx-arm64", "win-64"]

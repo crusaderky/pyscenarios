@@ -21,7 +21,7 @@ def sobol_kernel(
     return output
 
 
-@jit(  # type: ignore[misc]
+@jit(  # type: ignore[untyped-decorator]
     "void(uint32, uint32, uint32, uint32, uint32[:, :], float64[:, :])",
     nopython=True,
     nogil=True,

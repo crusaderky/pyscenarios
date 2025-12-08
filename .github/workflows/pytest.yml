@@ -46,22 +46,20 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Disregard pixi.lock (upstream only)
         if: matrix.environment == 'upstream'
         run: rm pixi.lock
 
-      - uses: prefix-dev/setup-pixi@v0.8.10
+      - uses: prefix-dev/setup-pixi@v0
         with:
-          pixi-version: v0.56.0
+          pixi-version: v0.60.0
           environments: ${{ matrix.environment }}
           cache: ${{ matrix.environment != 'upstream' }}
           locked: ${{ matrix.environment != 'upstream' }}
 
       - name: Smoke test
-        # FIXME scipy needs PYTHON_GIL=0; retest on >=1.16.1
-        if: matrix.environment != 'nogil'
         run: pixi run -e ${{ matrix.environment }} smoke-test
 
       - name: pytest with coverage
@@ -70,8 +68,7 @@ jobs:
 
       - name: Free-threading stress test
         if: matrix.environment == 'nogil'
-        # FIXME scipy needs PYTHON_GIL=0; retest on >=1.16.1
-        run: PYTHON_GIL=0 pixi run -e nogil tests --parallel-threads=4
+        run: pixi run -e nogil tests --parallel-threads=4
 
       - name: codecov.io
         if: matrix.environment != 'nogil' && matrix.environment != 'smoke'
