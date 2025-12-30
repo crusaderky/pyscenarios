@@ -36,8 +36,8 @@ jobs:
           - mindeps-numba
           - py310
           - py310-numba
-          - py313-numba
           - py314
+          - py314-numba
         include:
           - os: ubuntu-latest
             environment: upstream
@@ -54,7 +54,7 @@ jobs:
 
       - uses: prefix-dev/setup-pixi@v0
         with:
-          pixi-version: v0.60.0
+          pixi-version: v0.62.2
           environments: ${{ matrix.environment }}
           cache: ${{ matrix.environment != 'upstream' }}
           locked: ${{ matrix.environment != 'upstream' }}

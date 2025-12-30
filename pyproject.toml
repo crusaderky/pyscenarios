@@ -201,9 +201,6 @@ jupyter = { cmd = "jupyter lab", description = "Launch Jupyter Lab" }
 [tool.pixi.feature.py310.dependencies]
 python = "=3.10"
 
-[tool.pixi.feature.py313.dependencies]
-python = "=3.13" # Needed for Numba
-
 [tool.pixi.feature.py314.dependencies]
 python = "=3.14"
 
@@ -243,7 +240,7 @@ twine-check = { cmd = "python -m twine check dist/*" }
 twine-upload = { cmd = "python -m twine upload dist/*" }
 
 [tool.pixi.environments]
-default = { features = ["py313", "numba", "docs", "smoke", "tests", "jupyter"], solve-group = "py313-numba" }
+default = { features = ["py314", "numba", "docs", "smoke", "tests", "jupyter"], solve-group = "py314-numba" }
 dist = { features = ["dist"], no-default-feature = true }
 lint = { features = ["lint"], no-default-feature = true }
 docs = { features = ["py314", "docs", "jupyter"], solve-group = "py314" }
@@ -252,8 +249,8 @@ mindeps-numba = { features = ["mindeps", "mindeps-numba", "smoke", "tests"], sol
 py310 = { features = ["py310", "smoke", "tests"] }
 py310-numba = { features = ["py310", "numba", "smoke", "tests"] }
 py314 = { features = ["py314", "smoke", "tests"], solve-group = "py314" }
-# TODO no numba binaries for 3.13t, 3.14, or 3.14t yet
-py313-numba = { features = ["py313", "numba", "smoke", "tests"] }
+py314-numba = { features = ["py314", "numba", "smoke", "tests"] }
+# FIXME no numba support yet for free-threading
 nogil = { features = ["nogil", "smoke", "tests"] }
 upstream = { features = ["upstream", "smoke", "tests"], no-default-feature = true }
 smoke = { features = ["smoke"] }
