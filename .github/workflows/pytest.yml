@@ -63,7 +63,7 @@ jobs:
         run: pixi run -e ${{ matrix.environment }} smoke-test
 
       - name: pytest with coverage
-        if: matrix.environment != 'nogil' && matrix.environment != 'smoke'
+        if: matrix.environment != 'smoke'
         run: pixi run -e ${{ matrix.environment }} coverage
 
       - name: Free-threading stress test
@@ -71,5 +71,5 @@ jobs:
         run: pixi run -e nogil tests --parallel-threads=4
 
       - name: codecov.io
-        if: matrix.environment != 'nogil' && matrix.environment != 'smoke'
+        if: matrix.environment != 'smoke'
         uses: codecov/codecov-action@v5
